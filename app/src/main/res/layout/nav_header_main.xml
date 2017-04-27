@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_marginTop="10dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:weightSum="1">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="31dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_clear_black_24dp"
+            android:id="@+id/imgX"
+            android:layout_marginTop="5dp"
+
+            />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="31dp"
+            android:gravity="end"
+            android:layout_marginTop="5dp"
+            >
+
+        <TextView
+            android:text="@string/rus"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/txtKaz"
+            android:gravity="end"
+            android:textSize="@dimen/font_size"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView
+            android:text="@string/kaz"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/txtRus"
+            android:gravity="end"
+            android:textSize="@dimen/font_size"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView
+            android:text="@string/eng"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/txtEng"
+            android:gravity="end"
+            android:textSize="@dimen/font_size"
+            android:layout_marginLeft="15dp"
+            />
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_arrow"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/searchTxt"
+        android:layout_marginTop="10dp"
+        android:hint="@string/what_are_you_looking_for" />
+</LinearLayout>

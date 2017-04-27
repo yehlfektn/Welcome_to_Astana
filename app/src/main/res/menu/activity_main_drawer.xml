@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_go"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/where_go" />
+        <item
+            android:id="@+id/nav_eat"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/where_eat" />
+        <item
+            android:id="@+id/nav_stop"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/where_stop" />
+        <item
+            android:id="@+id/nav_tourist"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/tourist_advice" />
+
+        <item
+            android:id="@+id/nav_expo"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/expo" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>
