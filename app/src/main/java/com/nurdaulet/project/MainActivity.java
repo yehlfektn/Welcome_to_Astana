@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //assigning id of image X to imgX
-        imgX = (ImageView)findViewById(R.id.imgX);
+        //imgX = (ImageView)findViewById(R.id.imgX);
 
 
 
@@ -111,10 +111,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_tourist) {
 
         } else if (id == R.id.nav_expo) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
