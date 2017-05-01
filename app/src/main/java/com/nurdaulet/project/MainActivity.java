@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,13 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-
+    String TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ImageView imgX;
@@ -46,23 +52,53 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //end of generated code
 
-        //assigning id of image X to imgX
-        //imgX = (ImageView)findViewById(R.id.imgX);
+        //THE EXPANDABLE
+        View headerView = navigationView.getHeaderView(0);
+        ExpandableListView elv=(ExpandableListView) headerView.findViewById(R.id.expandableListView1);
 
+        final ArrayList<group> group = getData();
+        //CREATE AND BIND TO ADAPTER
+        CustomAdapter adapter = new CustomAdapter(this, group);
 
-
-        //setting onClick listener on image X
-       /* imgX.setOnClickListener(new View.OnClickListener(){
+        elv.setAdapter(adapter);
+        /*
+        //SET ONCLICK LISTENER
+        elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public void onClick(View v){
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                if (drawer.isDrawerOpen(GravityCompat.START)) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
+                                        int childPos, long id) {
+                Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos), Toast.LENGTH_SHORT).show();
+                return false;
             }
-        });*/
+        });
+        */
 
+    }
+
+    //ADD AND GET DATA
+    private ArrayList<group> getData()
+    {
+        group t1=new group("КУДА СХОДИТЬ");
+        t1.items.add("Достопримечательности");
+        t1.items.add("Шоппинг");
+        t1.items.add("Развлечения");
+        t1.items.add("Экскурсии");
+        t1.items.add("События");
+
+        group t2=new group("ГДЕ ПОЕСТЬ");
+        group t3=new group("ГДЕ ОСТАНОВИТЬСЯ");
+        group t4=new group("ПАМЯТКА ТУРИСТУ");
+        group t5=new group("EXPO");
+
+        ArrayList<group> allGroups =new ArrayList<group>();
+        allGroups.add(t1);
+        allGroups.add(t2);
+        allGroups.add(t3);
+        allGroups.add(t4);
+        allGroups.add(t5);
+        return allGroups;
     }
 
     @Override
