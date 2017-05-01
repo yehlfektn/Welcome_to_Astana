@@ -136,20 +136,28 @@ public class CustomAdapter extends BaseExpandableListAdapter {
 
             if (name == "КУДА СХОДИТЬ") {
                 img.setImageResource(R.mipmap.icon_opened);
-            } else if (name == "Chelsea") {
-                img.setImageResource(R.mipmap.icon_land_bw);
-            } else if (name == "Arsenal") {
-                img.setImageResource(R.mipmap.icon_land_bw);
+            } else if (name == "ГДЕ ПОЕСТЬ") {
+                img.setImageResource(R.mipmap.icon_burger);
+            } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {
+                img.setImageResource(R.mipmap.icon_location);
+            } else if (name == "ПАМЯТКА ТУРИСТУ") {
+                img.setImageResource(R.mipmap.icon_medical);
+            } else if (name == "EXPO") {
+                img.setImageResource(R.mipmap.icon_expo);
             }
 
         }else {
 
             if (name == "КУДА СХОДИТЬ") {
                 img.setImageResource(R.mipmap.icon_landscape);
-            } else if (name == "Chelsea") {
-                img.setImageResource(R.mipmap.icon_land_bw);
-            } else if (name == "Arsenal") {
-                img.setImageResource(R.mipmap.icon_land_bw);
+            } else if (name == "ГДЕ ПОЕСТЬ") {
+                img.setImageResource(R.mipmap.icon_burger);
+            } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {
+                img.setImageResource(R.mipmap.icon_location);
+            } else if (name == "ПАМЯТКА ТУРИСТУ") {
+                img.setImageResource(R.mipmap.icon_medical);
+            } else if (name == "EXPO") {
+                img.setImageResource(R.mipmap.icon_expo);
             }
         }
         //SET TEAM ROW BACKGROUND COLOR

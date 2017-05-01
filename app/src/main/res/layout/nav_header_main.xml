@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,6 +30,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_cross_symbol"
             android:id="@+id/imgX"
+            android:onClick="Xbutton"
 
 
             />
@@ -93,4 +96,43 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
     </ExpandableListView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:layout_marginTop="30dp">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_facebook"
+            android:id="@+id/facebook"
+            android:onClick="goToFacebook" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_mail"
+            android:id="@+id/mail"
+            android:onClick="goToMailru" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_insta"
+            android:id="@+id/insta"
+            android:onClick="goToInsta" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_vk"
+            android:id="@+id/vk"
+            android:onClick="goToVk" />
+
+    </LinearLayout>
+
 </LinearLayout>

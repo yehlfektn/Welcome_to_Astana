@@ -1,11 +1,14 @@
 package com.nurdaulet.project;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -57,14 +61,15 @@ public class MainActivity extends AppCompatActivity
         //THE EXPANDABLE
         View headerView = navigationView.getHeaderView(0);
         ExpandableListView elv=(ExpandableListView) headerView.findViewById(R.id.expandableListView1);
+        final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
         final ArrayList<group> group = getData();
         //CREATE AND BIND TO ADAPTER
         CustomAdapter adapter = new CustomAdapter(this, group);
 
         elv.setAdapter(adapter);
-        /*
-        //SET ONCLICK LISTENER
+
+        //SET ONCLICK LISTENER just for debugging
         elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
@@ -73,7 +78,29 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-        */
+
+        //setting onTouchListener to EditText
+        edt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (edt.getRight() - edt.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // close drawer
+                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                        drawer.closeDrawer(GravityCompat.START);
+                        Toast.makeText(getApplicationContext(), "EditTextWasActivated", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
 
     }
 
@@ -133,26 +160,45 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void Xbutton(View v) {
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+    }
+
+    public void goToFacebook(View view) {
+        goToUrl("https://www.facebook.com/welcometoastana/");
+    }
+
+    public void goToMailru(View view) {
+        goToUrl("http://mail.ru/");
+    }
+
+    public void goToInsta(View view) {
+        goToUrl("https://www.instagram.com/welcometoastana/");
+    }
+
+    public void goToVk(View view) {
+        goToUrl("https://vk.com/welcometoastana");
+    }
+
+    private void goToUrl(String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+    }
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_go) {
-            // Handle the camera action
-        } else if (id == R.id.nav_eat) {
-
-        } else if (id == R.id.nav_stop) {
-
-        } else if (id == R.id.nav_tourist) {
-
-        } else if (id == R.id.nav_expo) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
