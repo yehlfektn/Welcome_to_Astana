@@ -1,11 +1,14 @@
 package com.nurdaulet.project;
 
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity
 
 
     String TAG = "MainActivity";
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ImageView imgX;
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         //THE EXPANDABLE
         View headerView = navigationView.getHeaderView(0);
-        ExpandableListView elv=(ExpandableListView) headerView.findViewById(R.id.expandableListView1);
+        ExpandableListView elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
         final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
         final ArrayList<group> group = getData();
@@ -74,7 +79,38 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
-                Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos), Toast.LENGTH_SHORT).show();
+                Fragment fragment = null;
+
+                //finding out which fragment to use
+                if (groupPos == 0) {
+                    if (childPos == 0) {
+                        fragment = new SightSeeingsFragment();
+                    } else if (childPos == 1) {
+                        fragment = new ShoppingFragment();
+                    } else if (childPos == 2) {
+                        fragment = new EntertainmentFragment();
+                    } else if (childPos == 3) {
+                        fragment = new ExcursionsFragment();
+                    }
+                }
+
+
+                //Just for debugging
+                Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos) + "G:" + groupPos + " C:" + childPos, Toast.LENGTH_SHORT).show();
+
+                //if fragment found, make a transaction
+                if (fragment != null) {
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.mainFrame, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+
+
                 return false;
             }
         });
@@ -105,21 +141,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     //ADD AND GET DATA
-    private ArrayList<group> getData()
-    {
-        group t1=new group("КУДА СХОДИТЬ");
+    private ArrayList<group> getData() {
+        group t1 = new group("КУДА СХОДИТЬ");
         t1.items.add("Достопримечательности");
         t1.items.add("Шоппинг");
         t1.items.add("Развлечения");
         t1.items.add("Экскурсии");
         t1.items.add("События");
 
-        group t2=new group("ГДЕ ПОЕСТЬ");
-        group t3=new group("ГДЕ ОСТАНОВИТЬСЯ");
-        group t4=new group("ПАМЯТКА ТУРИСТУ");
-        group t5=new group("EXPO");
+        group t2 = new group("ГДЕ ПОЕСТЬ");
+        group t3 = new group("ГДЕ ОСТАНОВИТЬСЯ");
+        group t4 = new group("ПАМЯТКА ТУРИСТУ");
+        group t5 = new group("EXPO");
 
-        ArrayList<group> allGroups =new ArrayList<group>();
+        ArrayList<group> allGroups = new ArrayList<group>();
         allGroups.add(t1);
         allGroups.add(t2);
         allGroups.add(t3);
