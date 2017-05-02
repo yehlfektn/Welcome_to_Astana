@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity
                         fragment = new EntertainmentFragment();
                     } else if (childPos == 3) {
                         fragment = new ExcursionsFragment();
+                    } else if (childPos == 4) {
+                        fragment = new EventsFragment();
                     }
                 }
 
