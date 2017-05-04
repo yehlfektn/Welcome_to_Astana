@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
 
 
     String TAG = "MainActivity";
-    FragmentManager fragmentManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
