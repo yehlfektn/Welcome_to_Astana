@@ -43,7 +43,7 @@ public class MyAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Все достопримечательности";
+                return "Все объекты";
             case 1:
                 return "Культура";
             case 2:

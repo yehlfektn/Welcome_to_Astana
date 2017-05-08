@@ -57,35 +57,65 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         //ASSIGN IMAGES TO PLAYERS ACCORDING TO THEIR NAMES AN TEAMS
         if(groupName=="КУДА СХОДИТЬ")
         {
-            if(child=="Wayne Rooney")
+            if(child=="Шоппинг")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Ander Herera")
-            {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
+                img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }else if(child=="Достопримечательности")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
+                img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }else if(child=="События")
+            {
+                img.setImageResource(R.mipmap.icon_end_orange)  ;
+            }else if(child=="Экскурсии")
+            {
+                img.setImageResource(R.mipmap.icon_bw_orange)  ;
+            }
+            else if(child=="Развлечения")
+            {
+                img.setImageResource(R.mipmap.icon_bw_orange)  ;
+            }
+        }else if(groupName=="ГДЕ ПОЕСТЬ")
+        {
+            if(child=="Кафе")
+            {
+                img.setImageResource(R.mipmap.icon_bw_green)  ;
+            }else if(child=="Рестораны")
+            {
+                img.setImageResource(R.mipmap.icon_bw_green)  ;
+            }else if(child=="Бары")
+            {
+                img.setImageResource(R.mipmap.icon_end_green)  ;
+            }
+        }else if(groupName=="ГДЕ ОСТАНОВИТЬСЯ")
+        {
+            if(child=="Гостиницы")
+            {
+                img.setImageResource(R.mipmap.icon_land_bw)  ;
+            }else if(child=="Хостелы")
+            {
+                img.setImageResource(R.mipmap.icon_land_bw)  ;
+            }else if(child=="Апартаменты")
             {
                 img.setImageResource(R.mipmap.icon_land_end)  ;
             }
-        }else if(groupName=="Chelsea")
+        }else if(groupName=="ПАМЯТКА ТУРИСТУ")
         {
-            if(child=="John Terry")
+            if(child=="Пребывание")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Eden Hazard")
+                img.setImageResource(R.mipmap.icon_bw_yellow)  ;
+            }else if(child=="Транспорт")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Oscar")
+                img.setImageResource(R.mipmap.icon_bw_yellow)  ;
+            }else if(child=="Полезная информация")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Diego Costa")
+                img.setImageResource(R.mipmap.icon_bw_yellow)  ;
+            }else if(child=="Экстренная помощь")
             {
-                img.setImageResource(R.mipmap.icon_land_bw)  ;
+                img.setImageResource(R.mipmap.icon_end_yellow)  ;
             }
+
         }
+
         return convertView;
     }
     //GET NUMBER OF PLAYERS
@@ -135,13 +165,13 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         if(isExpanded){
 
             if (name == "КУДА СХОДИТЬ") {
-                img.setImageResource(R.mipmap.icon_opened);
+                img.setImageResource(R.mipmap.icon_landscape_opened);
             } else if (name == "ГДЕ ПОЕСТЬ") {
-                img.setImageResource(R.mipmap.icon_burger);
+                img.setImageResource(R.mipmap.icon_burger_opened);
             } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {
-                img.setImageResource(R.mipmap.icon_location);
+                img.setImageResource(R.mipmap.icon_location_opened);
             } else if (name == "ПАМЯТКА ТУРИСТУ") {
-                img.setImageResource(R.mipmap.icon_medical);
+                img.setImageResource(R.mipmap.icon_medical_opened);
             } else if (name == "EXPO") {
                 img.setImageResource(R.mipmap.icon_expo);
             }
@@ -149,7 +179,7 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         }else {
 
             if (name == "КУДА СХОДИТЬ") {
-                img.setImageResource(R.mipmap.icon_landscape);
+                img.setImageResource(R.mipmap.icon_landscape_collapsed);
             } else if (name == "ГДЕ ПОЕСТЬ") {
                 img.setImageResource(R.mipmap.icon_burger);
             } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {

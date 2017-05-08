@@ -37,21 +37,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ImageView imgX;
+
         //setting navigation drawer code was generated
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setLogo(R.drawable.wtalogo2);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -65,14 +59,35 @@ public class MainActivity extends AppCompatActivity
 
         //THE EXPANDABLE
         View headerView = navigationView.getHeaderView(0);
-        ExpandableListView elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
+        final ExpandableListView elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
         final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
         final ArrayList<group> group = getData();
+
         //CREATE AND BIND TO ADAPTER
         CustomAdapter adapter = new CustomAdapter(this, group);
 
         elv.setAdapter(adapter);
+
+        elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if(groupPosition != previousItem )
+                    elv.collapseGroup(previousItem );
+                previousItem = groupPosition;
+            }
+        });
+
+        Fragment fragment = new SightSeeingsFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.mainFrame, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+
 
         //SET ONCLICK LISTENER just for debugging
         elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -152,8 +167,18 @@ public class MainActivity extends AppCompatActivity
         t1.items.add("События");
 
         group t2 = new group("ГДЕ ПОЕСТЬ");
+        t2.items.add("Кафе");
+        t2.items.add("Рестораны");
+        t2.items.add("Бары");
         group t3 = new group("ГДЕ ОСТАНОВИТЬСЯ");
+        t3.items.add("Гостиницы");
+        t3.items.add("Хостелы");
+        t3.items.add("Апартаменты");
         group t4 = new group("ПАМЯТКА ТУРИСТУ");
+        t4.items.add("Пребывание");
+        t4.items.add("Транспорт");
+        t4.items.add("Полезная информация");
+        t4.items.add("Экстренная помощь");
         group t5 = new group("EXPO");
 
         ArrayList<group> allGroups = new ArrayList<group>();
