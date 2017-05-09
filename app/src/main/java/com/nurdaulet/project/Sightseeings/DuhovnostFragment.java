@@ -1,4 +1,4 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.Sightseeings;
 
 
 import android.app.ProgressDialog;
@@ -17,6 +17,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.nurdaulet.project.ListItem;
+import com.nurdaulet.project.R;
+import com.nurdaulet.project.RecycleAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,18 +28,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CultureFragment extends Fragment {
+public class DuhovnostFragment extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/getSightseeings/?limit=10&category=5";
+    private static final String Url = "http://welcometoastana.kz/api/v1/getSightseeings/?limit=10&category=50";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<ListItem> listItems;
 
-    public CultureFragment() {
+
+    public DuhovnostFragment() {
         // Required empty public constructor
     }
 
@@ -45,20 +48,27 @@ public class CultureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_culture, container, false);
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleCulture);
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_duhovnost, container, false);
+
+        recyclerView = (RecyclerView)v.findViewById(R.id.recycleDuhovnost);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        listItems = new ArrayList<>();
+        if(listItems==null) {
+            listItems = new ArrayList<>();
+        }
+        if(listItems.size()==0){
 
-        loadRecyclerView();
+            loadRecyclerView();
 
+        }else{
+            adapter = new RecycleAdapter(listItems,getContext());
+            recyclerView.setAdapter(adapter);
+        }
 
         return v;
     }
-
-
     private void loadRecyclerView() {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");

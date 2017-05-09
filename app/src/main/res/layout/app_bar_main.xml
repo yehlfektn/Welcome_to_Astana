@@ -17,9 +17,19 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/ab_gradient"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            />
+            >
+
+           <ImageView
+               android:layout_width="70dp"
+               android:layout_height="match_parent"
+               android:src="@drawable/wta_logo_white"
+               />
+
+
+
+        </android.support.v7.widget.Toolbar>
 
 
         <!-- android:background="?attr/colorPrimary"  -->
@@ -32,8 +42,6 @@
         android:layout_marginTop="55dp"
         android:layout_height="match_parent"
         android:id="@+id/mainFrame">
-
-
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

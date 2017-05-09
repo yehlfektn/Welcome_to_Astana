@@ -1,4 +1,4 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.Sightseeings;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.nurdaulet.project.R;
+import com.nurdaulet.project.Sightseeings.MyAdapter;
 
 /**
  * Created by nurdaulet on 5/3/17.

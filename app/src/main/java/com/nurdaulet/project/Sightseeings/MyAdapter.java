@@ -1,11 +1,8 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.Sightseeings;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
-
-import static com.nurdaulet.project.EntertainmentFragment.int_items;
 
 /**
  * Created by Nurdaulet on 3/1/2017.
@@ -22,11 +19,19 @@ public class MyAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new AllEntertainment();
+                return new AllSightseeings();
             case 1:
                 return new CultureFragment();
             case 2:
                 return new HistoryFragment();
+            case 3:
+                return new DuhovnostFragment();
+            case 4:
+                return new DosugFragment();
+            case 5:
+                return new InterestingPlacesFragment();
+            case 6:
+                return new Architecture_Fragment();
 
 
         }
@@ -36,8 +41,8 @@ public class MyAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
 
+        return 7;
 
-        return int_items;
     }
 
     public CharSequence getPageTitle(int position) {
@@ -48,7 +53,14 @@ public class MyAdapter extends FragmentPagerAdapter {
                 return "Культура";
             case 2:
                 return "История";
-
+            case 3:
+                return "Духовность";
+            case 4:
+                return "Досуг";
+            case 5:
+                return "Интересные Места";
+            case 6:
+                return "Архитектура";
 
         }
 

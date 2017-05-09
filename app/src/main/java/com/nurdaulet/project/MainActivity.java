@@ -5,12 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -23,8 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
 
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setLogo(R.drawable.wtalogo2);
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -113,7 +109,7 @@ public class MainActivity extends AppCompatActivity
 
 
                 //Just for debugging
-                Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos) + "G:" + groupPos + " C:" + childPos, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos) + "G:" + groupPos + " C:" + childPos, Toast.LENGTH_SHORT).show();
 
                 //if fragment found, make a transaction
                 if (fragment != null) {
@@ -198,6 +194,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+
     }
 
     @Override
