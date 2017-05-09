@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class AllSightseeings extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/getSightseeings/?limit=10&category=40";
+    private static final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<ListItem> listItems;
@@ -95,7 +95,7 @@ public class AllSightseeings extends Fragment {
                         ListItem item = new ListItem(
                                 o.getString("name"),
                                 o.getString("summary"),
-                                o.getString("image")
+                                o.getJSONArray("images").get(0).toString()
                         );
 
                         listItems.add(item);

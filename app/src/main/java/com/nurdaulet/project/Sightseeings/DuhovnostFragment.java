@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class DuhovnostFragment extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/getSightseeings/?limit=10&category=50";
+    private static final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1&category=53";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<ListItem> listItems;
@@ -47,8 +47,6 @@ public class DuhovnostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_duhovnost, container, false);
 
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleDuhovnost);
@@ -70,14 +68,12 @@ public class DuhovnostFragment extends Fragment {
         return v;
     }
     private void loadRecyclerView() {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
+
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -87,7 +83,7 @@ public class DuhovnostFragment extends Fragment {
                         ListItem item = new ListItem(
                                 o.getString("name"),
                                 o.getString("summary"),
-                                o.getString("image")
+                                o.getJSONArray("images").get(0).toString()
                         );
 
                         listItems.add(item);
@@ -106,7 +102,7 @@ public class DuhovnostFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
+
                 Toast.makeText(getContext(), error.getMessage(),Toast.LENGTH_LONG).show();
             }
         });

@@ -1,8 +1,7 @@
 package com.nurdaulet.project;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+
 
 import java.util.List;
 
@@ -42,11 +42,10 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
         final ListItem listItem = listItems.get(position);
         holder.name.setText(listItem.getName());
-        //holder.summary.setText(listItem.getSummary());
-        Picasso.with(context)
+
+        Glide.with(context)
                 .load(listItem.getImageUrl())
                 .into(holder.imageView);
-
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +67,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView name;
-        //public TextView summary;
         public ImageView imageView;
         public RelativeLayout relativeLayout;
 
@@ -76,7 +74,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
             super(itemView);
 
             name = (TextView)itemView.findViewById(R.id.name);
-            //summary = (TextView)itemView.findViewById(R.id.desc);
+
             imageView = (ImageView)itemView.findViewById(R.id.imageView);
             relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
 

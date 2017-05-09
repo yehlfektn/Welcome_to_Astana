@@ -1,5 +1,6 @@
 package com.nurdaulet.project;
 
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +21,9 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.nurdaulet.project.Entertainment.EntertainmentFragment;
+import com.nurdaulet.project.ListView.CustomAdapter;
+import com.nurdaulet.project.ListView.group;
 import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
 
 
@@ -94,6 +99,9 @@ public class MainActivity extends AppCompatActivity
 
                 //finding out which fragment to use
                 if (groupPos == 0) {
+                    //changing the gradient
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800 , 0xffFF8B00 });
+                    getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
                         fragment = new SightSeeingsFragment();
                     } else if (childPos == 1) {
@@ -105,6 +113,22 @@ public class MainActivity extends AppCompatActivity
                     } else if (childPos == 4) {
                         fragment = new EventsFragment();
                     }
+                }else if(groupPos == 1){
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
+                    getSupportActionBar().setBackgroundDrawable(g);
+                    if(childPos == 0){
+                    }
+                }else if(groupPos == 2){
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
+                    getSupportActionBar().setBackgroundDrawable(g);
+                    if(childPos == 0){
+
+                    }
+
+                }else if(groupPos == 3){
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800, 0xffFF8B00});
+                    getSupportActionBar().setBackgroundDrawable(g);
+
                 }
 
 

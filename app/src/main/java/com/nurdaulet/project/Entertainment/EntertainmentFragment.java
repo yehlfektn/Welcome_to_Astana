@@ -1,7 +1,7 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.Entertainment;
+
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -13,12 +13,10 @@ import com.nurdaulet.project.R;
 import com.nurdaulet.project.Sightseeings.MyAdapter;
 
 /**
- * Created by nurdaulet on 5/3/17.
+ * A simple {@link Fragment} subclass.
  */
-
 public class EntertainmentFragment extends Fragment {
 
-    public static int int_items = 3;
     public TabLayout tabLayout;
     public ViewPager viewPager;
 
@@ -26,14 +24,15 @@ public class EntertainmentFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_entertainment, container, false);
 
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.sightseeings_layout, container, false);
-
-        tabLayout = (TabLayout) v.findViewById(R.id.tabs);
-        viewPager = (ViewPager) v.findViewById(R.id.viewpager);
+        tabLayout = (TabLayout) v.findViewById(R.id.tabsEnter);
+        viewPager = (ViewPager) v.findViewById(R.id.viewpagerEnter);
         //set an adpater
 
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
@@ -48,4 +47,5 @@ public class EntertainmentFragment extends Fragment {
 
         return v;
     }
+
 }

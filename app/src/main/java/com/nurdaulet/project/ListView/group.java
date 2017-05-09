@@ -1,4 +1,4 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.ListView;
 
 /**
  * Created by nurdaulet on 4/28/17.
@@ -17,7 +17,6 @@ public class group {
     }
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return Name;
     }
 }

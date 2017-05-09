@@ -13,7 +13,7 @@ public class ListItem {
     public ListItem(String name, String description, String imageUrl){
         this.name = name;
         this.summary = description;
-        this.imageUrl = "http://welcometoastana.kz"+imageUrl;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {

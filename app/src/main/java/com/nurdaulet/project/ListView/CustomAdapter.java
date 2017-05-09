@@ -1,4 +1,4 @@
-package com.nurdaulet.project;
+package com.nurdaulet.project.ListView;
 
 /**
  * Created by nurdaulet on 4/28/17.
@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.nurdaulet.project.R;
 
 import java.util.ArrayList;
 
@@ -28,13 +30,11 @@ public class CustomAdapter extends BaseExpandableListAdapter {
     //GET A Child
     @Override
     public Object getChild(int groupPos, int childPos) {
-        // TODO Auto-generated method stub
         return group.get(groupPos).items.get(childPos);
     }
     //GET CHIlD ID
     @Override
     public long getChildId(int arg0, int arg1) {
-        // TODO Auto-generated method stub
         return 0;
     }
     //GET CHILD ROW
@@ -121,25 +121,21 @@ public class CustomAdapter extends BaseExpandableListAdapter {
     //GET NUMBER OF PLAYERS
     @Override
     public int getChildrenCount(int groupPosw) {
-        // TODO Auto-generated method stub
         return group.get(groupPosw).items.size();
     }
     //GET TEAM
     @Override
     public Object getGroup(int groupPos) {
-        // TODO Auto-generated method stub
         return group.get(groupPos);
     }
     //GET NUMBER OF TEAMS
     @Override
     public int getGroupCount() {
-        // TODO Auto-generated method stub
         return group.size();
     }
     //GET TEAM ID
     @Override
     public long getGroupId(int arg0) {
-        // TODO Auto-generated method stub
         return 0;
     }
     //GET TEAM ROW

@@ -18,7 +18,6 @@ import com.nurdaulet.project.Sightseeings.MyAdapter;
 
 public class SightSeeingsFragment extends Fragment {
 
-    public static int int_items = 3;
     public TabLayout tabLayout;
     public ViewPager viewPager;
 
