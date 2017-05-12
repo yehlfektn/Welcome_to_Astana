@@ -1,15 +1,14 @@
 package com.nurdaulet.project.Sightseeings;
 
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,7 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.nurdaulet.project.ListItem;
+import com.nurdaulet.project.KudaShoditListItem;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.RecycleAdapter;
 
@@ -36,7 +35,7 @@ public class Architecture_Fragment extends Fragment {
     private static final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1&category=53";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<ListItem> listItems;
+    private List<KudaShoditListItem> kudaShoditListItems;
 
 
     public Architecture_Fragment() {
@@ -54,15 +53,16 @@ public class Architecture_Fragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(listItems==null) {
-            listItems = new ArrayList<>();
+        if(kudaShoditListItems ==null) {
+            kudaShoditListItems = new ArrayList<>();
         }
-        if(listItems.size()==0){
+        if(kudaShoditListItems.size()==0){
 
             loadRecyclerView();
 
         }else{
-            adapter = new RecycleAdapter(listItems,getContext());
+
+            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
         }
 
@@ -82,17 +82,22 @@ public class Architecture_Fragment extends Fragment {
 
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
-                        ListItem item = new ListItem(
+                        KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("summary"),
-                                o.getJSONArray("images").get(0).toString()
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat")
                         );
 
-                        listItems.add(item);
+                        kudaShoditListItems.add(item);
 
                     }
-                    adapter = new RecycleAdapter(listItems,getContext());
+                    Log.d("Sightseeings","AdapterAttached");
+                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
+
 
 
                 } catch (JSONException e) {
@@ -105,7 +110,8 @@ public class Architecture_Fragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(getContext(), error.getMessage(),Toast.LENGTH_LONG).show();
+                Log.d("Sightseeings",error.toString());
+
             }
         });
 

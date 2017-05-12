@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,7 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.nurdaulet.project.ListItem;
+import com.nurdaulet.project.KudaShoditListItem;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.RecycleAdapter;
 
@@ -37,7 +36,7 @@ public class AllSightseeings extends Fragment {
     private static final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<ListItem> listItems;
+    private List<KudaShoditListItem> kudaShoditListItems;
 
 
     public AllSightseeings() {
@@ -57,20 +56,17 @@ public class AllSightseeings extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        if(listItems==null) {
-            listItems = new ArrayList<>();
+        if(kudaShoditListItems ==null) {
+            kudaShoditListItems = new ArrayList<>();
         }
-        if(listItems.size()==0){
+        if(kudaShoditListItems.size()==0){
 
             loadRecyclerView();
 
         }else{
-            adapter = new RecycleAdapter(listItems,getContext());
+            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
         }
-
-
-
 
 
         return v;
@@ -90,32 +86,34 @@ public class AllSightseeings extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
+
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
-                        ListItem item = new ListItem(
+                        KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("summary"),
-                                o.getJSONArray("images").get(0).toString()
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat")
                         );
 
-                        listItems.add(item);
+                        kudaShoditListItems.add(item);
 
                     }
-                    adapter = new RecycleAdapter(listItems,getContext());
+                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
-
-
                 } catch (JSONException e) {
+
                     e.printStackTrace();
                 }
-
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-                Toast.makeText(getContext(), error.getMessage(),Toast.LENGTH_LONG).show();
+                loadRecyclerView();
             }
         });
 

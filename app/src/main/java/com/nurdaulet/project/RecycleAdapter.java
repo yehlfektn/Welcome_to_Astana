@@ -22,17 +22,17 @@ import java.util.List;
 
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
 
-    private List<ListItem> listItems;
+    private List<KudaShoditListItem> kudaShoditListItems;
     private final Context context;
 
-    public RecycleAdapter(List<ListItem> listItems, Context context) {
-        this.listItems = listItems;
+    public RecycleAdapter(List<KudaShoditListItem> kudaShoditListItems, Context context) {
+        this.kudaShoditListItems = kudaShoditListItems;
         this.context = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_kudashodit,parent,false);
 
         return new ViewHolder(v);
     }
@@ -40,18 +40,20 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        final ListItem listItem = listItems.get(position);
-        holder.name.setText(listItem.getName());
+        final KudaShoditListItem kudaShoditListItem = kudaShoditListItems.get(position);
+        holder.name.setText(kudaShoditListItem.getName());
+        holder.category.setText(kudaShoditListItem.getCategory());
 
         Glide.with(context)
-                .load(listItem.getImageUrl())
+                .load(kudaShoditListItem.getImageUrl())
+                .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(context, "You clicked "+listItem.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "You clicked "+ kudaShoditListItem.getName()+"lon: "+kudaShoditListItem.getLon()+" lat: "+kudaShoditListItem.getLat(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -61,7 +63,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return listItems.size();
+        return kudaShoditListItems.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -69,15 +71,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         public TextView name;
         public ImageView imageView;
         public RelativeLayout relativeLayout;
+        public TextView category;
+        public TextView distance;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             name = (TextView)itemView.findViewById(R.id.name);
-
             imageView = (ImageView)itemView.findViewById(R.id.imageView);
             relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
-
+            category = (TextView)itemView.findViewById(R.id.category);
+            distance = (TextView)itemView.findViewById(R.id.distance);
         }
     }
 

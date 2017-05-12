@@ -4,13 +4,14 @@ package com.nurdaulet.project.Entertainment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.nurdaulet.project.R;
-import com.nurdaulet.project.Sightseeings.MyAdapter;
+import com.nurdaulet.project.Entertainment.MyAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +37,7 @@ public class EntertainmentFragment extends Fragment {
         //set an adpater
 
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+
 
         tabLayout.post(new Runnable() {
             @Override

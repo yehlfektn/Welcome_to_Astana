@@ -57,7 +57,7 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         //ASSIGN IMAGES TO PLAYERS ACCORDING TO THEIR NAMES AN TEAMS
         if(groupName=="КУДА СХОДИТЬ")
         {
-            if(child=="Шоппинг")
+            if(child=="Шоппинг и Развлечения")
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }else if(child=="Достопримечательности")
@@ -70,10 +70,7 @@ public class CustomAdapter extends BaseExpandableListAdapter {
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }
-            else if(child=="Развлечения")
-            {
-                img.setImageResource(R.mipmap.icon_bw_orange)  ;
-            }
+
         }else if(groupName=="ГДЕ ПОЕСТЬ")
         {
             if(child=="Кафе")

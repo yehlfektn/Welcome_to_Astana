@@ -27,21 +27,17 @@ public class MyAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new AllSightseeings();
+                return new TorgovyiFragment();
             case 1:
-                return new CultureFragment();
+                return new ZonyOtdyhaFragment();
             case 2:
-                return new HistoryFragment();
+                return new BeachFragment();
             case 3:
-                return new DuhovnostFragment();
+                return new ClubsFragment();
             case 4:
-                return new DosugFragment();
+                return new CinemaFragment();
             case 5:
-                return new InterestingPlacesFragment();
-            case 6:
-                return new Architecture_Fragment();
-
-
+                return new EnterDosug();
         }
         return null;
     }
@@ -49,26 +45,25 @@ public class MyAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
 
-        return 7;
+        return 6;
 
     }
 
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Все объекты";
+                return "Торговые центры";
             case 1:
-                return "Культура";
+                return "Зоны отдыха";
             case 2:
-                return "История";
+                return "Пляжи";
             case 3:
-                return "Духовность";
+                return "Ночные клубы";
             case 4:
-                return "Досуг";
+                return "Кинотеатры";
             case 5:
-                return "Интересные Места";
-            case 6:
-                return "Архитектура";
+                return "Развлечения";
+
 
         }
 

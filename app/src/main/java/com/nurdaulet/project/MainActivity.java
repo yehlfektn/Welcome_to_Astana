@@ -1,11 +1,14 @@
 package com.nurdaulet.project;
 
 import android.graphics.drawable.GradientDrawable;
+import android.location.Location;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,22 +20,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nurdaulet.project.Entertainment.EntertainmentFragment;
+import com.nurdaulet.project.GdePoest.GdePoest;
 import com.nurdaulet.project.ListView.CustomAdapter;
 import com.nurdaulet.project.ListView.group;
 import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
 
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     String TAG = "MainActivity";
+    Location gpsLocation;
+    private Boolean exit = false;
 
 
     @Override
@@ -46,8 +57,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -58,12 +67,30 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         //end of generated code
 
-        //THE EXPANDABLE
+        SmartLocation.with(this).location()
+                .oneFix()
+                .start(new OnLocationUpdatedListener() {
+                    @Override
+                    public void onLocationUpdated(Location location) {
+                        gpsLocation = location;
+                        Toast.makeText(getApplicationContext(),"location: "+location,Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+        //THE EXPANDABLELIST
         View headerView = navigationView.getHeaderView(0);
         final ExpandableListView elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
         final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
         final ArrayList<group> group = getData();
+
+        //layout Parameters
+        final LinearLayout linearLayout = (LinearLayout)headerView.findViewById(R.id.layoutLinear);
+        final ViewGroup.LayoutParams params = linearLayout.getLayoutParams();
+        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+
+
 
         //CREATE AND BIND TO ADAPTER
         CustomAdapter adapter = new CustomAdapter(this, group);
@@ -72,13 +99,32 @@ public class MainActivity extends AppCompatActivity
 
         elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousItem = -1;
+            int pixels;
 
             @Override
             public void onGroupExpand(int groupPosition) {
                 if(groupPosition != previousItem )
-                    elv.collapseGroup(previousItem );
+                    elv.collapseGroup(previousItem);
                 previousItem = groupPosition;
+                if(groupPosition == 0){
+                    pixels = (int) (760 * scale + 0.5f);
+                    params.height=pixels;
+                    linearLayout.setLayoutParams(params);
+                }else if(groupPosition == 1 || groupPosition==2){
+                    pixels = (int) (700 * scale + 0.5f);
+                    params.height=pixels;
+                    linearLayout.setLayoutParams(params);
+                }else if(groupPosition == 3){
+                    pixels = (int) (750 * scale + 0.5f);
+                    params.height=pixels;
+                    linearLayout.setLayoutParams(params);
+                }else if(groupPosition == 4){
+                    pixels = (int) (600 * scale + 0.5f);
+                    params.height=pixels;
+                    linearLayout.setLayoutParams(params);
+                }
             }
+
         });
 
         Fragment fragment = new SightSeeingsFragment();
@@ -96,7 +142,7 @@ public class MainActivity extends AppCompatActivity
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
                 Fragment fragment = null;
-
+                Bundle bundle = new Bundle();
                 //finding out which fragment to use
                 if (groupPos == 0) {
                     //changing the gradient
@@ -105,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                     if (childPos == 0) {
                         fragment = new SightSeeingsFragment();
                     } else if (childPos == 1) {
-                        fragment = new ShoppingFragment();
+                        fragment = new EntertainmentFragment();
                     } else if (childPos == 2) {
                         fragment = new EntertainmentFragment();
                     } else if (childPos == 3) {
@@ -116,7 +162,19 @@ public class MainActivity extends AppCompatActivity
                 }else if(groupPos == 1){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
                     getSupportActionBar().setBackgroundDrawable(g);
+
                     if(childPos == 0){
+                        bundle.putInt("position",1);
+                        fragment = new GdePoest();
+                        fragment.setArguments(bundle);
+                    }else if(childPos == 1){
+                        bundle.putInt("position",2);
+                        fragment = new GdePoest();
+                        fragment.setArguments(bundle);
+                    }else if(childPos == 2){
+                        bundle.putInt("position",3);
+                        fragment = new GdePoest();
+                        fragment.setArguments(bundle);
                     }
                 }else if(groupPos == 2){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
@@ -126,7 +184,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 }else if(groupPos == 3){
-                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800, 0xffFF8B00});
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFFA800, 0xffFFD200});
                     getSupportActionBar().setBackgroundDrawable(g);
 
                 }
@@ -181,8 +239,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<group> getData() {
         group t1 = new group("КУДА СХОДИТЬ");
         t1.items.add("Достопримечательности");
-        t1.items.add("Шоппинг");
-        t1.items.add("Развлечения");
+        t1.items.add("Шоппинг и Развлечения");
         t1.items.add("Экскурсии");
         t1.items.add("События");
 
@@ -216,7 +273,21 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            if (exit) {
+                finish(); // finish activity
+            } else {
+                Toast.makeText(this, R.string.press_Back,
+                        Toast.LENGTH_SHORT).show();
+                exit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        exit = false;
+                    }
+                }, 3000);
+
+            }
         }
 
     }
@@ -276,8 +347,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -4,6 +4,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,12 @@ public class SightSeeingsFragment extends Fragment {
                 tabLayout.setupWithViewPager(viewPager);
             }
         });
+
+        //Очищаем прежние фрагменты
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        for(int i = 0; i < fm.getBackStackEntryCount()-1; ++i) {
+            fm.popBackStack();
+        }
 
 
         return v;

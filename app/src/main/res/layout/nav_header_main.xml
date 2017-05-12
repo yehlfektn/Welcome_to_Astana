@@ -4,6 +4,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutLinear"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:background="@drawable/side_nav_bar"
@@ -97,6 +98,7 @@
         android:divider="@null"
         android:groupIndicator="@null"
         android:childIndicator="@null"
+        android:listSelector="@android:color/transparent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
     </ExpandableListView>
