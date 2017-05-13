@@ -1,10 +1,18 @@
 package com.nurdaulet.project.Sightseeings;
 
+import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +28,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,6 +36,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.utility.ViewPagerAdapter;
 
@@ -36,16 +60,24 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class DescriptionActivity extends AppCompatActivity {
+import io.nlopez.smartlocation.SmartLocation;
 
+public class DescriptionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    GoogleMap mGoogleMap;
+    GoogleApiClient mGoogleApiClient;
+    double lat, lng;
+    //= 51.128249084968,lng = 71.430494032634;
+    String lngStr, latStr;
     int id;
     ViewPager viewPager;
     LinearLayout linearLayout;
     private int dotscount;
+    double lat2, lng2;
     private ImageView[] dots;
     private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private ArrayList<String> imageUrls;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,20 +88,30 @@ public class DescriptionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        TextView name = (TextView)findViewById(R.id.name);
-        TextView category = (TextView)findViewById(R.id.category);
-        TextView summary = (TextView)findViewById(R.id.summary);
+        TextView name = (TextView) findViewById(R.id.name);
+        TextView category = (TextView) findViewById(R.id.category);
+        TextView summary = (TextView) findViewById(R.id.summary);
+        final TextView distance  = (TextView) findViewById(R.id.distance);
 
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         summary.setText(getIntent().getStringExtra("description"));
+//        latStr = getIntent().getStringExtra("latit");
+//        lngStr = getIntent().getStringExtra("longit");
+
+
+
         makeTextViewResizable(summary, 3, "Читать дальше", true);
 
+        if (googleServicesAvailable()) {
+            //Toast.makeText(this, "Perfect!", Toast.LENGTH_LONG).show();
+            initMap();
+        }
 
-        id = getIntent().getIntExtra("id",0);
+        id = getIntent().getIntExtra("id", 0);
 
         imageUrls = new ArrayList<>();
-        linearLayout = (LinearLayout)findViewById(R.id.LinearSlider);
+        linearLayout = (LinearLayout) findViewById(R.id.LinearSlider);
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading data...");
@@ -84,14 +126,40 @@ public class DescriptionActivity extends AppCompatActivity {
                     JSONArray array = jsonObject.getJSONArray("places");
 
 
-                    for (int i=0; i<array.length();i++) {
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
-                        if(o.getInt("id")==id){
-                        JSONArray arr = o.getJSONArray("images");
-                        for (int j =0; j<arr.length();j++){
-                            imageUrls.add(arr.get(j).toString());
-                            Log.d("MainActivity",arr.get(j).toString());
-                        }
+                        if (o.getInt("id") == id) {
+                            JSONArray arr = o.getJSONArray("images");
+                            latStr = o.getString("lat");
+                            lngStr = o.getString("lon");
+                            if (lngStr == null) {
+                                lngStr = "0";
+                                latStr = "0";
+                            }
+                            lat = Double.parseDouble(latStr);
+                            lng = Double.parseDouble(lngStr);
+
+                            Location startPoint=new Location("locationA");
+                            startPoint.setLatitude(lat2);
+                            startPoint.setLongitude(lng2);
+                            Location endPoint=new Location("locationB");
+                            endPoint.setLatitude(lat);
+                            endPoint.setLongitude(lng);
+
+                            float distanceDouble=startPoint.distanceTo(endPoint);
+                            if (distanceDouble > 1000) {
+                                distance.setText(" " + (int) distanceDouble/1000 + "." + (int) ((distanceDouble%1000)/100) + "км ");
+                            } else {
+                                distance.setText(" "+(int) distanceDouble + "м ");
+                            }
+
+                            goToLocationZoom(lat, lng, 15);
+                            setMarker(getIntent().getStringExtra("name"), lat, lng);
+
+                            for (int j = 0; j < arr.length(); j++) {
+                                imageUrls.add(arr.get(j).toString());
+                                Log.d("MainActivity", arr.get(j).toString());
+                            }
                         }
                     }
 
@@ -102,16 +170,16 @@ public class DescriptionActivity extends AppCompatActivity {
                     dotscount = viewPagerAdapter.getCount();
                     dots = new ImageView[dotscount];
 
-                    for(int i = 0; i < dotscount; i++){
+                    for (int i = 0; i < dotscount; i++) {
 
                         dots[i] = new ImageView(getApplicationContext());
                         dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(8,0,8,0);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(8, 0, 8, 0);
                         linearLayout.addView(dots[i], params);
 
                     }
-                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.active_dot));
+                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
                     viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                         @Override
@@ -122,10 +190,10 @@ public class DescriptionActivity extends AppCompatActivity {
                         @Override
                         public void onPageSelected(int position) {
 
-                            for (int i = 0; i< dotscount; i++) {
+                            for (int i = 0; i < dotscount; i++) {
                                 dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
-                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.active_dot));
+                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
                         }
 
@@ -150,6 +218,12 @@ public class DescriptionActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+
+    }
+
+    private void initMap() {
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
     }
 
@@ -207,7 +281,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View widget) {
-                    
+
 
                     if (viewMore) {
                         tv.setLayoutParams(tv.getLayoutParams());
@@ -229,13 +303,171 @@ public class DescriptionActivity extends AppCompatActivity {
 
     }
 
-
-
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public boolean googleServicesAvailable() {
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int isAvailable = api.isGooglePlayServicesAvailable(this);
+        if (isAvailable == ConnectionResult.SUCCESS) {
+            return true;
+        } else if (api.isUserResolvableError(isAvailable)) {
+            Dialog dialog = api.getErrorDialog(this, isAvailable, 0);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "Can't connect to play services", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
+
+
+        if(mGoogleMap != null){
+
+
+            mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLng) {
+                    DescriptionActivity.this.setMarker("Local", latLng.latitude, latLng.longitude);
+                }
+            });
+
+
+            mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+
+                    Geocoder gc = new Geocoder(DescriptionActivity.this);
+                    LatLng ll = marker.getPosition();
+                    double lat = ll.latitude;
+                    double lng = ll.longitude;
+
+
+                    marker.setTitle(getIntent().getStringExtra("name"));
+                    marker.showInfoWindow();
+                }
+            });
+
+
+            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter(){
+
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    return null;
+                }
+            });
+        }
+
+
+        //goToLocationZoom(39.008224, -76.8984527, 15);
+        //goToLocationZoom(lat, lng, 15);
+        //goToLocationZoom(51.128249084968, 71.430494032634, 15);
+        //setMarker(getIntent().getStringExtra("name"), lat, lng);
+
+    }
+
+    private void goToLocation(double lat, double lng) {
+        LatLng ll = new LatLng(lat, lng);
+        CameraUpdate update = CameraUpdateFactory.newLatLng(ll);
+        mGoogleMap.moveCamera(update);
+    }
+
+    private void goToLocationZoom(double lat, double lng, float zoom) {
+        LatLng ll = new LatLng(lat, lng);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
+        mGoogleMap.moveCamera(update);
+    }
+
+    Marker marker;
+
+    public void geoLocate(){
+
+        String locality = getIntent().getStringExtra("name");
+
+        goToLocationZoom(lat, lng, 15);
+
+        setMarker(locality, lat, lng);
+
+    }
+
+    private void setMarker(String locality, double lat, double lng) {
+        MarkerOptions options = new MarkerOptions()
+                .title(locality)
+                .draggable(true)
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_location))
+                .position(new LatLng(lat, lng));
+
+        mGoogleMap.addMarker(options);
+
+    }
+
+    LocationRequest mLocationRequest;
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+
+        if(location == null){
+            Toast.makeText(this, "Can't get current location", Toast.LENGTH_LONG).show();
+        } else {
+            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+            lat2=location.getLatitude();
+            lng2=location.getLongitude();
+            Log.d("myLat", String.valueOf(location.getLatitude()));
+            Log.d("myLng", String.valueOf(location.getLongitude()));
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
+            mGoogleMap.animateCamera(update);
+        }
     }
 
 }

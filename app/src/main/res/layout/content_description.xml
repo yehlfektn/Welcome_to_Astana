@@ -45,7 +45,7 @@
 
 
             <TextView
-                android:text="Астана"
+                android:text="Не указано"
                 android:layout_width="303dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -75,13 +75,12 @@
                 android:id="@+id/category" />
 
             <TextView
-                android:layout_width="60dp"
+                android:layout_width="wrap_content"
                 android:id="@+id/distance"
                 android:layout_height="26dp"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
-                android:text="500 м"
                 android:background="@drawable/rectangleshape"
                 android:layout_gravity="bottom"
                 />
@@ -98,6 +97,13 @@
             android:id="@+id/summary"
             android:layout_marginBottom="20dp"/>
 
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map"
+            />
 
 
         <ImageButton

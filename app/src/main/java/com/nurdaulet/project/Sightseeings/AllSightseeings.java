@@ -1,15 +1,24 @@
 package com.nurdaulet.project.Sightseeings;
 
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,11 +43,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllSightseeings extends Fragment {
+public class AllSightseeings extends Fragment implements LocationListener {
 
     private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    double lat2, lng2;
     private List<KudaShoditListItem> kudaShoditListItems;
 
 
@@ -48,7 +58,7 @@ public class AllSightseeings extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_all_sightseeings, container, false);
@@ -74,12 +84,14 @@ public class AllSightseeings extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), DescriptionActivity.class);
                             intent.putExtra("name", kudaShoditListItems.get(position).getName());
                             intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
                             intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
                             intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                            intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+                            intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                             startActivityForResult(intent, 0);
                         }
 
@@ -91,7 +103,7 @@ public class AllSightseeings extends Fragment {
             );
 
         }
-            return v;
+        return v;
 
     }
 
@@ -110,17 +122,20 @@ public class AllSightseeings extends Fragment {
                     JSONArray array = jsonObject.getJSONArray("places");
 
 
-                    for (int i=0; i<array.length();i++){
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
+                                o.getString("lon"),
+                                o.getString("lat"),
                                 o.getInt("id")
                         );
+
+
+
 
                         kudaShoditListItems.add(item);
 
@@ -164,5 +179,31 @@ public class AllSightseeings extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void onLocationChanged(Location loc)
+    {
+        lat2=loc.getLatitude();
+        lng2=loc.getLongitude();
+        String Text = "My current location is: " +"Latitud = "+ loc.getLatitude() +"Longitud = " + loc.getLongitude();
+
+        //System.out.println("Lat & Lang form Loc"+Text);
+        //Toast.makeText( getApplicationContext(), Text,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
