@@ -3,10 +3,17 @@ package com.nurdaulet.project.Sightseeings;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+<<<<<<< HEAD
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
+=======
+<<<<<<< HEAD
+=======
+import android.graphics.drawable.Drawable;
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,7 +84,14 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
     private ImageView[] dots;
     private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private ArrayList<String> imageUrls;
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+    String sum;
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +102,23 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+<<<<<<< HEAD
         TextView name = (TextView) findViewById(R.id.name);
         TextView category = (TextView) findViewById(R.id.category);
         TextView summary = (TextView) findViewById(R.id.summary);
         final TextView distance  = (TextView) findViewById(R.id.distance);
+=======
+        TextView name = (TextView)findViewById(R.id.name);
+        TextView category = (TextView)findViewById(R.id.category);
+<<<<<<< HEAD
+        final TextView summary = (TextView)findViewById(R.id.summary);
+
+        name.setText(getIntent().getStringExtra("name"));
+        category.setText(getIntent().getStringExtra("category"));
+        //summary.setText(getIntent().getStringExtra("description"));
+=======
+        TextView summary = (TextView)findViewById(R.id.summary);
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
 
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
@@ -108,7 +135,12 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             initMap();
         }
 
+<<<<<<< HEAD
         id = getIntent().getIntExtra("id", 0);
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+        id = getIntent().getIntExtra("id",0);
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
 
         imageUrls = new ArrayList<>();
         linearLayout = (LinearLayout) findViewById(R.id.LinearSlider);
@@ -128,6 +160,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
+<<<<<<< HEAD
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
                             latStr = o.getString("lat");
@@ -160,6 +193,24 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                                 imageUrls.add(arr.get(j).toString());
                                 Log.d("MainActivity", arr.get(j).toString());
                             }
+=======
+                        if(o.getInt("id")==id){
+<<<<<<< HEAD
+                            summary.setText(o.getString("summary"));
+                            makeTextViewResizable(summary, 3, "Читать дальше", true);
+                            JSONArray arr = o.getJSONArray("images");
+                            for (int j =0; j<arr.length();j++){
+                                imageUrls.add(arr.get(j).toString());
+                                Log.d("MainActivity",arr.get(j).toString());
+                            }
+=======
+                        JSONArray arr = o.getJSONArray("images");
+                        for (int j =0; j<arr.length();j++){
+                            imageUrls.add(arr.get(j).toString());
+                            Log.d("MainActivity",arr.get(j).toString());
+                        }
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
                         }
                     }
 
@@ -221,12 +272,19 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
     }
 
+<<<<<<< HEAD
     private void initMap() {
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
     }
 
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
     public static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
 
         if (tv.getTag() == null) {
@@ -281,7 +339,14 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
                 @Override
                 public void onClick(View widget) {
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+=======
+                    
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
 
                     if (viewMore) {
                         tv.setLayoutParams(tv.getLayoutParams());
@@ -309,6 +374,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         return true;
     }
 
+<<<<<<< HEAD
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(this);
@@ -470,4 +536,11 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
+=======
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
+>>>>>>> a9851a6fbc7b5445f4376e75ec2952630dacc573
 }
