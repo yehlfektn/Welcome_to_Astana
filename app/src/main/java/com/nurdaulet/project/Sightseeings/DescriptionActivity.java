@@ -207,6 +207,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View widget) {
+                    
 
                     if (viewMore) {
                         tv.setLayoutParams(tv.getLayoutParams());
