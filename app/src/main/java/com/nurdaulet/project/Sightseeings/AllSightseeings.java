@@ -114,7 +114,7 @@ public class AllSightseeings extends Fragment {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
-                                o.getString("summary"),
+                                o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
@@ -129,12 +129,21 @@ public class AllSightseeings extends Fragment {
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+<<<<<<< HEAD
 
                                 @Override
                                 public void onItemClick(View view, int position) {
                                     Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), DescriptionActivity.class);
                                     intent.putExtra("name", kudaShoditListItems.get(position).getName());
+=======
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    String name = kudaShoditListItems.get(position).getName().substring(0,kudaShoditListItems.get(position).getName().length()-1);
+                                    Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                                    intent.putExtra("name", name);
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
                                     intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
                                     intent.putExtra("category",kudaShoditListItems.get(position).getCategory());
                                     intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());

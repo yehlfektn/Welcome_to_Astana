@@ -33,6 +33,7 @@
 
 
         <TextView
+<<<<<<< HEAD
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,10 +100,65 @@
                 android:layout_marginStart="28dp"
                 android:textSize="16sp"
                 android:id="@+id/dist" />
+=======
+            android:text="Name"
+            android:layout_width="337dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:id="@+id/name"
+            android:layout_weight="0.15" />
+
+
+            <TextView
+                android:text="Астана"
+                android:layout_width="303dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:drawableLeft="@drawable/ic_map_markerblack"
+                android:drawableStart="@drawable/ic_map_markerblack"
+                android:id="@+id/address"
+                />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp">
+
+            <TextView
+                android:text="Category"
+                android:textColor="#FF8B00"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/bullet"
+                android:drawableLeft="@drawable/bullet"
+                android:drawablePadding="5dp"
+                android:textSize="18sp"
+                android:id="@+id/category" />
+
+            <TextView
+                android:layout_width="60dp"
+                android:id="@+id/distance"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:text="500 м"
+                android:background="@drawable/rectangleshape"
+                android:layout_gravity="bottom"
+                />
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
 
         </LinearLayout>
 
         <TextView
+<<<<<<< HEAD
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,6 +170,16 @@
             android:textColor="@android:color/black"
             android:id="@+id/summary" />
 
+=======
+            android:text="Description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@android:color/black"
+            android:id="@+id/summary"
+            android:layout_marginBottom="20dp"/>
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
 
 
 

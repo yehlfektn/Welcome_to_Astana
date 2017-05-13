@@ -1,6 +1,10 @@
 package com.nurdaulet.project.Sightseeings;
 
 import android.app.ProgressDialog;
+<<<<<<< HEAD
+=======
+import android.graphics.drawable.Drawable;
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -45,7 +49,10 @@ public class DescriptionActivity extends AppCompatActivity {
     private ImageView[] dots;
     private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private ArrayList<String> imageUrls;
+<<<<<<< HEAD
     String sum;
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +65,22 @@ public class DescriptionActivity extends AppCompatActivity {
 
         TextView name = (TextView)findViewById(R.id.name);
         TextView category = (TextView)findViewById(R.id.category);
+<<<<<<< HEAD
         final TextView summary = (TextView)findViewById(R.id.summary);
 
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         //summary.setText(getIntent().getStringExtra("description"));
+=======
+        TextView summary = (TextView)findViewById(R.id.summary);
+
+        name.setText(getIntent().getStringExtra("name"));
+        category.setText(getIntent().getStringExtra("category"));
+        summary.setText(getIntent().getStringExtra("description"));
+        makeTextViewResizable(summary, 3, "Читать дальше", true);
+
+
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
         id = getIntent().getIntExtra("id",0);
 
         imageUrls = new ArrayList<>();
@@ -84,6 +102,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     for (int i=0; i<array.length();i++) {
                         JSONObject o = array.getJSONObject(i);
                         if(o.getInt("id")==id){
+<<<<<<< HEAD
                             summary.setText(o.getString("summary"));
                             makeTextViewResizable(summary, 3, "Читать дальше", true);
                             JSONArray arr = o.getJSONArray("images");
@@ -91,6 +110,13 @@ public class DescriptionActivity extends AppCompatActivity {
                                 imageUrls.add(arr.get(j).toString());
                                 Log.d("MainActivity",arr.get(j).toString());
                             }
+=======
+                        JSONArray arr = o.getJSONArray("images");
+                        for (int j =0; j<arr.length();j++){
+                            imageUrls.add(arr.get(j).toString());
+                            Log.d("MainActivity",arr.get(j).toString());
+                        }
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
                         }
                     }
 
@@ -152,7 +178,10 @@ public class DescriptionActivity extends AppCompatActivity {
 
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
     public static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
 
         if (tv.getTag() == null) {
@@ -207,6 +236,10 @@ public class DescriptionActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View widget) {
+<<<<<<< HEAD
+=======
+                    
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
 
                     if (viewMore) {
                         tv.setLayoutParams(tv.getLayoutParams());
@@ -237,6 +270,9 @@ public class DescriptionActivity extends AppCompatActivity {
         return true;
     }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 24f4fbc3347329a747418723ae337b59adec1941
 }
