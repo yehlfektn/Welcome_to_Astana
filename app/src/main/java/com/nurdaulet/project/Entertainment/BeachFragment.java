@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class BeachFragment extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/places/shopping?limit=20&page=1&category=40";
+    private final String Url = "http://welcometoastana.kz/api/v1/places/shopping?limit=20&page=1&category=40";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
@@ -90,7 +90,8 @@ public class BeachFragment extends Fragment {
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
-                                o.optString("lat")
+                                o.optString("lat"),
+                                o.getInt("id")
                         );
 
                         kudaShoditListItems.add(item);

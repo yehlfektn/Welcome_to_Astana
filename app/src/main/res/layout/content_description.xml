@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content_description_"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.nurdaulet.recycleview.Description_Activity"
+        tools:showIn="@layout/activity_description"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="258dp"/>
+
+        <LinearLayout
+        android:id="@+id/LinearSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/viewPager"
+        android:gravity="center_vertical|center_horizontal"/>
+
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="28dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="31dp"
+            android:textSize="18sp"
+            android:textStyle="normal|bold"
+            android:textColor="@android:color/black"
+            android:id="@+id/name" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/locationImage"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/ic_map_markerblack"/>
+
+
+            <TextView
+                android:text="Не указано"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:id="@+id/address"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginTop="6dp"
+                android:layout_marginLeft="28dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:src="@drawable/active_dot"
+                />
+            <TextView
+                android:text="TextView"
+                android:textColor="#FF8B00"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="16sp"
+                android:id="@+id/category" />
+
+            <TextView
+                android:textColor="#FF8B00"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginStart="28dp"
+                android:textSize="16sp"
+                android:id="@+id/dist" />
+
+        </LinearLayout>
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="28dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:id="@+id/summary" />
+
+
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:scaleType="matrix"
+            android:src="@drawable/share"
+            android:id="@+id/shareButton"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@null"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:scaleType="matrix"
+            android:layout_gravity="center"
+            android:src="@drawable/way"
+            android:id="@+id/wayButton"
+            android:background="@null"
+            android:layout_marginBottom="10dp"/>
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:scaleType="matrix"
+            android:layout_gravity="center"
+            android:src="@drawable/taxi"
+            android:background="@null"
+            android:id="@+id/taxiButton"/>
+    </LinearLayout>
+</ScrollView>
