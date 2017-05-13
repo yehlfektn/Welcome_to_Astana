@@ -10,4 +10,5 @@
     <string name="eng">ENG</string>
     <string name="developed_in">Разработано в</string>
     <string name="press_Back">Нажмите назад еще раз чтобы выйти</string>
+    <string name="title_activity_description">DescriptionActivity</string>
 </resources>

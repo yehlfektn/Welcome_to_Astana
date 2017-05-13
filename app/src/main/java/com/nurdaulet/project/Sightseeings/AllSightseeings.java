@@ -2,6 +2,7 @@ package com.nurdaulet.project.Sightseeings;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.nurdaulet.project.KudaShoditListItem;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.RecycleAdapter;
+import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +36,7 @@ import java.util.List;
  */
 public class AllSightseeings extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
+    private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
@@ -51,25 +54,45 @@ public class AllSightseeings extends Fragment {
         View v = inflater.inflate(R.layout.fragment_all_sightseeings, container, false);
 
 
-            recyclerView = (RecyclerView) v.findViewById(R.id.recycle);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycle);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        if(kudaShoditListItems ==null) {
+        if (kudaShoditListItems == null) {
             kudaShoditListItems = new ArrayList<>();
         }
-        if(kudaShoditListItems.size()==0){
+        if (kudaShoditListItems.size() == 0) {
 
             loadRecyclerView();
 
-        }else{
-            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
+        } else {
+            adapter = new RecycleAdapter(kudaShoditListItems, getContext());
             recyclerView.setAdapter(adapter);
+            recyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                            intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                            intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+                            intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+                            intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                            startActivityForResult(intent, 0);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            // do whatever
+                        }
+                    })
+            );
+
         }
+            return v;
 
-
-        return v;
     }
 
 
@@ -91,11 +114,12 @@ public class AllSightseeings extends Fragment {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
-                                o.getString("summary"),
+                                o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
-                                o.optString("lat")
+                                o.optString("lat"),
+                                o.getInt("id")
                         );
 
                         kudaShoditListItems.add(item);
@@ -103,6 +127,27 @@ public class AllSightseeings extends Fragment {
                     }
                     adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
+                    recyclerView.addOnItemTouchListener(
+                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    String name = kudaShoditListItems.get(position).getName().substring(0,kudaShoditListItems.get(position).getName().length()-1);
+                                    Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+                                    intent.putExtra("category",kudaShoditListItems.get(position).getCategory());
+                                    intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+                                    intent.putExtra("id", kudaShoditListItems.get(position).getId());
+                                    startActivityForResult(intent, 0);
+                                }
+
+                                @Override
+                                public void onLongItemClick(View view, int position) {
+                                    // do whatever
+                                }
+                            })
+                    );
                 } catch (JSONException e) {
 
                     e.printStackTrace();

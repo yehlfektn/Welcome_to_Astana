@@ -87,7 +87,8 @@ public class HistoryFragment extends Fragment {
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
-                                o.optString("lat")
+                                o.optString("lat"),
+                                o.getInt("id")
                         );
 
                         kudaShoditListItems.add(item);
