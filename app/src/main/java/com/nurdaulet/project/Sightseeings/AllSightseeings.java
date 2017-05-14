@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class AllSightseeings extends Fragment implements LocationListener {
 
-    private final String Url = "http://welcometoastana.kz/api/v1/places/sightseeings?limit=20&page=1";
+    private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     double lat2, lng2;
@@ -84,14 +84,16 @@ public class AllSightseeings extends Fragment implements LocationListener {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), DescriptionActivity.class);
                             intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
                             intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
                             intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
                             intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                            intent.putExtra("url",Url);
                             startActivityForResult(intent, 0);
                         }
 
@@ -116,7 +118,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -144,16 +146,19 @@ public class AllSightseeings extends Fragment implements LocationListener {
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    String name = kudaShoditListItems.get(position).getName().substring(0,kudaShoditListItems.get(position).getName().length()-1);
-                                    Toast.makeText(getContext(), "You clicked "+kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                                    intent.putExtra("name", name);
+                                    intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
                                     intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                                    intent.putExtra("category",kudaShoditListItems.get(position).getCategory());
                                     intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                                    intent.putExtra("id", kudaShoditListItems.get(position).getId());
+                                    intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                                    intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+                                    intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                                    intent.putExtra("url",Url);
                                     startActivityForResult(intent, 0);
                                 }
 
@@ -163,6 +168,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                                 }
                             })
                     );
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
 
                     e.printStackTrace();

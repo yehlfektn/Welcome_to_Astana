@@ -27,9 +27,17 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nurdaulet.project.Entertainment.EntertainmentFragment;
+import com.nurdaulet.project.Events.EventsFragment;
+import com.nurdaulet.project.Excursion.ExcursionsFragment;
+import com.nurdaulet.project.GdeOstanovitsya.GdeOstanovitsya;
 import com.nurdaulet.project.GdePoest.GdePoest;
 import com.nurdaulet.project.ListView.CustomAdapter;
 import com.nurdaulet.project.ListView.group;
+import com.nurdaulet.project.Pamyatka.Expo;
+import com.nurdaulet.project.Pamyatka.Extrennaya;
+import com.nurdaulet.project.Pamyatka.Poleznaya;
+import com.nurdaulet.project.Pamyatka.Prebyvanie;
+import com.nurdaulet.project.Pamyatka.Transport;
 import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
@@ -37,12 +45,13 @@ import java.util.ArrayList;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     String TAG = "MainActivity";
-    Location gpsLocation;
+    public static Location  gpsLocation;
     private Boolean exit = false;
 
 
@@ -73,7 +82,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onLocationUpdated(Location location) {
                         gpsLocation = location;
-                        Toast.makeText(getApplicationContext(),"location: "+location,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(),"location: "+location,Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -119,15 +128,30 @@ public class MainActivity extends AppCompatActivity
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 4){
+
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                    elv.collapseGroup(4);
                     pixels = (int) (600 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff366AFE, 0xff1A44BD});
+                    getSupportActionBar().setBackgroundDrawable(g);
+                    Fragment fragment = new Expo();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.mainFrame, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+
+
+
                 }
             }
 
         });
 
-        Fragment fragment = new SightSeeingsFragment();
+        Fragment fragment = new EventsFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.mainFrame, fragment);
@@ -143,21 +167,32 @@ public class MainActivity extends AppCompatActivity
                                         int childPos, long id) {
                 Fragment fragment = null;
                 Bundle bundle = new Bundle();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 //finding out which fragment to use
                 if (groupPos == 0) {
                     //changing the gradient
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800 , 0xffFF8B00 });
                     getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
-                        fragment = new SightSeeingsFragment();
+                        fragment = getSupportFragmentManager().findFragmentByTag("SightSeeings");
+                        if(fragment == null){
+                        fragment = new SightSeeingsFragment();}
+                        transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
                     } else if (childPos == 1) {
-                        fragment = new EntertainmentFragment();
+                        fragment = getSupportFragmentManager().findFragmentByTag("Entertainment");
+                        if(fragment == null){
+                            fragment = new EntertainmentFragment();}
+                        transaction.replace(R.id.mainFrame, fragment,"Entertainment");
                     } else if (childPos == 2) {
-                        fragment = new EntertainmentFragment();
+                        fragment = getSupportFragmentManager().findFragmentByTag("Excursion");
+                        if(fragment == null){
+                            fragment = new ExcursionsFragment();}
+                        transaction.replace(R.id.mainFrame, fragment,"Excursion");
                     } else if (childPos == 3) {
-                        fragment = new ExcursionsFragment();
-                    } else if (childPos == 4) {
-                        fragment = new EventsFragment();
+                        fragment = getSupportFragmentManager().findFragmentByTag("Events");
+                        if(fragment == null){
+                            fragment = new EventsFragment();}
+                        transaction.replace(R.id.mainFrame, fragment,"Events");
                     }
                 }else if(groupPos == 1){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
@@ -167,25 +202,65 @@ public class MainActivity extends AppCompatActivity
                         bundle.putInt("position",1);
                         fragment = new GdePoest();
                         fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
+
                     }else if(childPos == 1){
                         bundle.putInt("position",2);
                         fragment = new GdePoest();
                         fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 2){
                         bundle.putInt("position",3);
                         fragment = new GdePoest();
                         fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
                     }
                 }else if(groupPos == 2){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if(childPos == 0){
-
+                        bundle.putInt("position",1);
+                        fragment = new GdeOstanovitsya();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
+                    }else if(childPos == 1){
+                        bundle.putInt("position",2);
+                        fragment = new GdeOstanovitsya();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
+                    }else if(childPos == 2){
+                        bundle.putInt("position",3);
+                        fragment = new GdeOstanovitsya();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.mainFrame, fragment);
                     }
 
                 }else if(groupPos == 3){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFFA800, 0xffFFD200});
                     getSupportActionBar().setBackgroundDrawable(g);
+                    if (childPos == 0) {
+
+                        fragment = getSupportFragmentManager().findFragmentByTag("Preb");
+                        if(fragment == null){
+                            fragment = new Prebyvanie();}
+                        transaction.replace(R.id.mainFrame, fragment,"Preb");
+
+                    } else if (childPos == 1) {
+                        fragment = getSupportFragmentManager().findFragmentByTag("Trans");
+                        if(fragment == null){
+                            fragment = new Transport();}
+                        transaction.replace(R.id.mainFrame, fragment,"Trans");
+                    } else if (childPos == 2) {
+                        fragment = getSupportFragmentManager().findFragmentByTag("Polez");
+                        if(fragment == null){
+                            fragment = new Poleznaya();}
+                        transaction.replace(R.id.mainFrame, fragment,"Polez");
+                    } else if (childPos == 3) {
+                        fragment = getSupportFragmentManager().findFragmentByTag("Extr");
+                        if(fragment == null){
+                            fragment = new Extrennaya();}
+                        transaction.replace(R.id.mainFrame, fragment,"Extr");
+                    }
 
                 }
 
@@ -194,13 +269,11 @@ public class MainActivity extends AppCompatActivity
                 //Toast.makeText(getApplicationContext(), group.get(groupPos).items.get(childPos) + "G:" + groupPos + " C:" + childPos, Toast.LENGTH_SHORT).show();
 
                 //if fragment found, make a transaction
-                if (fragment != null) {
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                    transaction.replace(R.id.mainFrame, fragment);
+
+
                     transaction.addToBackStack(null);
                     transaction.commit();
-                }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);

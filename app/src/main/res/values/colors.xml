@@ -3,4 +3,6 @@
     <color name="colorAccent">#A64DFF</color>
 
     <color name="colorDrawer">#FFFFFF</color>
+    <color name="foreground"> #EFB201 </color>
+    <color name="background"> #DAD9D5 </color>
 </resources>

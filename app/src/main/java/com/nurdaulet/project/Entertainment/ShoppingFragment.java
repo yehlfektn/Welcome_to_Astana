@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ShoppingFragment extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/places/shopping?limit=20&page=1&category=6";
+    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=6";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;

@@ -37,6 +37,7 @@ public class SightSeeingsFragment extends Fragment {
         //set an adpater
 
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setOffscreenPageLimit(3);
 
         tabLayout.post(new Runnable() {
             @Override
@@ -44,13 +45,6 @@ public class SightSeeingsFragment extends Fragment {
                 tabLayout.setupWithViewPager(viewPager);
             }
         });
-
-        //Очищаем прежние фрагменты
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        for(int i = 0; i < fm.getBackStackEntryCount()-1; ++i) {
-            fm.popBackStack();
-        }
-
 
         return v;
     }

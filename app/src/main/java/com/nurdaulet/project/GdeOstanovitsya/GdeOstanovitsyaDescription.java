@@ -1,19 +1,27 @@
-package com.nurdaulet.project.Sightseeings;
+package com.nurdaulet.project.GdeOstanovitsya;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +35,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +60,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.utility.ViewPagerAdapter;
 
@@ -61,8 +69,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
-public class DescriptionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
@@ -76,40 +83,55 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
     double lat2, lng2;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
+    TextView website;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_description);
+        setContentView(R.layout.activity_gde_ostanovitsya_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading data...");
         progressDialog.show();
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
+        getSupportActionBar().setBackgroundDrawable(g);
         getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
 
-
         TextView name = (TextView) findViewById(R.id.name);
-        TextView category = (TextView) findViewById(R.id.category);
         TextView summary = (TextView) findViewById(R.id.summary);
         final TextView distance  = (TextView) findViewById(R.id.distance);
+        TextView phone =  (TextView)findViewById(R.id.phone);
+        TextView address = (TextView)findViewById(R.id.address);
+        website = (TextView)findViewById(R.id.website);
+        RatingBar ratingBar = (RatingBar)findViewById(R.id.ratingBar);
 
-        name.setText(getIntent().getStringExtra("name"));
-        category.setText(getIntent().getStringExtra("category"));
-        summary.setText(getIntent().getStringExtra("description"));
-        final String Url=getIntent().getStringExtra("url");
-        Log.d("DescriptionActivity", Url);
-        if(MainActivity.gpsLocation != null){
 
-            lat2 = MainActivity.gpsLocation.getLatitude();
-            lng2 = MainActivity.gpsLocation.getLongitude();
-            Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
-
+        if(getIntent().getStringExtra("website").length()<2){
+            website.setVisibility(View.GONE);
+        }else{
+            website.setText(getIntent().getStringExtra("website"));
         }
+
+        address.setText(getIntent().getStringExtra("address"));
+        name.setText(getIntent().getStringExtra("name"));
+        summary.setText(getIntent().getStringExtra("description"));
+        phone.setText(getIntent().getStringExtra("phone"));
+        final String Url=getIntent().getStringExtra("url");
+        Log.d("GdePoestDescription", Url);
+
+        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+
+        setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color.foreground));
+        // Half filled stars
+        setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, R.color.background));
+        // Empty stars
+        setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, R.color.background));
+        ratingBar.setRating(getIntent().getIntExtra("stars",0));
 
         //latStr = getIntent().getStringExtra("latit");
         //lngStr = getIntent().getStringExtra("longit");
@@ -134,16 +156,16 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                Log.d("DescriptionActivity", Url);
+                Log.d("GdePoestDescription", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    Log.d("DescriptionActivity", "try-places");
+                    Log.d("GdePoestDescription", "try-places");
                     for (int i = 0; i < array.length(); i++) {
-                        Log.d("DescriptionActivity", "size"+array.length());
+
                         JSONObject o = array.getJSONObject(i);
-                        Log.d("DescriptionActivity", "id:"+id+"idJson: "+o.getInt("id"));
+
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
                             latStr = o.getString("lat");
@@ -156,29 +178,9 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
 
-                            Location startPoint=new Location("locationA");
-                            Log.d("DescriptionActivity", "lat: "+lat+"lon: "+lng);
-                            startPoint.setLatitude(lat2);
-                            startPoint.setLongitude(lng2);
-                            Location endPoint=new Location("locationB");
-                            endPoint.setLatitude(lat);
-                            endPoint.setLongitude(lng);
-
-
-                            float distanceDouble=startPoint.distanceTo(endPoint);
-                            Log.d("DescriptionActivity", "distance: "+distanceDouble);
-                            if(distanceDouble/1000>6000){
-                                distance.setVisibility(View.GONE);
-                            }else {
-                                if (distanceDouble > 1000) {
-                                    distance.setText(" " + (int) distanceDouble / 1000 + "." + (int) ((distanceDouble % 1000) / 100) + "км ");
-                                } else {
-                                    distance.setText(" " + (int) distanceDouble + "м ");
-                                }
-                            }
                             goToLocationZoom(lat, lng, 15);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
-                            Log.d("DescriptionActivity", "size: "+arr.length());
+                            Log.d("GdePoestDescription", "size: "+arr.length());
                             if(arr.length()==0){
 
                                 imageUrls.add("http://imgur.com/bpx2TrL");
@@ -208,7 +210,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                         linearLayout.addView(dots[i], params);
 
                     }
-                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
 
                     viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                         @Override
@@ -222,7 +224,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                             for (int i = 0; i < dotscount; i++) {
                                 dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
-                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
 
                         }
 
@@ -362,7 +364,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
-                    DescriptionActivity.this.setMarker("Local", latLng.latitude, latLng.longitude);
+                    GdeOstanovitsyaDescription.this.setMarker("Local", latLng.latitude, latLng.longitude);
                 }
             });
 
@@ -381,7 +383,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
 
-                    Geocoder gc = new Geocoder(DescriptionActivity.this);
+                    Geocoder gc = new Geocoder(GdeOstanovitsyaDescription.this);
                     LatLng ll = marker.getPosition();
                     double lat = ll.latitude;
                     double lng = ll.longitude;
@@ -497,6 +499,26 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
             mGoogleMap.animateCamera(update);
         }
+    }
+
+    private void setRatingStarColor(Drawable drawable, @ColorInt int color)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            DrawableCompat.setTint(drawable, color);
+        }
+        else
+        {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
+    }
+    public void goToTextView(View view){goToUrl(website.getText().toString());
+
+    }
+    private void goToUrl(String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
     }
 
 }

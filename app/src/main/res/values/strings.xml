@@ -10,5 +10,10 @@
     <string name="eng">ENG</string>
     <string name="developed_in">Разработано в</string>
     <string name="press_Back">Нажмите назад еще раз чтобы выйти</string>
-    <string name="title_activity_description">DescriptionActivity</string>
+    <string name="title_activity_description">ДОСТОПРИМЕЧАТЕЛЬНОСТИ</string>
+    <string name="expo">10 июня 2017 года откроет свои двери Международная специализированная Выставка «Астана ЭСКПО-2017». В подготовке павильонов примут участие 100 стран и более 10 международных организаций.</string>
+    <string name="learn_more">Узнать больше</string>
+    <string name="title_activity_pamyatka_description">PamyatkaDescription</string>
+    <string name="title_activity_gde_poest_description">GdePoestDescription</string>
+    <string name="title_activity_gde_ostanovitsya_description">GdeOstanovitsyaDescription</string>
 </resources>

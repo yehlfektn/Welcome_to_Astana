@@ -2,6 +2,7 @@ package com.nurdaulet.project.GdePoest;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.nurdaulet.project.R;
+import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +35,7 @@ public class RestaurantFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private static final String Url = "http://welcometoastana.kz/api/v1/foods?limit=20&page=1&category=1";
+    private static final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
 
 
     public RestaurantFragment() {
@@ -63,6 +65,32 @@ public class RestaurantFragment extends Fragment {
         }else{
             adapter = new GdePoestRecycleAdapter(gdePoestListItems,getContext());
             recyclerView.setAdapter(adapter);
+            recyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), GdePoestDescription.class);
+                            intent.putExtra("name", gdePoestListItems.get(position).getName());
+                            intent.putExtra("id",gdePoestListItems.get(position).getId());
+                            intent.putExtra("description", gdePoestListItems.get(position).getSummary());
+                            intent.putExtra("imageUrl", gdePoestListItems.get(position).getImageUrl());
+                            intent.putExtra("category", gdePoestListItems.get(position).getCategory());
+                            intent.putExtra("longit", gdePoestListItems.get(position).getLon());
+                            intent.putExtra("latit", gdePoestListItems.get(position).getLat());
+                            intent.putExtra("address",gdePoestListItems.get(position).getAddress());
+                            intent.putExtra("url",Url);
+                            intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
+                            startActivityForResult(intent, 0);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            // do whatever
+                        }
+                    })
+            );
         }
 
         return v;
@@ -84,13 +112,14 @@ public class RestaurantFragment extends Fragment {
                         JSONObject o = array.getJSONObject(i);
                         GdePoestListItem item = new GdePoestListItem(
                                 o.getString("name"),
-                                o.getString("summary"),
+                                o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
                                 o.optString("lat"),
                                 o.optString("phone"),
-                                o.optString("address")
+                                o.optString("address"),
+                                o.getInt("id")
                         );
 
                         gdePoestListItems.add(item);
@@ -99,6 +128,32 @@ public class RestaurantFragment extends Fragment {
 
                     adapter = new GdePoestRecycleAdapter(gdePoestListItems,getContext());
                     recyclerView.setAdapter(adapter);
+                    recyclerView.addOnItemTouchListener(
+                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), GdePoestDescription.class);
+                                    intent.putExtra("name", gdePoestListItems.get(position).getName());
+                                    intent.putExtra("id",gdePoestListItems.get(position).getId());
+                                    intent.putExtra("description", gdePoestListItems.get(position).getSummary());
+                                    intent.putExtra("imageUrl", gdePoestListItems.get(position).getImageUrl());
+                                    intent.putExtra("category", gdePoestListItems.get(position).getCategory());
+                                    intent.putExtra("longit", gdePoestListItems.get(position).getLon());
+                                    intent.putExtra("latit", gdePoestListItems.get(position).getLat());
+                                    intent.putExtra("address",gdePoestListItems.get(position).getAddress());
+                                    intent.putExtra("url",Url);
+                                    intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
+                                    startActivityForResult(intent, 0);
+                                }
+
+                                @Override
+                                public void onLongItemClick(View view, int position) {
+                                    // do whatever
+                                }
+                            })
+                    );
 
 
                 } catch (JSONException e) {

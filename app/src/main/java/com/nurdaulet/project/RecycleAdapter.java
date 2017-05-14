@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.nurdaulet.project.Sightseeings.DescriptionActivity;
+
 
 
 import java.util.List;
@@ -55,34 +55,37 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         holder.category.setText(kudaShoditListItem.getCategory());
 
         Location startPoint=new Location("locationA");
+        if(MainActivity.gpsLocation != null){
+
+            lat2 = MainActivity.gpsLocation.getLatitude();
+            lng2 = MainActivity.gpsLocation.getLongitude();
+
+        }
         startPoint.setLatitude(lat2);
         startPoint.setLongitude(lng2);
 
+
         Location endPoint=new Location("locationB");
-        endPoint.setLatitude(Double.parseDouble(kudaShoditListItem.getLat()));
-        endPoint.setLongitude(Double.parseDouble(kudaShoditListItem.getLon()));
+        if(kudaShoditListItem.getLat().equals("null")){
+            holder.distance.setVisibility(View.GONE);
+        }else {
+            endPoint.setLatitude(Double.parseDouble(kudaShoditListItem.getLat()));
+            endPoint.setLongitude(Double.parseDouble(kudaShoditListItem.getLon()));
 
-        distanceDouble=startPoint.distanceTo(endPoint);
-        //Intent intent = new Intent(get, DescriptionActivity.class);
-        if (distanceDouble > 1000) {
-            holder.distance.setText(" " + (int) distanceDouble/1000 + "." + (int) ((distanceDouble%1000)/100) + "км ");
-        } else {
-            holder.distance.setText(" "+(int) distanceDouble + "м ");
+            distanceDouble = startPoint.distanceTo(endPoint);
+            //Intent intent = new Intent(get, DescriptionActivity.class);
+            if (distanceDouble > 1000) {
+                holder.distance.setText(" " + (int) distanceDouble / 1000 + "." + (int) ((distanceDouble % 1000) / 100) + "км ");
+            } else {
+                holder.distance.setText(" " + (int) distanceDouble + "м ");
+            }
         }
-
         Glide.with(context)
                 .load(kudaShoditListItem.getImageUrl())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Toast.makeText(context, "You clicked "+ kudaShoditListItem.getName()+"lon: "+kudaShoditListItem.getLon()+" lat: "+kudaShoditListItem.getLat(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
 
     }

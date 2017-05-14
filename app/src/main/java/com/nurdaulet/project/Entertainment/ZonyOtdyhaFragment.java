@@ -2,6 +2,7 @@ package com.nurdaulet.project.Entertainment;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ import com.android.volley.toolbox.Volley;
 import com.nurdaulet.project.KudaShoditListItem;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.RecycleAdapter;
+import com.nurdaulet.project.Sightseeings.DescriptionActivity;
+import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +35,7 @@ import java.util.List;
  */
 public class ZonyOtdyhaFragment extends Fragment {
 
-    private static final String Url = "http://welcometoastana.kz/api/v1/places/shopping?limit=20&page=1&category=30";
+    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=30";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
@@ -65,6 +68,30 @@ public class ZonyOtdyhaFragment extends Fragment {
         }else{
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
+            recyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                            intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
+                            intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+                            intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+                            intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                            intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+                            intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                            intent.putExtra("url",Url);
+                            startActivityForResult(intent, 0);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            // do whatever
+                        }
+                    })
+            );
         }
 
         return v;
@@ -87,7 +114,7 @@ public class ZonyOtdyhaFragment extends Fragment {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
-                                o.getString("summary"),
+                                o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
@@ -101,6 +128,30 @@ public class ZonyOtdyhaFragment extends Fragment {
 
                     adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
+                    recyclerView.addOnItemTouchListener(
+                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                                    intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
+                                    intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+                                    intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+                                    intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                                    intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+                                    intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                                    intent.putExtra("url",Url);
+                                    startActivityForResult(intent, 0);
+                                }
+
+                                @Override
+                                public void onLongItemClick(View view, int position) {
+                                    // do whatever
+                                }
+                            })
+                    );
 
 
                 } catch (JSONException e) {

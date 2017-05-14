@@ -14,10 +14,11 @@ public class GdePoestListItem {
     private String lat;
     private String phone;
     private String address;
+    private int id;
 
 
 
-    public GdePoestListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address){
+    public GdePoestListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address,int id){
         this.name = name+" >";
         this.summary = description;
         this.imageUrl = imageUrl;
@@ -26,6 +27,7 @@ public class GdePoestListItem {
         this.lat=lat;
         this.phone=phone;
         this.address=address;
+        this.id = id;
     }
 
     public String getName() {
@@ -56,7 +58,12 @@ public class GdePoestListItem {
         return address;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getCategory() {
+
 
         return category;
     }
