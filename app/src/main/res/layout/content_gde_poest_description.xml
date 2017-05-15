@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:layout_marginTop="56dp">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content_description_"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.nurdaulet.recycleview.Description_Activity"
+        tools:showIn="@layout/activity_description"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:weightSum="1">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="258dp"/>
+
+        <LinearLayout
+            android:id="@+id/LinearSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_below="@id/viewPager"
+            android:gravity="center_vertical|center_horizontal"/>
+
+
+        <TextView
+            android:text="Name"
+            android:layout_width="337dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:id="@+id/name"
+            android:layout_weight="0.15" />
+
+
+        <TextView
+            android:text="Не указано"
+            android:layout_width="303dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textSize="18sp"
+            android:textColor="@android:color/darker_gray"
+            android:drawableLeft="@drawable/ic_map_markerblack"
+            android:drawableStart="@drawable/ic_map_markerblack"
+            android:id="@+id/address"
+            />
+
+        <TextView
+            android:text="Не указано"
+            android:layout_width="303dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textSize="18sp"
+            android:textColor="@android:color/darker_gray"
+            android:drawableLeft="@drawable/ic_icon"
+            android:drawableStart="@drawable/ic_icon"
+            android:id="@+id/phone"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp">
+
+            <TextView
+                android:text="Category"
+                android:textColor="@android:color/holo_green_light"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/bulletgreen"
+                android:drawableLeft="@drawable/bulletgreen"
+                android:drawablePadding="5dp"
+                android:textSize="18sp"
+                android:id="@+id/category" />
+
+
+
+        </LinearLayout>
+
+        <TextView
+            android:text="Description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@android:color/black"
+            android:id="@+id/summary"
+            android:layout_marginBottom="20dp"/>
+
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map"
+            />
+
+
+        <ImageButton
+            android:layout_height="54dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/share_green"
+            android:id="@+id/shareButton"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            android:layout_width="wrap_content" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            android:src="@drawable/way_green"
+            android:id="@+id/wayButton"
+            android:background="@null"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+         />
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="center"
+            android:src="@drawable/taxi_green"
+            android:background="@null"
+            android:id="@+id/taxiButton"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"/>
+    </LinearLayout>
+</ScrollView>
