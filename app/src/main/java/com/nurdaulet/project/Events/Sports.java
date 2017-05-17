@@ -1,6 +1,7 @@
 package com.nurdaulet.project.Events;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.nurdaulet.project.KudaShoditListItem;
+import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.RecycleAdapter;
 import com.nurdaulet.project.Sightseeings.DescriptionActivity;
@@ -35,54 +37,55 @@ import java.util.List;
  */
 public class Sports extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/events?limit=20&page=1&category=68";
+    private final String Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<KudaShoditListItem> kudaShoditListItems;
-
+    private List<EventsItemList> eventsItemLists;
 
     public Sports() {
         // Required empty public constructor
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(kudaShoditListItems ==null) {
-            kudaShoditListItems = new ArrayList<>();
+        if(eventsItemLists == null) {
+            eventsItemLists = new ArrayList<>();
         }
-        if(kudaShoditListItems.size()==0){
+        if(eventsItemLists.size()==0){
 
+            Log.d("AllEvents","Startingloadingdata");
             loadRecyclerView();
 
         }else{
 
-            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
+            adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                            intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                            intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                            intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                            intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                            intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                            intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                            //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), EventsDescription.class);
+                            intent.putExtra("name", eventsItemLists.get(position).getName());
+                            intent.putExtra("id", eventsItemLists.get(position).getId());
+                            intent.putExtra("description", eventsItemLists.get(position).getSummary());
+                            intent.putExtra("imageUrl", eventsItemLists.get(position).getImageUrl());
+                            intent.putExtra("category", eventsItemLists.get(position).getCategory());
+                            intent.putExtra("longit", eventsItemLists.get(position).getLon());
+                            intent.putExtra("latit", eventsItemLists.get(position).getLat());
                             intent.putExtra("url",Url);
+                            intent.putExtra("address",eventsItemLists.get(position).getAddress());
+                            intent.putExtra("money",eventsItemLists.get(position).getMoney());
+                            intent.putExtra("date",eventsItemLists.get(position).getDate());
                             startActivityForResult(intent, 0);
                         }
 
@@ -96,6 +99,7 @@ public class Sports extends Fragment {
 
         return v;
     }
+
     private void loadRecyclerView() {
 
 
@@ -107,39 +111,60 @@ public class Sports extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    for (int i=0; i<array.length();i++){
-                        JSONObject o = array.getJSONObject(i);
-                        KudaShoditListItem item = new KudaShoditListItem(
-                                o.getString("name"),
-                                o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
-                                o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
-                                o.getInt("id")
-                        );
+                    for (int i=0; i<array.length();i++) {
 
-                        kudaShoditListItems.add(item);
+                        JSONObject o = array.getJSONObject(i);
+
+
+                            String lon;
+                            String lat;
+                            if (o.getJSONArray("points").length() > 0) {
+                                lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                                lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                            } else {
+                                lon = "null";
+                                lat = "null";
+                            }
+
+                            EventsItemList item = new EventsItemList(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    o.getJSONArray("images").get(0).toString(),
+                                    o.getJSONObject("category").getString("name"),
+                                    lon,
+                                    lat,
+                                    o.getInt("id"),
+                                    o.getString("date"),
+                                    o.getString("address"),
+                                    "от 5000тг"
+                            );
+
+                            eventsItemLists.add(item);
+
 
                     }
-                    Log.d("Sightseeings","AdapterAttached");
-                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
+                    MainActivity.eventsItemList = eventsItemLists;
+                    Log.d("Sightseeings","MainActivity got items");
+                    adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                                    intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                                    intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                                    intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                                    intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                                    intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                                    intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                                    //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), EventsDescription.class);
+                                    intent.putExtra("name", eventsItemLists.get(position).getName());
+                                    intent.putExtra("id", eventsItemLists.get(position).getId());
+                                    intent.putExtra("description", eventsItemLists.get(position).getSummary());
+                                    intent.putExtra("imageUrl", eventsItemLists.get(position).getImageUrl());
+                                    intent.putExtra("category", eventsItemLists.get(position).getCategory());
+                                    intent.putExtra("longit", eventsItemLists.get(position).getLon());
+                                    intent.putExtra("latit", eventsItemLists.get(position).getLat());
                                     intent.putExtra("url",Url);
+                                    intent.putExtra("address",eventsItemLists.get(position).getAddress());
+                                    intent.putExtra("money",eventsItemLists.get(position).getMoney());
+                                    intent.putExtra("date",eventsItemLists.get(position).getDate());
                                     startActivityForResult(intent, 0);
                                 }
 
@@ -149,7 +174,6 @@ public class Sports extends Fragment {
                                 }
                             })
                     );
-
 
 
                 } catch (JSONException e) {
@@ -170,5 +194,4 @@ public class Sports extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
-
 }

@@ -35,7 +35,7 @@ public class BarsFragments extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private static final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=3";
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=3";
 
     public BarsFragments() {
         // Required empty public constructor
@@ -161,7 +161,7 @@ public class BarsFragments extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                loadRecyclerView();
+
             }
         });
 

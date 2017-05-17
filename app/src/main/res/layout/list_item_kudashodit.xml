@@ -46,16 +46,16 @@
 
 
                 <TextView
-                    android:text="Астана"
-                    android:layout_width="246dp"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/bullet"
-                    android:drawableLeft="@drawable/bullet"
-                    android:textColor="#FF8B00"
-                    android:textSize="18sp"
                     android:id="@+id/category"
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
+                    android:drawableLeft="@drawable/bullet"
                     android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/bullet"
+                    android:text="Астана"
+                    android:textColor="#FF8B00"
+                    android:textSize="15sp"
 
                     />
                 <LinearLayout
@@ -69,10 +69,13 @@
                         android:id="@+id/distance"
                         android:layout_height="26dp"
                         android:gravity="center"
-                        android:text="500 м"
+                        android:text="2500.0 kм"
                         android:background="@drawable/rectangleshape"
                         android:layout_marginRight="10dp"
                         android:layout_marginEnd="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+
 
 
                         />

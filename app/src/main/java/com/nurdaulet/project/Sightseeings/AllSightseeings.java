@@ -94,6 +94,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                             intent.putExtra("url",Url);
+                            intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
                         }
 
@@ -133,7 +134,8 @@ public class AllSightseeings extends Fragment implements LocationListener {
                                 o.getJSONObject("category").getString("name"),
                                 o.getString("lon"),
                                 o.getString("lat"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("address")
                         );
 
 
@@ -159,6 +161,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                                     intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                                     intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                                     intent.putExtra("url",Url);
+                                    intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
                                 }
 

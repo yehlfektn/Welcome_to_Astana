@@ -13,10 +13,11 @@ public class KudaShoditListItem {
     private String lon;
     private String lat;
     private int id;
+    private String address;
 
 
 
-    public KudaShoditListItem(String name, String description, String imageUrl, String category,String lon, String lat, int id){
+    public KudaShoditListItem(String name, String description, String imageUrl, String category,String lon, String lat, int id,String address){
         this.name = name+" >";
         this.summary = description;
         this.imageUrl = imageUrl;
@@ -24,6 +25,7 @@ public class KudaShoditListItem {
         this.lon=lon;
         this.lat=lat;
         this.id = id;
+        this.address = address;
     }
 
     public String getName() {
@@ -48,6 +50,10 @@ public class KudaShoditListItem {
 
     public int getId() {
         return id;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public String getCategory() {

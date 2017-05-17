@@ -3,10 +3,12 @@ package com.nurdaulet.project.Sightseeings;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +27,7 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -86,9 +89,14 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading data...");
         progressDialog.show();
-        getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
 
 
 
@@ -97,7 +105,10 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         TextView category = (TextView) findViewById(R.id.category);
         TextView summary = (TextView) findViewById(R.id.summary);
         final TextView distance  = (TextView) findViewById(R.id.distance);
+        TextView address = (TextView)findViewById(R.id.address);
 
+
+        address.setText(getIntent().getStringExtra("address"));
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         summary.setText(getIntent().getStringExtra("description"));
@@ -443,7 +454,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         MarkerOptions options = new MarkerOptions()
                 .title(locality)
                 .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markerorange))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marker))
                 .position(new LatLng(lat, lng));
 
         mGoogleMap.addMarker(options);
@@ -459,13 +470,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -498,5 +503,31 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             mGoogleMap.animateCamera(update);
         }
     }
+
+    public void GoogleMap(View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng+""));
+        startActivity(intent);
+
+
+    }
+    public void Share(View view) {
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = getIntent().getStringExtra("description");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+    }
+    public void CallTaxi(View view){
+
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "+77017123386"));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
+    }
+
 
 }

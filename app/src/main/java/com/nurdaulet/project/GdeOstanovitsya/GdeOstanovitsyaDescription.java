@@ -85,6 +85,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
     private ArrayList<String> imageUrls;
     TextView website;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +150,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
 
         imageUrls = new ArrayList<>();
         linearLayout = (LinearLayout) findViewById(R.id.LinearSlider);
+
 
 
 
@@ -445,7 +447,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         MarkerOptions options = new MarkerOptions()
                 .title(locality)
                 .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markerorange))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marker_purple))
                 .position(new LatLng(lat, lng));
 
         mGoogleMap.addMarker(options);
@@ -519,6 +521,31 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         startActivity(launchBrowser);
+    }
+
+    public void GoogleMapGde(View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng+""));
+        startActivity(intent);
+
+
+    }
+    public void ShareGde(View view) {
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = getIntent().getStringExtra("description");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+    }
+    public void CallTaxiGdeOst(View view){
+
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "+77017123386"));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
     }
 
 }

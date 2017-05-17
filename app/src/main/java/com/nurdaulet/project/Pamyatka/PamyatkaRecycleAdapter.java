@@ -57,7 +57,6 @@ public class PamyatkaRecycleAdapter extends RecyclerView.Adapter<PamyatkaRecycle
             }
         });
 
-
     }
 
     @Override

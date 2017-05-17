@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.nurdaulet.project.R;
 
+import java.lang.reflect.Field;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -39,6 +41,7 @@ public class GdePoest extends Fragment {
         int position = getArguments().getInt("position");
         viewPager.setCurrentItem(position);
 
+
         tabLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -47,6 +50,21 @@ public class GdePoest extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            Field childFragmentManager = Fragment.class
+                    .getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

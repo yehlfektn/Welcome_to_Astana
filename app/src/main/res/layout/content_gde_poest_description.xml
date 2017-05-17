@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textColor="@android:color/darker_gray"
             android:drawableLeft="@drawable/ic_map_markerblack"
             android:drawableStart="@drawable/ic_map_markerblack"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textColor="@android:color/darker_gray"
             android:drawableLeft="@drawable/ic_icon"
             android:drawableStart="@drawable/ic_icon"
@@ -85,7 +85,7 @@
                 android:drawableStart="@drawable/bulletgreen"
                 android:drawableLeft="@drawable/bulletgreen"
                 android:drawablePadding="5dp"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:id="@+id/category" />
 
 
@@ -124,7 +124,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:background="@null"
-            android:layout_width="wrap_content" />
+            android:layout_width="wrap_content"
+            android:onClick="ShareGdePoest"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -139,6 +140,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
+            android:onClick="GoogleMapGdePoest"
          />
 
 
@@ -154,6 +156,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:onClick="CallTaxiPoest"/>
     </LinearLayout>
 </ScrollView>

@@ -131,7 +131,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:background="@null"
-            android:layout_width="wrap_content" />
+            android:layout_width="wrap_content"
+            android:onClick="ShareGde"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -146,6 +147,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
+            android:onClick="GoogleMapGde"
             />
 
 
@@ -161,6 +163,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:onClick="CallTaxiGdeOst"/>
     </LinearLayout>
 </ScrollView>

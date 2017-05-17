@@ -3,13 +3,15 @@ package com.nurdaulet.project;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.support.multidex.MultiDex;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 
 import com.nurdaulet.project.Entertainment.EntertainmentFragment;
 import com.nurdaulet.project.Events.EventsFragment;
+import com.nurdaulet.project.Events.EventsItemList;
 import com.nurdaulet.project.Excursion.ExcursionsFragment;
 import com.nurdaulet.project.GdeOstanovitsya.GdeOstanovitsya;
 import com.nurdaulet.project.GdePoest.GdePoest;
@@ -41,6 +44,7 @@ import com.nurdaulet.project.Pamyatka.Transport;
 import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -52,7 +56,9 @@ public class MainActivity extends AppCompatActivity
 
     String TAG = "MainActivity";
     public static Location  gpsLocation;
+    public static List<EventsItemList> eventsItemList;
     private Boolean exit = false;
+
 
 
     @Override
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         //setting navigation drawer code was generated
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MultiDex.install(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -132,6 +139,10 @@ public class MainActivity extends AppCompatActivity
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
                     elv.collapseGroup(4);
+                    FragmentManager fm = getSupportFragmentManager();
+                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                        fm.popBackStack();
+                    }
                     pixels = (int) (600 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
@@ -165,7 +176,27 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
-                Fragment fragment = null;
+
+                FragmentManager fm = getSupportFragmentManager();
+
+                for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                    if(fm.getBackStackEntryAt(0)!=null){
+                    if( getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName())!=null){
+                        getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDetach();
+                        getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDestroy();
+                    }
+                    }
+                    if(fm.getBackStackEntryAt(i)!=null){
+                        if( getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName())!=null){
+                            getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDetach();
+                            getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDestroy();
+                        }
+                    }
+                    fm.popBackStack();
+                }
+
+
+                Fragment fragment;
                 Bundle bundle = new Bundle();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 //finding out which fragment to use
@@ -174,24 +205,16 @@ public class MainActivity extends AppCompatActivity
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800 , 0xffFF8B00 });
                     getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("SightSeeings");
-                        if(fragment == null){
-                        fragment = new SightSeeingsFragment();}
+                        fragment = new SightSeeingsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
                     } else if (childPos == 1) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Entertainment");
-                        if(fragment == null){
-                            fragment = new EntertainmentFragment();}
+                            fragment = new EntertainmentFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Entertainment");
                     } else if (childPos == 2) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Excursion");
-                        if(fragment == null){
-                            fragment = new ExcursionsFragment();}
+                            fragment = new ExcursionsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Excursion");
                     } else if (childPos == 3) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Events");
-                        if(fragment == null){
-                            fragment = new EventsFragment();}
+                            fragment = new EventsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Events");
                     }
                 }else if(groupPos == 1){
@@ -235,30 +258,22 @@ public class MainActivity extends AppCompatActivity
                         transaction.replace(R.id.mainFrame, fragment);
                     }
 
-                }else if(groupPos == 3){
-                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFFA800, 0xffFFD200});
+                }else if(groupPos == 3) {
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFFA800, 0xffFFD200});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
-
-                        fragment = getSupportFragmentManager().findFragmentByTag("Preb");
-                        if(fragment == null){
-                            fragment = new Prebyvanie();}
-                        transaction.replace(R.id.mainFrame, fragment,"Preb");
-
+                        fragment = new Prebyvanie();
+                        transaction.replace(R.id.mainFrame, fragment,"Trans");
                     } else if (childPos == 1) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Trans");
-                        if(fragment == null){
-                            fragment = new Transport();}
+                            fragment = new Transport();
                         transaction.replace(R.id.mainFrame, fragment,"Trans");
                     } else if (childPos == 2) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Polez");
-                        if(fragment == null){
-                            fragment = new Poleznaya();}
+
+                            fragment = new Poleznaya();
                         transaction.replace(R.id.mainFrame, fragment,"Polez");
                     } else if (childPos == 3) {
-                        fragment = getSupportFragmentManager().findFragmentByTag("Extr");
-                        if(fragment == null){
-                            fragment = new Extrennaya();}
+
+                            fragment = new Extrennaya();
                         transaction.replace(R.id.mainFrame, fragment,"Extr");
                     }
 

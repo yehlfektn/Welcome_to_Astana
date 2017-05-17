@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:layout_marginTop="56dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonFrame"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:text="Купить     →"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:textSize="10sp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="225dp"
+            android:background="@drawable/circle"/>
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/content_description_"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:showIn="@layout/activity_description"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="258dp" />
+
+            <LinearLayout
+                android:id="@+id/LinearSlider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/viewPager"
+                android:gravity="center_vertical|center_horizontal"/>
+
+
+            <TextView
+                android:text="Name"
+                android:layout_width="337dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:id="@+id/name"
+                android:layout_weight="0.15" />
+
+
+            <TextView
+                android:text="Не указано"
+                android:layout_width="303dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/darker_gray"
+                android:drawableLeft="@drawable/ic_map_markerblack"
+                android:drawableStart="@drawable/ic_map_markerblack"
+                android:drawablePadding="5dp"
+                android:id="@+id/address"
+                />
+
+            <TextView
+                android:text="Не указано"
+                android:layout_width="303dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="18sp"
+                android:textColor="#B9B9B9"
+                android:drawableLeft="@drawable/ic_calendar"
+                android:drawableStart="@drawable/ic_calendar"
+                android:drawablePadding="5dp"
+                android:id="@+id/date"
+                />
+            <TextView
+                android:text="от 5000"
+                android:layout_width="303dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="18sp"
+                android:textColor="#B9B9B9"
+                android:drawableLeft="@drawable/ic_money_purse_icon"
+                android:drawableStart="@drawable/ic_money_purse_icon"
+                android:drawablePadding="5dp"
+                android:id="@+id/money"
+                />
+
+
+            <TextView
+                android:text="Description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@android:color/black"
+                android:id="@+id/summary"
+                android:lineSpacingExtra="5dp"
+                android:layout_marginBottom="20dp"/>
+
+
+
+
+            <fragment
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:id="@+id/map"
+                />
+
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="54dp"
+                android:scaleType="matrix"
+                android:src="@drawable/share"
+                android:id="@+id/shareButton"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@null"
+                android:onClick="ShareEvents"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="54dp"
+                android:scaleType="matrix"
+                android:layout_gravity="center"
+                android:src="@drawable/way"
+                android:id="@+id/wayButton"
+                android:background="@null"
+                android:layout_marginBottom="10dp"
+                android:onClick="GoogleMapEvents"/>
+
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="54dp"
+                android:scaleType="matrix"
+                android:layout_gravity="center"
+                android:src="@drawable/taxi"
+                android:background="@null"
+                android:id="@+id/taxiButton"
+                android:onClick="CallTaxiEvent"/>
+        </LinearLayout>
+    </FrameLayout>
+
+</ScrollView>

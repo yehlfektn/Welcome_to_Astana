@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class CultureFragment extends Fragment {
 
-    private static final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=100&page=1&category=5";
+    private static final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1&category=5";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
@@ -81,6 +81,7 @@ public class CultureFragment extends Fragment {
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                             intent.putExtra("url",Url);
+                            intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
                         }
 
@@ -110,16 +111,17 @@ public class CultureFragment extends Fragment {
                     JSONArray array = jsonObject.getJSONArray("places");
 
 
-                    for (int i=0; i<array.length();i++){
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
-                                o.getInt("id")
+                                o.getString("lon"),
+                                o.getString("lat"),
+                                o.getInt("id"),
+                                o.getString("address")
                         );
 
                         kudaShoditListItems.add(item);
@@ -142,6 +144,7 @@ public class CultureFragment extends Fragment {
                                     intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                                     intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                                     intent.putExtra("url",Url);
+                                    intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
                                 }
 

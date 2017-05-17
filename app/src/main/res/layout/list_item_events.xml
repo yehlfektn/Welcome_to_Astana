@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="258dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1E1E1E">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="258dp"
+            android:src="@drawable/image"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/blackgradient" >
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="318dp"
+                android:layout_height="104dp"
+                tools:text="Концерт Филиппа Киркорова"
+                android:textColor="@android:color/background_light"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                android:layout_marginLeft="@dimen/marginLeft"
+                android:layout_marginStart="@dimen/marginLeft"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:layout_marginBottom="35dp"/>
+
+            <LinearLayout
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/marginLeft"
+                android:layout_marginStart="@dimen/marginLeft"
+                android:layout_marginBottom="10dp">
+
+
+                <TextView
+                    android:text="Астана"
+                    android:layout_width="246dp"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/bullet"
+                    android:drawableLeft="@drawable/bullet"
+                    android:textColor="#FF8B00"
+                    android:textSize="18sp"
+                    android:id="@+id/category"
+                    android:layout_gravity="bottom"
+                    android:drawablePadding="5dp"
+
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+        </FrameLayout>
+
+
+    </FrameLayout>
+
+
+
+
+</RelativeLayout>

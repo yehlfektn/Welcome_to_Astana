@@ -37,7 +37,7 @@ public class CafeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private static final String Url = "http://89.219.32.107/api/v1/foods?limit=5&page=1&category=10";
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=5&page=1&category=10";
 
 
     public CafeFragment() {
@@ -170,7 +170,7 @@ public class CafeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-                loadRecyclerView();
+
             }
         });
 

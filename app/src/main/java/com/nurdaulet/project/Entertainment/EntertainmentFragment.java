@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.Entertainment.MyAdapter;
 
+import java.lang.reflect.Field;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -29,6 +31,7 @@ public class EntertainmentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_entertainment, container, false);
 
@@ -37,7 +40,6 @@ public class EntertainmentFragment extends Fragment {
         //set an adpater
 
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
-
 
         tabLayout.post(new Runnable() {
             @Override
@@ -48,6 +50,20 @@ public class EntertainmentFragment extends Fragment {
 
 
         return v;
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            Field childFragmentManager = Fragment.class
+                    .getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

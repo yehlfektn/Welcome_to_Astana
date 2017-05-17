@@ -47,7 +47,8 @@ public class ViewPagerAdapter extends PagerAdapter {
         View itemView = layoutInflater.inflate(R.layout.pager_layout, container, false);
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.viewPagerItem_image1);
-
+        imageView.setScaleType(ImageView.ScaleType.FIT_START);
+        imageView.setAdjustViewBounds(true);
         Glide.with(context).load(arrayList.get(position))
                 .placeholder(R.drawable.placeholder)
                 .into(imageView);

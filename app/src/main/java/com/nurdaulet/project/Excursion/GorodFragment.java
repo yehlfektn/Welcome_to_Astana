@@ -82,6 +82,7 @@ public class GorodFragment extends Fragment {
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                             intent.putExtra("url",Url);
+                            intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
                         }
 
@@ -107,18 +108,18 @@ public class GorodFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    for (int i=0; i<array.length();i++){
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
                         KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
-                                o.getInt("id")
+                                o.getString("lon"),
+                                o.getString("lat"),
+                                o.getInt("id"),
+                                o.getString("address")
                         );
-
                         kudaShoditListItems.add(item);
 
                     }
@@ -140,6 +141,7 @@ public class GorodFragment extends Fragment {
                                     intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                                     intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                                     intent.putExtra("url",Url);
+                                    intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
                                 }
 

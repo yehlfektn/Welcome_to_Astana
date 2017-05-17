@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class AllPlacesFragment extends Fragment {
 
-    private static final String Url = "http://89.219.32.107/api/v1/foods?limit=100&page=1";
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=100&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
@@ -44,12 +44,10 @@ public class AllPlacesFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_all_places, container, false);
-
-
         recyclerView = (RecyclerView) v.findViewById(R.id.recycleAllPlaces);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -61,7 +59,6 @@ public class AllPlacesFragment extends Fragment {
         if(gdePoestListItems.size()==0){
 
             loadRecyclerView();
-
 
         }else{
             adapter = new GdePoestRecycleAdapter(gdePoestListItems,getContext());
@@ -96,15 +93,13 @@ public class AllPlacesFragment extends Fragment {
 
         return v;
     }
+
     private void loadRecyclerView() {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -143,6 +138,7 @@ public class AllPlacesFragment extends Fragment {
                                     intent.putExtra("category", gdePoestListItems.get(position).getCategory());
                                     intent.putExtra("longit", gdePoestListItems.get(position).getLon());
                                     intent.putExtra("latit", gdePoestListItems.get(position).getLat());
+                                    intent.putExtra("address",gdePoestListItems.get(position).getAddress());
                                     intent.putExtra("url",Url);
                                     intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                                     startActivityForResult(intent, 0);
@@ -166,14 +162,13 @@ public class AllPlacesFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                loadRecyclerView();
+
+
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
-
 
 }

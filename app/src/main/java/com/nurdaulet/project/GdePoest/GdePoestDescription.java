@@ -3,10 +3,12 @@ package com.nurdaulet.project.GdePoest;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -419,7 +421,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         MarkerOptions options = new MarkerOptions()
                 .title(locality)
                 .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_markerorange))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marker_green))
                 .position(new LatLng(lat, lng));
 
         mGoogleMap.addMarker(options);
@@ -473,6 +475,30 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
             mGoogleMap.animateCamera(update);
         }
+    }
+    public void GoogleMapGdePoest(View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng+""));
+        startActivity(intent);
+
+
+    }
+    public void ShareGdePoest(View view) {
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = getIntent().getStringExtra("description");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+    }
+    public void CallTaxiPoest(View view){
+
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "+77017123386"));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
     }
 
 }

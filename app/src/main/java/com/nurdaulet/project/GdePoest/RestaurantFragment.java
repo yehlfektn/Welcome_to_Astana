@@ -35,7 +35,7 @@ public class RestaurantFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private static final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
 
 
     public RestaurantFragment() {
@@ -167,7 +167,6 @@ public class RestaurantFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                loadRecyclerView();
             }
         });
 
