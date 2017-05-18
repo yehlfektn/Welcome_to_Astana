@@ -20,7 +20,7 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="258dp"/>
+            android:layout_height="214dp" />
 
         <LinearLayout
             android:id="@+id/LinearSlider"
@@ -92,7 +92,7 @@
                     android:background="@drawable/rectangleshape"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="2500 м"
+                    android:text="2500.0 kм"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     />
@@ -152,8 +152,8 @@
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_location_on_road"
             android:padding="15dp"
-            android:paddingLeft="95dp"
-            android:paddingStart="95dp"
+            android:paddingLeft="85dp"
+            android:paddingStart="85dp"
             android:text="@string/make_way"
             android:gravity="left"
             android:layout_marginRight="10dp"

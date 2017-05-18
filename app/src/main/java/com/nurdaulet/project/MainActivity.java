@@ -205,17 +205,17 @@ public class MainActivity extends AppCompatActivity
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xffFF5800 , 0xffFF8B00 });
                     getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
-                        fragment = new SightSeeingsFragment();
-                        transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
+                        fragment = new EventsFragment();
+                        transaction.replace(R.id.mainFrame, fragment,"Events");
                     } else if (childPos == 1) {
-                            fragment = new EntertainmentFragment();
-                        transaction.replace(R.id.mainFrame, fragment,"Entertainment");
+                            fragment = new SightSeeingsFragment();
+                        transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
                     } else if (childPos == 2) {
                             fragment = new ExcursionsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Excursion");
                     } else if (childPos == 3) {
-                            fragment = new EventsFragment();
-                        transaction.replace(R.id.mainFrame, fragment,"Events");
+                            fragment = new EntertainmentFragment();
+                        transaction.replace(R.id.mainFrame, fragment,"Entertainment");
                     }
                 }else if(groupPos == 1){
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
@@ -326,10 +326,12 @@ public class MainActivity extends AppCompatActivity
     //ADD AND GET DATA
     private ArrayList<group> getData() {
         group t1 = new group("КУДА СХОДИТЬ");
-        t1.items.add("Достопримечательности");
-        t1.items.add("Шоппинг и Развлечения");
-        t1.items.add("Экскурсии");
         t1.items.add("События");
+        t1.items.add("Достопримечательности");
+        t1.items.add("Экскурсии");
+        t1.items.add("Шоппинг и Развлечения");
+
+
 
         group t2 = new group("ГДЕ ПОЕСТЬ");
         t2.items.add("Кафе");

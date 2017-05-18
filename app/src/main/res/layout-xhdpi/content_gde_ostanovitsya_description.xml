@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:layout_marginTop="56dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +15,8 @@
         tools:context="com.nurdaulet.recycleview.Description_Activity"
         tools:showIn="@layout/activity_description"
         android:orientation="vertical"
-        >
+        android:background="@android:color/white"
+        android:weightSum="1">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
@@ -33,79 +34,88 @@
 
 
         <TextView
-            android:text="Name"
-            android:layout_width="337dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
             android:id="@+id/name"
-            android:layout_weight="0.15" />
-
-
-        <TextView
-            android:text="Не указано"
-            android:layout_width="303dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textSize="18sp"
-            android:textColor="@android:color/darker_gray"
-            android:drawableLeft="@drawable/ic_map_markerblack"
-            android:drawableStart="@drawable/ic_map_markerblack"
-            android:id="@+id/address"
-            />
-
-        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp">
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight="0.12"
+            android:text="Name"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
 
-            <TextView
-                android:text="Category"
-                android:textColor="#FF8B00"
-                android:layout_width="194dp"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/bullet"
-                android:drawableLeft="@drawable/bullet"
-                android:drawablePadding="5dp"
-                android:textSize="18sp"
-                android:id="@+id/category" />
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            style="?android:attr/ratingBarStyleSmall"
+            android:progressTint="#EFB201"
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:rating="4" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
-
-                <TextView
-                    android:id="@+id/distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/rectangleshape"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="2500.0 kм"
-                    />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
 
         <TextView
-            android:text="Description"
-            android:layout_width="wrap_content"
+            android:id="@+id/address"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:textColor="@android:color/black"
+            android:drawableLeft="@drawable/ic_map_markerblack"
+            android:drawableStart="@drawable/ic_map_markerblack"
+            android:text="Не указано"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            />
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:drawableLeft="@drawable/ic_icon"
+            android:drawableStart="@drawable/ic_icon"
+            android:text="Не указано"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
+
+
+        <TextView
+            android:id="@+id/website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:drawableLeft="@drawable/ic_earth_globe"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_earth_globe"
+            android:onClick="goToTextView"
+            android:text="Не указано"
+            android:textColor="@android:color/holo_purple"
+            android:textSize="18sp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
+
+        <TextView
             android:id="@+id/summary"
-            android:layout_marginBottom="20dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:text="Description"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
 
 
         <fragment
@@ -115,13 +125,12 @@
             android:id="@+id/map"
             />
 
-
         <TextView
             android:id="@+id/shareButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/rectangleshape"
+            android:background="@drawable/rectangleshape_purple"
             android:drawableLeft="@drawable/ic_share_symbol"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_share_symbol"
@@ -135,20 +144,21 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="Share"/>
+            android:onClick="ShareGde"/>
+
 
         <TextView
             android:id="@+id/wayButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/rectangleshape"
+            android:background="@drawable/rectangleshape_purple"
             android:drawableLeft="@drawable/ic_location_on_road"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_location_on_road"
             android:padding="15dp"
-            android:paddingLeft="95dp"
-            android:paddingStart="95dp"
+            android:paddingLeft="90dp"
+            android:paddingStart="90dp"
             android:text="@string/make_way"
             android:gravity="left"
             android:layout_marginRight="20dp"
@@ -156,20 +166,20 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="GoogleMap"/>
+            android:onClick="GoogleMapEvents"/>
 
         <TextView
             android:id="@+id/taxiButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/rectangleshape"
+            android:background="@drawable/rectangleshape_purple"
             android:drawableLeft="@drawable/ic_cab"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_cab"
             android:padding="15dp"
-            android:paddingLeft="105dp"
-            android:paddingStart="105dp"
+            android:paddingLeft="110dp"
+            android:paddingStart="110dp"
             android:text="@string/call_taxi"
             android:gravity="left"
             android:layout_marginRight="20dp"
@@ -177,7 +187,6 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="CallTaxi"/>
-
+            android:onClick="CallTaxiEvent"/>
     </LinearLayout>
 </ScrollView>

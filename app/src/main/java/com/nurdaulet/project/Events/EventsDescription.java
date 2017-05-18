@@ -122,7 +122,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         //latStr = getIntent().getStringExtra("latit");
         //lngStr = getIntent().getStringExtra("longit");
         if(getIntent().getStringExtra("description").length()>10){
-            makeTextViewResizable(summary, 3, "Читать дальше", true);
+            makeTextViewResizable(summary, 4, "Читать дальше", true);
         }
 
 

@@ -59,13 +59,13 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         {
             if(child=="Шоппинг и Развлечения")
             {
-                img.setImageResource(R.mipmap.icon_bw_orange)  ;
+                img.setImageResource(R.mipmap.icon_end_orange)  ;
             }else if(child=="Достопримечательности")
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }else if(child=="События")
             {
-                img.setImageResource(R.mipmap.icon_end_orange)  ;
+                img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }else if(child=="Экскурсии")
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;

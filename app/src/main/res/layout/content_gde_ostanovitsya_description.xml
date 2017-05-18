@@ -118,52 +118,68 @@
             />
 
 
-        <ImageButton
-            android:layout_height="54dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/share_purple"
+        <TextView
             android:id="@+id/shareButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:background="@drawable/rectangleshape_purple"
+            android:drawableLeft="@drawable/ic_share_symbol"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_share_symbol"
+            android:padding="15dp"
+            android:paddingLeft="90dp"
+            android:paddingStart="90dp"
+            android:text="@string/share"
+            android:gravity="left"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@null"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
             android:onClick="ShareGde"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="54dp"
-            android:scaleType="fitXY"
-            android:layout_gravity="center"
-            android:src="@drawable/way_purple"
+
+        <TextView
             android:id="@+id/wayButton"
-            android:background="@null"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:onClick="GoogleMapGde"
-            />
-
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="54dp"
-            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/taxi_purple"
-            android:background="@null"
-            android:id="@+id/taxiButton"
+            android:background="@drawable/rectangleshape_purple"
+            android:drawableLeft="@drawable/ic_location_on_road"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_location_on_road"
+            android:padding="15dp"
+            android:paddingLeft="70dp"
+            android:paddingStart="70dp"
+            android:text="@string/make_way"
+            android:gravity="left"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:onClick="GoogleMapEvents"/>
+
+        <TextView
+            android:id="@+id/taxiButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/rectangleshape_purple"
+            android:drawableLeft="@drawable/ic_cab"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_cab"
+            android:padding="15dp"
+            android:paddingLeft="90dp"
+            android:paddingStart="90dp"
+            android:text="@string/call_taxi"
+            android:gravity="left"
             android:layout_marginRight="20dp"
-            android:onClick="CallTaxiGdeOst"/>
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:onClick="CallTaxiEvent"/>
     </LinearLayout>
 </ScrollView>

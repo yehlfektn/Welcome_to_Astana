@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="258dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="258dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image"
+            android:adjustViewBounds="false" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/blackgradient" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="318dp"
+                    android:layout_height="104dp"
+                    tools:text="Концерт Филиппа Киркорова"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp"
+                    android:textStyle="normal|bold"
+                    android:layout_marginLeft="@dimen/marginLeft"
+                    android:layout_marginStart="@dimen/marginLeft"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    />
+
+
+
+
+                <TextView
+                    android:text="+7(747)720-10-94"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/phoneGde"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="@dimen/marginLeft"
+                    android:layout_marginStart="@dimen/marginLeft"
+                    android:layout_gravity="bottom"
+                    />
+                <TextView
+                    android:text="пр. Туран 10. в здании Fitness Palace."
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/locationGde"
+                    android:layout_gravity="bottom"
+                    android:drawableLeft="@drawable/ic_map_marker"
+                    android:drawableStart="@drawable/ic_map_marker"
+                    android:drawablePadding="5dp"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="@dimen/marginLeft"
+                    android:layout_marginStart="@dimen/marginLeft"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:text="Астана"
+                        android:layout_width="211dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="23dp"
+                        android:layout_marginStart="23dp"
+                        android:drawableStart="@drawable/bulletpurple"
+                        android:drawableLeft="@drawable/bulletpurple"
+                        android:textColor="@android:color/holo_purple"
+                        android:textSize="18sp"
+                        android:id="@+id/category"
+                        android:layout_gravity="bottom"
+                        android:drawablePadding="5dp"
+                        />
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:progressTint="#EFB201"
+                        android:numStars="5"
+                        android:stepSize="1.0"
+                        android:rating="4" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+
+</RelativeLayout>

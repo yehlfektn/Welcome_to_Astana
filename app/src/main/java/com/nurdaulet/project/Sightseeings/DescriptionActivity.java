@@ -124,7 +124,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
         //latStr = getIntent().getStringExtra("latit");
         //lngStr = getIntent().getStringExtra("longit");
-        if(getIntent().getStringExtra("description").length()>10){
+       if(getIntent().getStringExtra("description").length()>10){
             makeTextViewResizable(summary, 3, "Читать дальше", true);
         }
 

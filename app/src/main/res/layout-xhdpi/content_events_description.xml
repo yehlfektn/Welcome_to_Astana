@@ -18,7 +18,7 @@
             android:gravity="center"
             android:textSize="10sp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="225dp"
+            android:layout_marginTop="200dp"
             android:background="@drawable/circle"/>
 
 
@@ -50,19 +50,19 @@
 
             <TextView
                 android:text="Name"
-                android:layout_width="489dp"
+                android:layout_width="339dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:textSize="20sp"
                 android:textColor="@android:color/black"
                 android:id="@+id/name"
-                android:layout_weight="0.29" />
+                android:layout_weight="0.13" />
 
 
             <TextView
                 android:text="Не указано"
-                android:layout_width="303dp"
+                android:layout_width="339dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
@@ -76,7 +76,7 @@
 
             <TextView
                 android:text="Не указано"
-                android:layout_width="303dp"
+                android:layout_width="338dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
@@ -89,7 +89,7 @@
                 />
             <TextView
                 android:text="от 5000"
-                android:layout_width="303dp"
+                android:layout_width="338dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
@@ -103,7 +103,7 @@
 
 
             <TextView
-                android:text="Description"
+                android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -111,7 +111,8 @@
                 android:textColor="@android:color/black"
                 android:id="@+id/summary"
                 android:lineSpacingExtra="5dp"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="20dp"
+                android:foreground="@drawable/whitegradient"/>
 
 
 
@@ -155,8 +156,8 @@
                 android:drawablePadding="10dp"
                 android:drawableStart="@drawable/ic_location_on_road"
                 android:padding="15dp"
-                android:paddingLeft="95dp"
-                android:paddingStart="95dp"
+                android:paddingLeft="100dp"
+                android:paddingStart="100dp"
                 android:text="@string/make_way"
                 android:gravity="left"
                 android:layout_marginRight="20dp"
@@ -176,8 +177,8 @@
                 android:drawablePadding="10dp"
                 android:drawableStart="@drawable/ic_cab"
                 android:padding="15dp"
-                android:paddingLeft="105dp"
-                android:paddingStart="105dp"
+                android:paddingLeft="110dp"
+                android:paddingStart="110dp"
                 android:text="@string/call_taxi"
                 android:gravity="left"
                 android:layout_marginRight="20dp"

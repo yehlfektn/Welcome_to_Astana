@@ -89,7 +89,7 @@
                     android:background="@drawable/rectangleshape"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="2500 м"
+                    android:text="2500.0 kм"
                     />
 
 

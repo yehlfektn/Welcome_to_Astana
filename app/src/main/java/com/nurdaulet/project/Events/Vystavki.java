@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Vystavki extends Fragment {
 
-    private final String Url = "http://welcometoastana.kz/api/v1/places/events?limit=200&page=13";
+    private final String Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=13";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
