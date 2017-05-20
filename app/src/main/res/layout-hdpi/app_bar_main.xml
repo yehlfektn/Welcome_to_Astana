@@ -22,13 +22,13 @@
 
             >
 
-           <ImageView
-               android:layout_width="80dp"
-               android:layout_height="match_parent"
-               android:src="@drawable/wta_logo_white"
-               android:layout_marginLeft="85dp"
-               android:layout_marginStart="85dp"
-               />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/wta_logo_white"
+                android:layout_marginLeft="65dp"
+                android:layout_marginStart="65dp"
+                />
 
 
 

@@ -20,15 +20,14 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="214dp" />
+            android:layout_height="258dp"/>
 
         <LinearLayout
             android:id="@+id/LinearSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal"
-            android:layout_below="@id/viewPager"
             android:gravity="center_vertical|center_horizontal"/>
 
 
@@ -36,14 +35,15 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_weight="0.08"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:text="Name"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"/>
+            android:textSize="16sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"/>
 
 
         <TextView
@@ -52,30 +52,32 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:drawableLeft="@drawable/ic_map_markerblack"
-            android:drawableStart="@drawable/ic_map_markerblack"
+            android:drawableLeft="@drawable/ic_map_marker"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_map_marker"
             android:text="Не указано"
             android:textColor="@android:color/darker_gray"
-            android:textSize="18sp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"/>
+            android:textSize="12sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp">
+            android:layout_marginStart="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginBottom="5dp">
 
             <TextView
-                android:id="@+id/category"
-                android:layout_width="194dp"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/bullet"
-                android:drawablePadding="5dp"
-                android:drawableStart="@drawable/bullet"
                 android:text="Category"
                 android:textColor="#FF8B00"
-                android:textSize="18sp" />
+                android:layout_width="194dp"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/bullet"
+                android:drawableLeft="@drawable/bullet"
+                android:drawablePadding="5dp"
+                android:textSize="12sp"
+                android:id="@+id/category" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,34 +86,48 @@
                 android:gravity="end">
 
                 <TextView
+                    android:layout_marginTop="2dp"
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/rectangleshape"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="2500.0 kм"
+                    android:gravity="bottom"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    />
-
-
+                    android:text="2500.0 kм"
+                    android:textSize="12sp"/>
             </LinearLayout>
 
         </LinearLayout>
 
-        <TextView
-            android:text="Description"
+
+        <at.blogc.android.views.ExpandableTextView
+            android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:textColor="@android:color/black"
             android:id="@+id/summary"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:lineSpacingExtra="5dp"
+            android:maxLines="6"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            app:animation_duration="1000"/>
+        <TextView
+            android:text="Читать дальше"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/openCollapse"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
             android:layout_marginBottom="20dp"/>
-
 
         <fragment
             android:layout_width="match_parent"
@@ -182,7 +198,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:onClick="CallTaxi"/>
+            android:onClick="CallTaxi"
+            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
 </ScrollView>

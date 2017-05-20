@@ -18,7 +18,7 @@ public class KudaShoditListItem {
 
 
     public KudaShoditListItem(String name, String description, String imageUrl, String category,String lon, String lat, int id,String address){
-        this.name = name+" >";
+        this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
         this.category = category;

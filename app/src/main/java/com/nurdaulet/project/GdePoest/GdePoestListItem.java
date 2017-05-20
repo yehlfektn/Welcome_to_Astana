@@ -19,7 +19,7 @@ public class GdePoestListItem {
 
 
     public GdePoestListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address,int id){
-        this.name = name+" >";
+        this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
         this.category = category;

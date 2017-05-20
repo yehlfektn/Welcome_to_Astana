@@ -53,11 +53,6 @@ public class AllEvents extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(MainActivity.eventsItemList != null){
-            if(MainActivity.eventsItemList.size()>0){
-                eventsItemLists = MainActivity.eventsItemList;
-            }
-        }
 
         if(eventsItemLists == null) {
             eventsItemLists = new ArrayList<>();
@@ -78,17 +73,19 @@ public class AllEvents extends Fragment {
                         public void onItemClick(View view, int position) {
                             //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), EventsDescription.class);
-                            intent.putExtra("name", eventsItemLists.get(position).getName());
-                            intent.putExtra("id", eventsItemLists.get(position).getId());
-                            intent.putExtra("description", eventsItemLists.get(position).getSummary());
-                            intent.putExtra("imageUrl", eventsItemLists.get(position).getImageUrl());
-                            intent.putExtra("category", eventsItemLists.get(position).getCategory());
-                            intent.putExtra("longit", eventsItemLists.get(position).getLon());
-                            intent.putExtra("latit", eventsItemLists.get(position).getLat());
+                            final EventsItemList eventsItemList = eventsItemLists.get(position);
+                            intent.putExtra("name", eventsItemList.getName());
+                            intent.putExtra("id", eventsItemList.getId());
+                            intent.putExtra("description", eventsItemList.getSummary());
+                            intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+                            intent.putExtra("category", eventsItemList.getCategory());
+                            intent.putExtra("longit", eventsItemList.getLon());
+                            intent.putExtra("latit", eventsItemList.getLat());
                             intent.putExtra("url",Url);
-                            intent.putExtra("address",eventsItemLists.get(position).getAddress());
-                            intent.putExtra("money",eventsItemLists.get(position).getMoney());
-                            intent.putExtra("date",eventsItemLists.get(position).getDate());
+                            intent.putExtra("address",eventsItemList.getAddress());
+                            intent.putExtra("money",eventsItemList.getMoney());
+                            intent.putExtra("date",eventsItemList.getDate());
+                            intent.putExtra("urlItem",eventsItemList.getUrl());
                             startActivityForResult(intent, 0);
                         }
 
@@ -97,8 +94,7 @@ public class AllEvents extends Fragment {
                             // do whatever
                         }
                     })
-            );
-        }
+            );        }
 
         return v;
     }
@@ -139,14 +135,15 @@ public class AllEvents extends Fragment {
                                 o.getInt("id"),
                                 o.getString("date"),
                                 o.getString("address"),
-                                "от 5000тг"
+                                "от 5000тг",
+                                o.getString("url")
                         );
 
                         eventsItemLists.add(item);
 
                     }
-                    MainActivity.eventsItemList = eventsItemLists;
-                    Log.d("Sightseeings","MainActivity got items");
+
+
                     adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -156,17 +153,19 @@ public class AllEvents extends Fragment {
                                 public void onItemClick(View view, int position) {
                                     //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), EventsDescription.class);
-                                    intent.putExtra("name", eventsItemLists.get(position).getName());
-                                    intent.putExtra("id", eventsItemLists.get(position).getId());
-                                    intent.putExtra("description", eventsItemLists.get(position).getSummary());
-                                    intent.putExtra("imageUrl", eventsItemLists.get(position).getImageUrl());
-                                    intent.putExtra("category", eventsItemLists.get(position).getCategory());
-                                    intent.putExtra("longit", eventsItemLists.get(position).getLon());
-                                    intent.putExtra("latit", eventsItemLists.get(position).getLat());
+                                    final EventsItemList eventsItemList = eventsItemLists.get(position);
+                                    intent.putExtra("name", eventsItemList.getName());
+                                    intent.putExtra("id", eventsItemList.getId());
+                                    intent.putExtra("description", eventsItemList.getSummary());
+                                    intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+                                    intent.putExtra("category", eventsItemList.getCategory());
+                                    intent.putExtra("longit", eventsItemList.getLon());
+                                    intent.putExtra("latit", eventsItemList.getLat());
                                     intent.putExtra("url",Url);
-                                    intent.putExtra("address",eventsItemLists.get(position).getAddress());
-                                    intent.putExtra("money",eventsItemLists.get(position).getMoney());
-                                    intent.putExtra("date",eventsItemLists.get(position).getDate());
+                                    intent.putExtra("address",eventsItemList.getAddress());
+                                    intent.putExtra("money",eventsItemList.getMoney());
+                                    intent.putExtra("date",eventsItemList.getDate());
+                                    intent.putExtra("urlItem",eventsItemList.getUrl());
                                     startActivityForResult(intent, 0);
                                 }
 

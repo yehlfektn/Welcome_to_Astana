@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity
 
     String TAG = "MainActivity";
     public static Location  gpsLocation;
-    public static List<EventsItemList> eventsItemList;
     private Boolean exit = false;
 
 
@@ -83,12 +82,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         //end of generated code
 
+
         SmartLocation.with(this).location()
-                .oneFix()
                 .start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
                         gpsLocation = location;
+                        Log.d("MainActivity", "Gsp Location was set: "+location.toString());
                         //Toast.makeText(getApplicationContext(),"location: "+location,Toast.LENGTH_LONG).show();
                     }
                 });
@@ -113,6 +113,16 @@ public class MainActivity extends AppCompatActivity
 
         elv.setAdapter(adapter);
 
+        elv.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            int pixels;
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                pixels = (int) (580 * scale + 0.5f);
+                params.height=pixels;
+                linearLayout.setLayoutParams(params);
+            }
+        });
+
         elv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousItem = -1;
             int pixels;
@@ -121,9 +131,10 @@ public class MainActivity extends AppCompatActivity
             public void onGroupExpand(int groupPosition) {
                 if(groupPosition != previousItem )
                     elv.collapseGroup(previousItem);
+
                 previousItem = groupPosition;
                 if(groupPosition == 0){
-                    pixels = (int) (760 * scale + 0.5f);
+                    pixels = (int) (730 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 1 || groupPosition==2){
@@ -131,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 3){
-                    pixels = (int) (750 * scale + 0.5f);
+                    pixels = (int) (730 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 4){
@@ -143,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                     for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
                         fm.popBackStack();
                     }
-                    pixels = (int) (600 * scale + 0.5f);
+                    pixels = (int) (580 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff366AFE, 0xff1A44BD});
@@ -331,8 +342,6 @@ public class MainActivity extends AppCompatActivity
         t1.items.add("Экскурсии");
         t1.items.add("Шоппинг и Развлечения");
 
-
-
         group t2 = new group("ГДЕ ПОЕСТЬ");
         t2.items.add("Кафе");
         t2.items.add("Рестораны");
@@ -389,20 +398,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     public void Xbutton(View v) {
 
@@ -426,6 +421,8 @@ public class MainActivity extends AppCompatActivity
     public void goToVk(View view) {
         goToUrl("https://vk.com/welcometoastana");
     }
+    public void goToExpo(View view){goToUrl("https://tickets.expo2017astana.com");}
+
 
     private void goToUrl(String url) {
         Uri uriUrl = Uri.parse(url);

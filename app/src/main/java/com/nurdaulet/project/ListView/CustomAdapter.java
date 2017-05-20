@@ -5,6 +5,7 @@ package com.nurdaulet.project.ListView;
  */
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         TextView nameTv=(TextView) convertView.findViewById(R.id.textView1);
         ImageView img=(ImageView) convertView.findViewById(R.id.imageView1);
         nameTv.setText(child);
+        nameTv.setTextColor(ContextCompat.getColor(c, R.color.gray));
         //GET TEAM NAME
         String groupName= getGroup(groupPos).toString();
         //ASSIGN IMAGES TO PLAYERS ACCORDING TO THEIR NAMES AN TEAMS

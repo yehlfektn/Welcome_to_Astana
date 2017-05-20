@@ -20,7 +20,7 @@ public class HotelsListItem {
 
 
     public HotelsListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address, int Stars, String website,int id){
-        this.name = name+" >";
+        this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
         this.category = category;

@@ -10,10 +10,6 @@
     android:background="@drawable/side_nav_bar"
     android:gravity="top"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:weightSum="1"
 
@@ -24,14 +20,21 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_marginTop="30dp"
-        android:layout_height="31dp">
+        android:layout_height="31dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        >
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cross_symbol"
             android:id="@+id/imgX"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/white"
             android:onClick="Xbutton"
+            android:src="@drawable/ic_cross_symbol"
 
 
             />
@@ -42,6 +45,10 @@
             android:layout_height="match_parent"
             android:gravity="end"
             android:layout_marginTop="5dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             >
 
         <TextView
@@ -51,7 +58,7 @@
             android:id="@+id/txtKaz"
             android:gravity="end"
             android:textSize="@dimen/font_size"
-            android:textColor="#C1C1C1"
+            android:textColor="@android:color/black"
             android:layout_marginLeft="15dp"
             />
         <TextView
@@ -89,7 +96,15 @@
         android:id="@+id/searchTxt"
         android:layout_marginTop="10dp"
         android:hint="@string/what_are_you_looking_for"
-        android:textColorHint="#C1C1C1"/>
+        android:textColorHint="#C1C1C1"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <ExpandableListView
         android:id="@+id/expandableListView1"
@@ -99,16 +114,24 @@
         android:groupIndicator="@null"
         android:childIndicator="@null"
         android:listSelector="@android:color/transparent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
     </ExpandableListView>
 
+    <View
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#F6FAFB"/>
     <LinearLayout
+        android:background="#F6FAFB"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:gravity="center"
-        android:layout_marginTop="30dp">
+        >
 
 
         <ImageView
@@ -143,7 +166,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="110dp"
+        android:background="#F6FAFB"
+        >
 
         <TextView
             android:layout_marginTop="20dp"
@@ -158,7 +183,7 @@
 
         <ImageView
             android:layout_width="160dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:adjustViewBounds="true"
             android:layout_gravity="center"
             android:src="@drawable/ibec"

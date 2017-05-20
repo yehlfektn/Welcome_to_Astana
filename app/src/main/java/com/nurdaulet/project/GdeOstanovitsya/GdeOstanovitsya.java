@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nurdaulet.project.R;
+import com.nurdaulet.project.utility.FixedSpeedScroller;
 
 import java.lang.reflect.Field;
 
@@ -39,6 +40,17 @@ public class GdeOstanovitsya extends Fragment {
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
         int position = getArguments().getInt("position");
         viewPager.setCurrentItem(position);
+        try {
+            Field mScroller;
+            mScroller = ViewPager.class.getDeclaredField("mScroller");
+            mScroller.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller(viewPager.getContext());
+            // scroller.setFixedDuration(5000);
+            mScroller.set(viewPager, scroller);
+        } catch (NoSuchFieldException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException e) {
+        }
 
 
         tabLayout.post(new Runnable() {

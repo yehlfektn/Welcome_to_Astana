@@ -5,10 +5,14 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +30,7 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,6 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.text.Text;
 import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
+import com.nurdaulet.project.utility.DashedUnderlineSpan;
 import com.nurdaulet.project.utility.ViewPagerAdapter;
 
 import org.json.JSONArray;
@@ -63,6 +69,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import at.blogc.android.views.ExpandableTextView;
 
 
 public class EventsDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -93,24 +101,21 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-
-
         TextView name = (TextView) findViewById(R.id.name);
-        TextView summary = (TextView) findViewById(R.id.summary);
         TextView address = (TextView) findViewById(R.id.address);
         TextView date = (TextView)findViewById(R.id.date);
         TextView money = (TextView)findViewById(R.id.money);
         Button frameButton = (Button)findViewById(R.id.buttonFrame);
-
         frameButton.bringToFront();
+
         address.setText(getIntent().getStringExtra("address"));
         date.setText(getIntent().getStringExtra("date"));
         money.setText(getIntent().getStringExtra("money"));
         name.setText(getIntent().getStringExtra("name"));
-        summary.setText(getIntent().getStringExtra("description"));
+
         final String Url=getIntent().getStringExtra("url");
         Log.d("DescriptionActivity", Url);
+
         if(MainActivity.gpsLocation != null){
 
             lat2 = MainActivity.gpsLocation.getLatitude();
@@ -118,12 +123,92 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
 
         }
+        //---------------Animated text--------------
+        final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
+        final String big = getIntent().getStringExtra("description");
+        expandableTextView.setText(big);
+        final Shader p = expandableTextView.getPaint().getShader();
 
-        //latStr = getIntent().getStringExtra("latit");
-        //lngStr = getIntent().getStringExtra("longit");
-        if(getIntent().getStringExtra("description").length()>10){
-            makeTextViewResizable(summary, 4, "Читать дальше", true);
-        }
+        final Shader textShader=new LinearGradient(0, 100, 0, 250, new int[]{Color.BLACK,Color.WHITE}, new float[]{0, 1}, Shader.TileMode.CLAMP);
+        expandableTextView.getPaint().setShader(textShader);
+        final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
+
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+
+        int intSpannableStringBuilderLength = spannableStringBuilder.length();
+
+        spannableStringBuilder.setSpan(
+                new DashedUnderlineSpan(OpenCollapse, ContextCompat.getColor(this, R.color.gray),
+                        getResources().getDimension(R.dimen.dus_stroke_thickness),
+                        getResources().getDimension(R.dimen.dus_dash_path),
+                        getResources().getDimension(R.dimen.dus_offset_y),
+                        getResources().getDimension(R.dimen.dus_spacing_extra)), 0,
+                intSpannableStringBuilderLength, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        OpenCollapse.setText(spannableStringBuilder);
+
+
+        expandableTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v){
+                if (expandableTextView.isExpanded())
+                {
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+                    OpenCollapse.setText("");
+                }
+            }
+
+        });
+        OpenCollapse.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View v)
+            {
+                if (expandableTextView.isExpanded())
+                {
+                    //expandableTextView.getPaint().setShader(textShader);
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+
+                    OpenCollapse.setText("");
+                }
+            }
+        });
+
+
+        //----------------------End of Animated Text --------------------
 
 
         if (googleServicesAvailable()) {
@@ -176,7 +261,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                                 for (int j = 0; j < arr.length(); j++) {
                                     imageUrls.add(arr.get(j).toString());
-                                    Log.d("MainActivity", arr.get(j).toString());
                                 }
                             }
                         }
@@ -397,12 +481,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             });
         }
 
-
-        //goToLocationZoom(39.008224, -76.8984527, 15);
-        //goToLocationZoom(lat, lng, 15);
-        //goToLocationZoom(51.128249084968, 71.430494032634, 15);
-        //setMarker(getIntent().getStringExtra("name"), lat, lng);
-
     }
 
     private void goToLocation(double lat, double lng) {
@@ -415,18 +493,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
         mGoogleMap.moveCamera(update);
-    }
-
-    Marker marker;
-
-    public void geoLocate(){
-
-        String locality = getIntent().getStringExtra("name");
-
-        goToLocationZoom(lat, lng, 15);
-
-        setMarker(locality, lat, lng);
-
     }
 
     private void setMarker(String locality, double lat, double lng) {
@@ -499,7 +565,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = getIntent().getStringExtra("description");
+        String shareBody = getIntent().getStringExtra("name") + getIntent().getStringExtra("urlItem");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));

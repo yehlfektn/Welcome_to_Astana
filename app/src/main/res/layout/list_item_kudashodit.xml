@@ -27,13 +27,13 @@
                 android:layout_height="104dp"
                 tools:text="Концерт Филиппа Киркорова"
                 android:textColor="@android:color/background_light"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="normal|bold"
                 android:layout_marginLeft="@dimen/marginLeft"
                 android:layout_marginStart="@dimen/marginLeft"
                 android:layout_gravity="bottom"
                 android:gravity="bottom"
-                android:layout_marginBottom="35dp"/>
+                android:layout_marginBottom="27dp"/>
 
             <LinearLayout
                 android:layout_gravity="bottom"
@@ -55,7 +55,7 @@
                     android:drawableStart="@drawable/bullet"
                     android:text="Астана"
                     android:textColor="#FF8B00"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
 
                     />
                 <LinearLayout
@@ -67,9 +67,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:id="@+id/distance"
-                        android:layout_height="26dp"
+                        android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="2500.0 kм"
+                        android:textSize="12sp"
                         android:background="@drawable/rectangleshape"
                         android:layout_marginRight="10dp"
                         android:layout_marginEnd="10dp"

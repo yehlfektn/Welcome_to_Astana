@@ -74,12 +74,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
 
             distanceDouble = startPoint.distanceTo(endPoint);
             //Intent intent = new Intent(get, DescriptionActivity.class);
+
+            if(distanceDouble > 5000000){
+                holder.distance.setVisibility(View.GONE);
+
+            }else{
             if (distanceDouble > 1000) {
                 holder.distance.setText(" " + (int) distanceDouble / 1000 + "." + (int) ((distanceDouble % 1000) / 100) + "км ");
             } else {
                 holder.distance.setText(" " + (int) distanceDouble + "м ");
             }
-        }
+        }}
         Glide.with(context)
                 .load(kudaShoditListItem.getImageUrl())
                 .placeholder(R.drawable.placeholder)

@@ -22,4 +22,5 @@
     <string name="share">Поделиться</string>
     <string name="call_taxi">Вызвать такси</string>
     <string name="make_way">Проложить маршрут</string>
+    <string name="buy">КУПИТЬ</string>
 </resources>

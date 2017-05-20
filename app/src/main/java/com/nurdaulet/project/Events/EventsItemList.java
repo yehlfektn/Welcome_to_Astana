@@ -15,11 +15,12 @@ public class EventsItemList {
     private String date;
     private String address;
     private String money;
+    private String url;
 
 
 
-    public EventsItemList(String name, String description, String imageUrl, String category,String lon, String lat, int id,String data,String address, String money){
-        this.name = name+" >";
+    public EventsItemList(String name, String description, String imageUrl, String category,String lon, String lat, int id,String data,String address, String money, String url){
+        this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -27,13 +28,9 @@ public class EventsItemList {
         this.lat=lat;
         this.id = id;
         this.date = data;
-        if(address.length()>2){
-            this.address = address;
-        }else{
-            this.address = "не указано";
-        }
-
+        this.address = address;
         this.money = money;
+        this.url = url;
     }
 
     public String getName() {
@@ -54,6 +51,10 @@ public class EventsItemList {
 
     public String getLat() {
         return lat;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public String getDate() {

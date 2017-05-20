@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="-65dp"
         android:layout_gravity="start"
-        android:background="@android:color/white"
+        android:background="#F6FAFB"
         app:headerLayout="@layout/nav_header_main"
         />
 

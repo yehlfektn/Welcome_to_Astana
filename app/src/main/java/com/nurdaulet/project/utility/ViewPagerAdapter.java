@@ -49,6 +49,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) itemView.findViewById(R.id.viewPagerItem_image1);
         Glide.with(context).load(arrayList.get(position))
                 .placeholder(R.drawable.placeholder)
+                .centerCrop()
                 .into(imageView);
 
         container.addView(itemView);
