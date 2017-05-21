@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:layout_marginTop="56dp">
+    android:layout_marginTop="56dp"
+    android:fillViewport="true">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -13,18 +13,18 @@
             android:id="@+id/buttonFrame"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:text="@string/buy"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="200dp"
+            android:background="@drawable/circle"
             android:drawableBottom="@drawable/ic_right_arrow_white"
             android:drawablePadding="-30dp"
-            android:paddingTop="-30dp"
-            android:paddingBottom="20dp"
-            android:layout_gravity="end"
             android:gravity="center"
-            android:textSize="15sp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="200dp"
-            android:background="@drawable/circle"/>
+            android:paddingBottom="20dp"
+            android:paddingTop="-30dp"
+            android:text="@string/buy"
+            android:textSize="15sp" />
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,10 +33,10 @@
             android:id="@+id/content_description_"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:showIn="@layout/activity_description"
             android:orientation="vertical"
-            android:weightSum="1">
+            android:weightSum="1"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:showIn="@layout/activity_description">
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewPager"
@@ -47,9 +47,9 @@
                 android:id="@+id/LinearSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal" />
 
 
             <TextView
@@ -57,98 +57,98 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
                 android:text="Name"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"/>
+                android:textSize="16sp" />
 
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
                 android:drawableLeft="@drawable/ic_map_marker"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/ic_map_marker"
                 android:text="Не указано"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="12sp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
                 android:drawableLeft="@drawable/ic_calendar"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/ic_calendar"
                 android:text="Не указано"
                 android:textColor="#B9B9B9"
-                android:textSize="12sp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/money"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
                 android:drawableLeft="@drawable/ic_money_purse_icon"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/ic_money_purse_icon"
                 android:text="от 5000"
                 android:textColor="#B9B9B9"
-                android:textSize="12sp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"/>
+                android:textSize="12sp" />
 
 
             <at.blogc.android.views.ExpandableTextView
-                android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
+                android:id="@+id/summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:textColor="@android:color/black"
-                android:id="@+id/summary"
-                android:layout_marginRight="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:ellipsize="end"
                 android:lineSpacingExtra="5dp"
                 android:maxLines="6"
-                android:ellipsize="end"
+                android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
+                android:textColor="@android:color/black"
                 android:textSize="12sp"
                 app:animation_duration="1000"/>
             <TextView
-                android:text="Читать дальше"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
+                android:id="@+id/openCollapse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/openCollapse"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:text="Читать дальше"
                 android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:layout_marginBottom="20dp"/>
+                android:textSize="12sp" />
 
 
 
 
 
             <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.MapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:name="com.google.android.gms.maps.MapFragment"
-                android:id="@+id/map"
                 />
 
 
@@ -157,64 +157,64 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/rectangleshape"
                 android:drawableLeft="@drawable/ic_share_symbol"
                 android:drawablePadding="10dp"
                 android:drawableStart="@drawable/ic_share_symbol"
+                android:gravity="left"
+                android:onClick="ShareEvents"
                 android:padding="15dp"
                 android:paddingLeft="110dp"
                 android:paddingStart="110dp"
-                android:text="@string/share"
-                android:gravity="left"
-                android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:onClick="ShareEvents"/>
+                android:text="@string/share" />
 
             <TextView
                 android:id="@+id/wayButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/rectangleshape"
                 android:drawableLeft="@drawable/ic_location_on_road"
                 android:drawablePadding="10dp"
                 android:drawableStart="@drawable/ic_location_on_road"
+                android:gravity="start"
+                android:onClick="GoogleMapEvents"
                 android:padding="15dp"
                 android:paddingLeft="90dp"
                 android:paddingStart="90dp"
-                android:text="@string/make_way"
-                android:gravity="start"
-                android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:onClick="GoogleMapEvents"/>
+                android:text="@string/make_way" />
 
             <TextView
                 android:id="@+id/taxiButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/rectangleshape"
                 android:drawableLeft="@drawable/ic_cab"
                 android:drawablePadding="10dp"
                 android:drawableStart="@drawable/ic_cab"
+                android:gravity="left"
+                android:onClick="CallTaxiEvent"
                 android:padding="15dp"
                 android:paddingLeft="110dp"
                 android:paddingStart="110dp"
-                android:text="@string/call_taxi"
-                android:gravity="left"
-                android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:onClick="CallTaxiEvent"
-                android:layout_marginBottom="20dp"/>
+                android:text="@string/call_taxi" />
         </LinearLayout>
     </FrameLayout>
 

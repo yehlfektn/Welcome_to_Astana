@@ -18,19 +18,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    afterEvaluate {
-        tasks.matching {
-            it.name.startsWith('dex')
-        }.each { dx ->
-            if (dx.additionalParameters == null) {
-                dx.additionalParameters = []
-            }
-            dx.additionalParameters += '--multi-dex' // enable multidex
 
-            // optional
-            // dx.additionalParameters += "--main-dex-list=$projectDir/<filename>".toString() // enable the main-dex-list
-        }
-    }
 }
 
 dependencies {
@@ -49,7 +37,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.google.android.gms:play-services-vision:10.2.0'
     compile 'com.android.support:mediarouter-v7:25.3.1'
-    compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.firebase:firebase-core:10.2.0'
     compile 'at.blogc:expandabletextview:1.0.3'
 

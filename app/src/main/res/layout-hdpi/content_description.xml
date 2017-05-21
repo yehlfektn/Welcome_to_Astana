@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:fillViewport="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,11 +11,11 @@
         android:id="@+id/content_description_"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="1"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.nurdaulet.recycleview.Description_Activity"
-        tools:showIn="@layout/activity_description"
-        android:orientation="vertical"
-        android:weightSum="1">
+        tools:showIn="@layout/activity_description">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
@@ -26,9 +26,9 @@
             android:id="@+id/LinearSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical|center_horizontal"/>
+            android:layout_marginTop="-2dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal" />
 
 
         <TextView
@@ -36,62 +36,62 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:text="Name"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"/>
+            android:textSize="16sp" />
 
 
         <TextView
             android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:drawableLeft="@drawable/ic_map_marker"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_map_marker"
             android:text="Не указано"
             android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"/>
+            android:textSize="12sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="22dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="22dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginStart="22dp">
 
             <TextView
-                android:text="Category"
-                android:textColor="#FF8B00"
+                android:id="@+id/category"
                 android:layout_width="194dp"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/bullet"
                 android:drawableLeft="@drawable/bullet"
                 android:drawablePadding="5dp"
-                android:textSize="12sp"
-                android:id="@+id/category" />
+                android:drawableStart="@drawable/bullet"
+                android:text="Category"
+                android:textColor="#FF8B00"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_marginTop="2dp"
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
+                    android:layout_marginTop="2dp"
                     android:background="@drawable/rectangleshape"
                     android:gravity="bottom"
                     android:paddingLeft="5dp"
@@ -104,36 +104,36 @@
 
 
         <at.blogc.android.views.ExpandableTextView
-            android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
+            android:id="@+id/summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textColor="@android:color/black"
-            android:id="@+id/summary"
-            android:layout_marginRight="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:ellipsize="end"
             android:lineSpacingExtra="5dp"
             android:maxLines="6"
-            android:ellipsize="end"
-            android:textSize="12sp"
+            android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
             app:animation_duration="1000"/>
         <TextView
-            android:text="Читать дальше"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
+            android:id="@+id/openCollapse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/openCollapse"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:text="Читать дальше"
             android:textColor="@color/gray"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="14sp" />
 
         <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/map"
             />
 
 
@@ -142,64 +142,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/rectangleshape"
             android:drawableLeft="@drawable/ic_share_symbol"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_share_symbol"
+            android:gravity="left"
+            android:onClick="Share"
             android:padding="15dp"
             android:paddingLeft="100dp"
             android:paddingStart="100dp"
-            android:text="@string/share"
-            android:gravity="left"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:onClick="Share"/>
+            android:text="@string/share" />
 
         <TextView
             android:id="@+id/wayButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/rectangleshape"
             android:drawableLeft="@drawable/ic_location_on_road"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_location_on_road"
+            android:gravity="left"
+            android:onClick="GoogleMap"
             android:padding="15dp"
             android:paddingLeft="85dp"
             android:paddingStart="85dp"
-            android:text="@string/make_way"
-            android:gravity="left"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:onClick="GoogleMap"/>
+            android:text="@string/make_way" />
 
         <TextView
             android:id="@+id/taxiButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/rectangleshape"
             android:drawableLeft="@drawable/ic_cab"
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_cab"
+            android:gravity="left"
+            android:onClick="CallTaxi"
             android:padding="15dp"
             android:paddingLeft="95dp"
             android:paddingStart="95dp"
-            android:text="@string/call_taxi"
-            android:gravity="left"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:onClick="CallTaxi"
-            android:layout_marginBottom="20dp"/>
+            android:text="@string/call_taxi" />
 
     </LinearLayout>
 </ScrollView>

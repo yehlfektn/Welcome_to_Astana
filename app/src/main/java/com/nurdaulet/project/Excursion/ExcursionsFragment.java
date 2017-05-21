@@ -74,4 +74,20 @@ public class ExcursionsFragment extends Fragment {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            Field childFragmentManager = Fragment.class
+                    .getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

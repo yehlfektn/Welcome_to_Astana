@@ -1,27 +1,26 @@
 package com.nurdaulet.project;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
-import android.os.Handler;
-import android.support.multidex.MultiDex;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -30,7 +29,6 @@ import android.widget.Toast;
 
 import com.nurdaulet.project.Entertainment.EntertainmentFragment;
 import com.nurdaulet.project.Events.EventsFragment;
-import com.nurdaulet.project.Events.EventsItemList;
 import com.nurdaulet.project.Excursion.ExcursionsFragment;
 import com.nurdaulet.project.GdeOstanovitsya.GdeOstanovitsya;
 import com.nurdaulet.project.GdePoest.GdePoest;
@@ -44,7 +42,6 @@ import com.nurdaulet.project.Pamyatka.Transport;
 import com.nurdaulet.project.Sightseeings.SightSeeingsFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -54,8 +51,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    String TAG = "MainActivity";
     public static Location  gpsLocation;
+    String TAG = "MainActivity";
     private Boolean exit = false;
 
 
@@ -66,7 +63,6 @@ public class MainActivity extends AppCompatActivity
         //setting navigation drawer code was generated
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MultiDex.install(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -200,6 +196,8 @@ public class MainActivity extends AppCompatActivity
                             getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDestroy();
                         }
                     }
+                }
+                for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
                     fm.popBackStack();
                 }
 
