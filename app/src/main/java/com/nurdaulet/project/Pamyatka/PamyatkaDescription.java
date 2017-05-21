@@ -9,13 +9,9 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -98,7 +94,6 @@ public class PamyatkaDescription extends AppCompatActivity {
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
                     expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
@@ -114,7 +109,6 @@ public class PamyatkaDescription extends AppCompatActivity {
             {
                 if (expandableTextView.isExpanded())
                 {
-                    //expandableTextView.getPaint().setShader(textShader);
                     expandableTextView.collapse();
                     OpenCollapse.setText(spannableStringBuilder);
                     final Handler handler = new Handler();
@@ -129,7 +123,6 @@ public class PamyatkaDescription extends AppCompatActivity {
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
                     expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
@@ -147,20 +140,19 @@ public class PamyatkaDescription extends AppCompatActivity {
                 .placeholder(R.drawable.placeholder)
                 .into(image);
 
-
-
-
-
-
-
     }
-
-
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_righ);
     }
 
 

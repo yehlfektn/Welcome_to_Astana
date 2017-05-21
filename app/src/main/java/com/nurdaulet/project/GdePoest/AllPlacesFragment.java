@@ -1,7 +1,6 @@
 package com.nurdaulet.project.GdePoest;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.nurdaulet.project.R;
-import com.nurdaulet.project.Sightseeings.DescriptionActivity;
 import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
 import org.json.JSONArray;
@@ -82,6 +79,7 @@ public class AllPlacesFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -150,6 +148,7 @@ public class AllPlacesFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

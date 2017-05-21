@@ -1,17 +1,14 @@
 package com.nurdaulet.project.GdePoest;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,25 +31,21 @@ import java.util.List;
  */
 public class CafeFragment extends Fragment {
 
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=10";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private final String Url = "http://89.219.32.107/api/v1/foods?limit=5&page=1&category=10";
-
 
     public CafeFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_cafe, container, false);
-
-
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleCafe);
+        View v = inflater.inflate(R.layout.fragment_bars_fragments, container, false);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBars);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -85,6 +78,7 @@ public class CafeFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -99,14 +93,11 @@ public class CafeFragment extends Fragment {
     }
 
     private void loadRecyclerView() {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -149,6 +140,7 @@ public class CafeFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -169,7 +161,7 @@ public class CafeFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
+
 
             }
         });
@@ -177,5 +169,6 @@ public class CafeFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
 
 }

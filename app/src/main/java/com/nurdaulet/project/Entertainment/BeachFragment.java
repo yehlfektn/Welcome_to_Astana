@@ -84,6 +84,7 @@ public class BeachFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -146,6 +147,7 @@ public class BeachFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

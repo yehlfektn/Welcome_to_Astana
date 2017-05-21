@@ -17,7 +17,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.nurdaulet.project.GdePoest.GdePoestDescription;
 import com.nurdaulet.project.R;
 import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
@@ -86,6 +85,7 @@ public class AllHotels extends Fragment {
                             intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                             intent.putExtra("stars",hotelsListItems.get(position).getStars());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -153,6 +153,7 @@ public class AllHotels extends Fragment {
                                     intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                                     intent.putExtra("stars",hotelsListItems.get(position).getStars());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

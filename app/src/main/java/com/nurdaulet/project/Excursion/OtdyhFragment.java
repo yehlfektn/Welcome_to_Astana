@@ -49,7 +49,6 @@ public class OtdyhFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_architecture, container, false);
 
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleArchitecture);
@@ -84,6 +83,7 @@ public class OtdyhFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -120,7 +120,6 @@ public class OtdyhFragment extends Fragment {
                                 o.getInt("id"),
                                 o.getString("address")
                         );
-
                         kudaShoditListItems.add(item);
 
                     }
@@ -144,6 +143,7 @@ public class OtdyhFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -175,3 +175,4 @@ public class OtdyhFragment extends Fragment {
     }
 
 }
+

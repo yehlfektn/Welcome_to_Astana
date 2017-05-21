@@ -40,7 +40,6 @@ public class ClubsFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
 
-
     public ClubsFragment() {
         // Required empty public constructor
     }
@@ -50,10 +49,10 @@ public class ClubsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_clubs, container, false);
+        View v = inflater.inflate(R.layout.fragment_beach, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleClubs);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -85,6 +84,7 @@ public class ClubsFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -147,6 +147,7 @@ public class ClubsFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -175,6 +176,5 @@ public class ClubsFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
-
 
 }

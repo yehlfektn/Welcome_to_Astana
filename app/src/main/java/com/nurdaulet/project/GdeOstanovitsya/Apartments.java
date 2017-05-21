@@ -83,6 +83,7 @@ public class Apartments extends Fragment {
                             intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                             intent.putExtra("stars",hotelsListItems.get(position).getStars());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -148,6 +149,7 @@ public class Apartments extends Fragment {
                                     intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                                     intent.putExtra("stars",hotelsListItems.get(position).getStars());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

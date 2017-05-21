@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,7 +33,6 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class DosugFragment extends Fragment {
-
     private static final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1&category=51";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -50,9 +48,9 @@ public class DosugFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_dosug, container, false);
+        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleDosug);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleArchitecture);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -64,6 +62,7 @@ public class DosugFragment extends Fragment {
             loadRecyclerView();
 
         }else{
+
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
@@ -83,6 +82,7 @@ public class DosugFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -93,12 +93,11 @@ public class DosugFragment extends Fragment {
             );
         }
 
-
-
         return v;
     }
 
     private void loadRecyclerView() {
+
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
@@ -124,6 +123,7 @@ public class DosugFragment extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
+                    Log.d("Sightseeings", "AdapterAttached");
                     adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -143,6 +143,7 @@ public class DosugFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -151,6 +152,8 @@ public class DosugFragment extends Fragment {
                                 }
                             })
                     );
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -162,11 +165,13 @@ public class DosugFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
                 Log.d("Sightseeings",error.toString());
+
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
 
 }

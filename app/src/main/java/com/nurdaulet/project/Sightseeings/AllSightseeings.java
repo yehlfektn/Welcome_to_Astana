@@ -1,25 +1,17 @@
 package com.nurdaulet.project.Sightseeings;
 
 
-import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -46,9 +38,9 @@ import java.util.List;
 public class AllSightseeings extends Fragment implements LocationListener {
 
     private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1";
+    double lat2, lng2;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    double lat2, lng2;
     private List<KudaShoditListItem> kudaShoditListItems;
 
 
@@ -96,6 +88,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -163,6 +156,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

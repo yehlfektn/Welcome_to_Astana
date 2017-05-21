@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,6 +40,7 @@ public class HistoryFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
 
+
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -50,21 +50,22 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_history, container, false);
+        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleHistory);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleArchitecture);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(kudaShoditListItems ==null) {
+        if (kudaShoditListItems == null) {
             kudaShoditListItems = new ArrayList<>();
         }
-        if(kudaShoditListItems.size()==0){
+        if (kudaShoditListItems.size() == 0) {
 
             loadRecyclerView();
 
-        }else{
-            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
+        } else {
+
+            adapter = new RecycleAdapter(kudaShoditListItems, getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -74,14 +75,16 @@ public class HistoryFragment extends Fragment {
                             //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), DescriptionActivity.class);
                             intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
+                            intent.putExtra("id", kudaShoditListItems.get(position).getId());
                             intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
                             intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
                             intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                            intent.putExtra("url",Url);
+                            intent.putExtra("url", Url);
+                            intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -94,6 +97,7 @@ public class HistoryFragment extends Fragment {
 
         return v;
     }
+
     private void loadRecyclerView() {
 
 
@@ -121,7 +125,8 @@ public class HistoryFragment extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
-                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
+                    Log.d("Sightseeings", "AdapterAttached");
+                    adapter = new RecycleAdapter(kudaShoditListItems, getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
                             new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -131,14 +136,16 @@ public class HistoryFragment extends Fragment {
                                     //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), DescriptionActivity.class);
                                     intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
+                                    intent.putExtra("id", kudaShoditListItems.get(position).getId());
                                     intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
                                     intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
                                     intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
                                     intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                                     intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                                    intent.putExtra("url",Url);
+                                    intent.putExtra("url", Url);
+                                    intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -147,7 +154,6 @@ public class HistoryFragment extends Fragment {
                                 }
                             })
                     );
-
 
 
                 } catch (JSONException e) {
@@ -160,12 +166,13 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Log.d("Sightseeings",error.toString());
+                Log.d("Sightseeings", error.toString());
+
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
-
 }
+

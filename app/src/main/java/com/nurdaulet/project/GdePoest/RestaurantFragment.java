@@ -1,7 +1,6 @@
 package com.nurdaulet.project.GdePoest;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,26 +30,21 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class RestaurantFragment extends Fragment {
-
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
-
 
     public RestaurantFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_restaurant, container, false);
-
-
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleRestaurant);
+        View v = inflater.inflate(R.layout.fragment_bars_fragments, container, false);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBars);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -83,6 +77,7 @@ public class RestaurantFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -97,8 +92,6 @@ public class RestaurantFragment extends Fragment {
     }
 
     private void loadRecyclerView() {
-
-
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
@@ -146,6 +139,7 @@ public class RestaurantFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -166,6 +160,7 @@ public class RestaurantFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
 
             }
         });

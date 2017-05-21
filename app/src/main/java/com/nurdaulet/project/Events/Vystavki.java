@@ -1,7 +1,6 @@
 package com.nurdaulet.project.Events;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,11 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.nurdaulet.project.KudaShoditListItem;
-import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
-import com.nurdaulet.project.RecycleAdapter;
-import com.nurdaulet.project.Sightseeings.DescriptionActivity;
 import com.nurdaulet.project.utility.RecyclerItemClickListener;
 
 import org.json.JSONArray;
@@ -90,6 +85,7 @@ public class Vystavki extends Fragment {
                             intent.putExtra("date",eventsItemList.getDate());
                             intent.putExtra("urlItem",eventsItemList.getUrl());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -97,7 +93,8 @@ public class Vystavki extends Fragment {
                             // do whatever
                         }
                     })
-            );        }
+            );
+        }
 
         return v;
     }
@@ -119,15 +116,15 @@ public class Vystavki extends Fragment {
                         JSONObject o = array.getJSONObject(i);
 
 
-                            String lon;
-                            String lat;
-                            if (o.getJSONArray("points").length() > 0) {
-                                lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
-                                lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
-                            } else {
-                                lon = "null";
-                                lat = "null";
-                            }
+                        String lon;
+                        String lat;
+                        if (o.getJSONArray("points").length() > 0) {
+                            lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                            lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                        } else {
+                            lon = "null";
+                            lat = "null";
+                        }
 
                         EventsItemList item = new EventsItemList(
                                 o.getString("name"),
@@ -146,8 +143,9 @@ public class Vystavki extends Fragment {
 
                         eventsItemLists.add(item);
 
-
                     }
+
+
                     adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -171,6 +169,7 @@ public class Vystavki extends Fragment {
                                     intent.putExtra("date",eventsItemList.getDate());
                                     intent.putExtra("urlItem",eventsItemList.getUrl());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -179,7 +178,6 @@ public class Vystavki extends Fragment {
                                 }
                             })
                     );
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -200,3 +198,4 @@ public class Vystavki extends Fragment {
         requestQueue.add(stringRequest);
     }
 }
+

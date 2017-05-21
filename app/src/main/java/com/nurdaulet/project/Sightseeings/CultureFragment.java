@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,6 +40,7 @@ public class CultureFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
 
+
     public CultureFragment() {
         // Required empty public constructor
     }
@@ -50,9 +50,9 @@ public class CultureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_culture, container, false);
+        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleCulture);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleArchitecture);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -64,6 +64,7 @@ public class CultureFragment extends Fragment {
             loadRecyclerView();
 
         }else{
+
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
@@ -83,6 +84,7 @@ public class CultureFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -93,11 +95,8 @@ public class CultureFragment extends Fragment {
             );
         }
 
-
-
         return v;
     }
-
 
     private void loadRecyclerView() {
 
@@ -109,7 +108,6 @@ public class CultureFragment extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
-
 
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
@@ -127,6 +125,7 @@ public class CultureFragment extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
+                    Log.d("Sightseeings", "AdapterAttached");
                     adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -146,6 +145,7 @@ public class CultureFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -167,11 +167,13 @@ public class CultureFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
                 Log.d("Sightseeings",error.toString());
+
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
 
 }

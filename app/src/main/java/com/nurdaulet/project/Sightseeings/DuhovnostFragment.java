@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,7 +34,7 @@ import java.util.List;
  */
 public class DuhovnostFragment extends Fragment {
 
-    private static final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1&category=53";
+    private static final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1&category=50";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
@@ -49,9 +48,10 @@ public class DuhovnostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_duhovnost, container, false);
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleDuhovnost);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleArchitecture);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -63,6 +63,7 @@ public class DuhovnostFragment extends Fragment {
             loadRecyclerView();
 
         }else{
+
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
@@ -80,7 +81,9 @@ public class DuhovnostFragment extends Fragment {
                             intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                             intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                             intent.putExtra("url",Url);
+                            intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -93,9 +96,8 @@ public class DuhovnostFragment extends Fragment {
 
         return v;
     }
+
     private void loadRecyclerView() {
-
-
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
@@ -122,6 +124,7 @@ public class DuhovnostFragment extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
+                    Log.d("Sightseeings", "AdapterAttached");
                     adapter = new RecycleAdapter(kudaShoditListItems,getContext());
                     recyclerView.setAdapter(adapter);
                     recyclerView.addOnItemTouchListener(
@@ -139,7 +142,9 @@ public class DuhovnostFragment extends Fragment {
                                     intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
                                     intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
                                     intent.putExtra("url",Url);
+                                    intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -161,11 +166,13 @@ public class DuhovnostFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
                 Log.d("Sightseeings",error.toString());
+
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
 
 }

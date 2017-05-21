@@ -40,7 +40,6 @@ public class ZonyOtdyhaFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
 
-
     public ZonyOtdyhaFragment() {
         // Required empty public constructor
     }
@@ -50,10 +49,10 @@ public class ZonyOtdyhaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_zony_otdyha, container, false);
+        View v = inflater.inflate(R.layout.fragment_beach, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleZony);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -85,6 +84,7 @@ public class ZonyOtdyhaFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -123,6 +123,7 @@ public class ZonyOtdyhaFragment extends Fragment {
                                 o.getInt("id"),
                                 o.getString("address")
                         );
+
                         kudaShoditListItems.add(item);
 
                     }
@@ -146,6 +147,7 @@ public class ZonyOtdyhaFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

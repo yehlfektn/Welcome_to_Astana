@@ -49,10 +49,10 @@ public class EnterDosug extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_enter_dosug, container, false);
+        View v = inflater.inflate(R.layout.fragment_beach, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleEnterDosug);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -84,6 +84,7 @@ public class EnterDosug extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -146,6 +147,7 @@ public class EnterDosug extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

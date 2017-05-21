@@ -35,11 +35,10 @@ import java.util.List;
  */
 public class CinemaFragment extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=41";
+    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=46";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
-
 
     public CinemaFragment() {
         // Required empty public constructor
@@ -50,10 +49,10 @@ public class CinemaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_cinema, container, false);
+        View v = inflater.inflate(R.layout.fragment_beach, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleCinema);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -85,6 +84,7 @@ public class CinemaFragment extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -123,6 +123,7 @@ public class CinemaFragment extends Fragment {
                                 o.getInt("id"),
                                 o.getString("address")
                         );
+
                         kudaShoditListItems.add(item);
 
                     }
@@ -146,6 +147,7 @@ public class CinemaFragment extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -174,6 +176,5 @@ public class CinemaFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
-
 
 }

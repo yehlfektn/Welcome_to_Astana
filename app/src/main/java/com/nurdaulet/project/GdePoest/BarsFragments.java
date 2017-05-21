@@ -1,7 +1,6 @@
 package com.nurdaulet.project.GdePoest;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,10 +31,10 @@ import java.util.List;
  */
 public class BarsFragments extends Fragment {
 
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=3";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
-    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=3";
 
     public BarsFragments() {
         // Required empty public constructor
@@ -79,6 +78,7 @@ public class BarsFragments extends Fragment {
                             intent.putExtra("url",Url);
                             intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -140,6 +140,7 @@ public class BarsFragments extends Fragment {
                                     intent.putExtra("url",Url);
                                     intent.putExtra("phone",gdePoestListItems.get(position).getPhone());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override

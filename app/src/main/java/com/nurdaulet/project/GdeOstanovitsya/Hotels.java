@@ -35,7 +35,6 @@ public class Hotels extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<HotelsListItem> hotelsListItems;
-
     public Hotels() {
         // Required empty public constructor
     }
@@ -84,6 +83,7 @@ public class Hotels extends Fragment {
                             intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                             intent.putExtra("stars",hotelsListItems.get(position).getStars());
                             startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -96,7 +96,6 @@ public class Hotels extends Fragment {
 
         return v;
     }
-
     private void loadRecyclerView() {
 
 
@@ -150,6 +149,7 @@ public class Hotels extends Fragment {
                                     intent.putExtra("website",hotelsListItems.get(position).getWebsite());
                                     intent.putExtra("stars",hotelsListItems.get(position).getStars());
                                     startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -171,10 +171,13 @@ public class Hotels extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                loadRecyclerView();
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
+
 }

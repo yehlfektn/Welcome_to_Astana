@@ -2,7 +2,6 @@ package com.nurdaulet.project.Sightseeings;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -89,9 +88,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
 
         if(getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -231,7 +227,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
                 Log.d("DescriptionActivity", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -342,7 +337,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
             }
         });
 
@@ -361,6 +355,13 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_righ);
     }
 
     public boolean googleServicesAvailable() {
@@ -438,16 +439,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
         mGoogleMap.moveCamera(update);
-    }
-
-    public void geoLocate(){
-
-        String locality = getIntent().getStringExtra("name");
-
-        goToLocationZoom(lat, lng, 15);
-
-        setMarker(locality, lat, lng);
-
     }
 
     private void setMarker(String locality, double lat, double lng) {

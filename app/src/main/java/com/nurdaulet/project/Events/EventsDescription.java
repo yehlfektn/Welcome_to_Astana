@@ -2,7 +2,6 @@ package com.nurdaulet.project.Events;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.graphics.drawable.GradientDrawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
@@ -22,14 +22,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,94 +83,17 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
 
-    public static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
-
-        if (tv.getTag() == null) {
-            tv.setTag(tv.getText());
-        }
-        ViewTreeObserver vto = tv.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-
-                ViewTreeObserver obs = tv.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-                if (maxLine == 0) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(0);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 10) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 10) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else {
-                    int lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, lineEndIndex, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                }
-            }
-        });
-
-    }
-
-    private static SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
-                                                                            final int maxLine, final String spanableText, final boolean viewMore) {
-        String str = strSpanned.toString();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
-
-        if (str.contains(spanableText)) {
-            ssb.setSpan(new ClickableSpan() {
-
-                @Override
-                public void onClick(View widget) {
-
-
-                    if (viewMore) {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, -1, "Уменьшить", false);
-                    } else {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, 3, "Читать дальше", true);
-                    }
-
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);
-
-        }
-        return ssb;
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
         getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF5800, 0xffFF8B00});
+        getSupportActionBar().setBackgroundDrawable(g);
 
         TextView name = (TextView) findViewById(R.id.name);
         TextView address = (TextView) findViewById(R.id.address);
@@ -183,7 +102,12 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         Button frameButton = (Button)findViewById(R.id.buttonFrame);
         frameButton.bringToFront();
 
-        address.setText(getIntent().getStringExtra("address"));
+        if (getIntent().getStringExtra("address").length() < 2) {
+            address.setVisibility(View.GONE);
+        } else {
+            address.setText(getIntent().getStringExtra("address"));
+        }
+
         date.setText(getIntent().getStringExtra("date"));
         money.setText(getIntent().getStringExtra("money"));
         name.setText(getIntent().getStringExtra("name"));
@@ -301,17 +225,13 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
                 Log.d("DescriptionActivity", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    Log.d("DescriptionActivity", "try-places");
                     for (int i = 0; i < array.length(); i++) {
-                        Log.d("DescriptionActivity", "size"+array.length());
                         JSONObject o = array.getJSONObject(i);
-                        Log.d("DescriptionActivity", "id:"+id+"idJson: "+o.getInt("id"));
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
                             latStr = getIntent().getStringExtra("latit");
@@ -321,10 +241,8 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                                 lngStr = "0";
                                 latStr = "0";
                             }
-
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
-
 
                             goToLocationZoom(lat, lng, 15);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
@@ -381,6 +299,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         }
                     });
 
+                    if (imageUrls.size() < 2) {
+                        linearLayout.setVisibility(View.GONE);
+                    }
+
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -390,7 +312,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
             }
         });
 
@@ -407,9 +328,18 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public boolean onSupportNavigateUp() {
+
         onBackPressed();
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_righ);
+    }
+
 
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
