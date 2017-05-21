@@ -48,15 +48,6 @@ public class PamyatkaRecycleAdapter extends RecyclerView.Adapter<PamyatkaRecycle
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Toast.makeText(context, "You clicked "+ kudaShoditListItem.getName(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
     }
 
     @Override
@@ -68,7 +59,7 @@ public class PamyatkaRecycleAdapter extends RecyclerView.Adapter<PamyatkaRecycle
 
         public TextView name;
         public ImageView imageView;
-        public RelativeLayout relativeLayout;
+
 
 
 
@@ -77,7 +68,6 @@ public class PamyatkaRecycleAdapter extends RecyclerView.Adapter<PamyatkaRecycle
 
             name = (TextView)itemView.findViewById(R.id.name);
             imageView = (ImageView)itemView.findViewById(R.id.imageView);
-            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
 
         }
     }

@@ -14,7 +14,7 @@ public class PamyatkaListItem {
 
 
     public PamyatkaListItem(String name, String description, String imageUrl, String category){
-        this.name = name+" >";
+        this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
         this.category = category;

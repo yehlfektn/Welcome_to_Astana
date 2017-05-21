@@ -133,6 +133,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         }
 
 
+        //---------------Text Animation---------------------------
         final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
         final String big = getIntent().getStringExtra("description");
         expandableTextView.setText(big);
@@ -215,6 +216,8 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                 }
             }
         });
+
+        //---------------TextAnimation End---------------------------
 
 
         if (googleServicesAvailable()) {
@@ -585,8 +588,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng+""));
         startActivity(intent);
-
-
     }
     public void Share(View view) {
 

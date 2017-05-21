@@ -70,10 +70,8 @@ public class Transport extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            String name = pamyatkaListItems.get(position).getName().substring(0,pamyatkaListItems.get(position).getName().length()-1);
-                            Toast.makeText(getContext(), "You clicked "+pamyatkaListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
-                            intent.putExtra("name", name);
+                            intent.putExtra("name", pamyatkaListItems.get(position).getName());
                             intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
                             intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
                             startActivityForResult(intent, 0);
@@ -119,10 +117,8 @@ public class Transport extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    String name = pamyatkaListItems.get(position).getName().substring(0,pamyatkaListItems.get(position).getName().length()-1);
-                                    Toast.makeText(getContext(), "You clicked "+pamyatkaListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
-                                    intent.putExtra("name", name);
+                                    intent.putExtra("name", pamyatkaListItems.get(position).getName());
                                     intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
                                     intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
                                     startActivityForResult(intent, 0);

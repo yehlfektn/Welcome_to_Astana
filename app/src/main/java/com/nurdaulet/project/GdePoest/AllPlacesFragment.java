@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -104,12 +105,19 @@ public class AllPlacesFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
+
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if(o.getJSONArray("images").length()>0){
+                            image = o.getJSONArray("images").get(0).toString();
+                        }else{
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
                         GdePoestListItem item = new GdePoestListItem(
                                 o.getString("name"),
                                 o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
+                                image,
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
                                 o.optString("lat"),

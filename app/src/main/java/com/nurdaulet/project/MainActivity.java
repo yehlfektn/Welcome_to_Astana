@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
                     public void onLocationUpdated(Location location) {
                         gpsLocation = location;
                         Log.d("MainActivity", "Gsp Location was set: "+location.toString());
+                        SmartLocation.with(getApplicationContext()).location().stop();
                         //Toast.makeText(getApplicationContext(),"location: "+location,Toast.LENGTH_LONG).show();
                     }
                 });
@@ -105,8 +106,6 @@ public class MainActivity extends AppCompatActivity
         final LinearLayout linearLayout = (LinearLayout)headerView.findViewById(R.id.layoutLinear);
         final ViewGroup.LayoutParams params = linearLayout.getLayoutParams();
         final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-
-
 
         //CREATE AND BIND TO ADAPTER
         CustomAdapter adapter = new CustomAdapter(this, group);
@@ -165,8 +164,6 @@ public class MainActivity extends AppCompatActivity
                     transaction.replace(R.id.mainFrame, fragment);
                     transaction.addToBackStack(null);
                     transaction.commit();
-
-
 
                 }
             }

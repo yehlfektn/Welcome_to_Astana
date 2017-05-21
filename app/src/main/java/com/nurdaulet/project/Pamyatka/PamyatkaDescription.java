@@ -1,7 +1,12 @@
 package com.nurdaulet.project.Pamyatka;
 
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -16,6 +21,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.nurdaulet.project.R;
+import com.nurdaulet.project.utility.DashedUnderlineSpan;
+
+import at.blogc.android.views.ExpandableTextView;
 
 public class PamyatkaDescription extends AppCompatActivity {
 
@@ -33,14 +41,105 @@ public class PamyatkaDescription extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(g);
 
         TextView name = (TextView)findViewById(R.id.name);
-        TextView summary = (TextView)findViewById(R.id.summary);
         ImageView image = (ImageView)findViewById(R.id.imagePamyatka);
 
         name.setText(getIntent().getStringExtra("name"));
-        summary.setText(getIntent().getStringExtra("description"));
-        if(getIntent().getStringExtra("description").length()!=0){
-            makeTextViewResizable(summary, 3, "Читать дальше", true);
+        final String big;
+        String namestr = getIntent().getStringExtra("name");
+        if(namestr.equals("Разговорник")){
+            big = getIntent().getStringExtra("description").substring(10,getIntent().getStringExtra("description").length()-1);
+        }else if(namestr.contains("Посольства")){
+            big = getIntent().getStringExtra("description").substring(19,getIntent().getStringExtra("description").length()-1);
         }
+        else{
+           big = getIntent().getStringExtra("description");
+        }
+
+        //---------------Text Animation---------------------------
+        final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
+
+        expandableTextView.setText(big);
+        final Shader p = expandableTextView.getPaint().getShader();
+
+        final Shader textShader=new LinearGradient(0, 100, 0, 250, new int[]{Color.BLACK,Color.WHITE}, new float[]{0, 1}, Shader.TileMode.CLAMP);
+        expandableTextView.getPaint().setShader(textShader);
+        final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
+
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+
+        int intSpannableStringBuilderLength = spannableStringBuilder.length();
+
+        spannableStringBuilder.setSpan(
+                new DashedUnderlineSpan(OpenCollapse, ContextCompat.getColor(this, R.color.gray),
+                        getResources().getDimension(R.dimen.dus_stroke_thickness),
+                        getResources().getDimension(R.dimen.dus_dash_path),
+                        getResources().getDimension(R.dimen.dus_offset_y),
+                        getResources().getDimension(R.dimen.dus_spacing_extra)), 0,
+                intSpannableStringBuilderLength, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        OpenCollapse.setText(spannableStringBuilder);
+
+
+        expandableTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v){
+                if (expandableTextView.isExpanded())
+                {
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+                    OpenCollapse.setText("");
+                }
+            }
+
+        });
+        OpenCollapse.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View v)
+            {
+                if (expandableTextView.isExpanded())
+                {
+                    //expandableTextView.getPaint().setShader(textShader);
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+
+                    OpenCollapse.setText("");
+                }
+            }
+        });
+
+        //---------------TextAnimation End---------------------------
 
 
         Glide.with(this)
@@ -56,81 +155,7 @@ public class PamyatkaDescription extends AppCompatActivity {
 
     }
 
-    public static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
 
-        if (tv.getTag() == null) {
-            tv.setTag(tv.getText());
-        }
-        ViewTreeObserver vto = tv.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-
-                ViewTreeObserver obs = tv.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-                if (maxLine == 0) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(0);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 10) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
-                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 10) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                } else {
-                    int lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
-                    String text = tv.getText().subSequence(0, lineEndIndex) + " \n\n" + expandText;
-                    tv.setText(text);
-                    tv.setMovementMethod(LinkMovementMethod.getInstance());
-                    tv.setText(
-                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, lineEndIndex, expandText,
-                                    viewMore), TextView.BufferType.SPANNABLE);
-                }
-            }
-        });
-
-    }
-
-    private static SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
-                                                                            final int maxLine, final String spanableText, final boolean viewMore) {
-        String str = strSpanned.toString();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
-
-        if (str.contains(spanableText)) {
-            ssb.setSpan(new ClickableSpan() {
-
-                @Override
-                public void onClick(View widget) {
-
-
-                    if (viewMore) {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, -1, "Уменьшить", false);
-                    } else {
-                        tv.setLayoutParams(tv.getLayoutParams());
-                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
-                        tv.invalidate();
-                        makeTextViewResizable(tv, 3, "Читать дальше", true);
-                    }
-
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);
-
-        }
-        return ssb;
-
-    }
 
     @Override
     public boolean onSupportNavigateUp() {

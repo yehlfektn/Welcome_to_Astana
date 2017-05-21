@@ -15,8 +15,7 @@
         tools:context="com.nurdaulet.recycleview.Description_Activity"
         tools:showIn="@layout/activity_description"
         android:orientation="vertical"
-        android:background="@android:color/white"
-        android:weightSum="1">
+        android:background="@android:color/white">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
@@ -27,79 +26,160 @@
             android:id="@+id/LinearSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal"
             android:layout_below="@id/viewPager"
             android:gravity="center_vertical|center_horizontal"/>
 
 
         <TextView
-            android:text="Name"
-            android:layout_width="337dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
             android:id="@+id/name"
-            android:layout_weight="0.15" />
-
-
-        <TextView
-            android:text="Не указано"
-            android:layout_width="303dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:textSize="15sp"
-            android:textColor="@android:color/darker_gray"
-            android:drawableLeft="@drawable/ic_map_markerblack"
-            android:drawableStart="@drawable/ic_map_markerblack"
-            android:id="@+id/address"
-            />
+            android:layout_weight="0.15"
+            android:text="Name"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"/>
 
-        <TextView
-            android:text="Не указано"
-            android:layout_width="303dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textSize="15sp"
-            android:textColor="@android:color/darker_gray"
-            android:drawableLeft="@drawable/ic_icon"
-            android:drawableStart="@drawable/ic_icon"
-            android:id="@+id/phone"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp">
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_map_marker"
+                android:layout_gravity="top"/>
+
 
             <TextView
-                android:text="Category"
-                android:textColor="@android:color/holo_green_light"
-                android:layout_width="260dp"
+                android:id="@+id/address"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/bulletgreen"
+                android:text="Не указано "
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_telephone_receiver"
+                android:layout_gravity="top"/>
+
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Не указано"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="-2dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="247dp"
+                android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/bulletgreen"
                 android:drawablePadding="5dp"
-                android:textSize="15sp"
-                android:id="@+id/category" />
+                android:drawableStart="@drawable/bulletgreen"
+                android:text="Category"
+                android:textColor="@android:color/holo_green_light"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_marginTop="2dp"
+                    android:id="@+id/distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangleshape_green"
+                    android:gravity="bottom"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="2500.0 kм"
+                    android:textSize="12sp"
+
+                    />
+
+
+            </LinearLayout>
 
 
 
         </LinearLayout>
 
-        <TextView
-            android:text="Description"
-            android:layout_width="wrap_content"
+        <at.blogc.android.views.ExpandableTextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="5dp"
+            android:maxLines="6"
+            android:text="Description"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            app:animation_duration="1000" />
+        <TextView
+            android:text="Читать дальше"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:textColor="@android:color/black"
-            android:id="@+id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/openCollapse"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
             android:layout_marginBottom="20dp"/>
 
 
@@ -121,8 +201,8 @@
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_share_symbol"
             android:padding="15dp"
-            android:paddingLeft="90dp"
-            android:paddingStart="90dp"
+            android:paddingLeft="110dp"
+            android:paddingStart="110dp"
             android:text="@string/share"
             android:gravity="left"
             android:layout_marginRight="20dp"
@@ -143,8 +223,8 @@
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_location_on_road"
             android:padding="15dp"
-            android:paddingLeft="70dp"
-            android:paddingStart="70dp"
+            android:paddingLeft="90dp"
+            android:paddingStart="90dp"
             android:text="@string/make_way"
             android:gravity="left"
             android:layout_marginRight="20dp"
@@ -164,8 +244,8 @@
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_cab"
             android:padding="15dp"
-            android:paddingLeft="90dp"
-            android:paddingStart="90dp"
+            android:paddingLeft="110dp"
+            android:paddingStart="110dp"
             android:text="@string/call_taxi"
             android:gravity="left"
             android:layout_marginRight="20dp"
@@ -173,6 +253,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="CallTaxiPoest"/>
+            android:onClick="CallTaxiPoest"
+            android:layout_marginBottom="20dp"/>
     </LinearLayout>
 </ScrollView>

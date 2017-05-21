@@ -27,7 +27,7 @@
             android:id="@+id/LinearSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal"
             android:layout_below="@id/viewPager"
             android:gravity="center_vertical|center_horizontal"/>
@@ -42,9 +42,10 @@
             android:layout_weight="0.12"
             android:text="Name"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"/>
+            android:textSize="16sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="5dp"/>
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -59,39 +60,72 @@
             android:rating="4" />
 
 
-        <TextView
-            android:id="@+id/address"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:drawableLeft="@drawable/ic_map_markerblack"
-            android:drawableStart="@drawable/ic_map_markerblack"
-            android:text="Не указано"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="18sp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/phone"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_map_marker"
+                android:layout_gravity="top"/>
+
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Не указано "
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:drawableLeft="@drawable/ic_icon"
-            android:drawableStart="@drawable/ic_icon"
-            android:text="Не указано"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="18sp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"/>
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_telephone_receiver"
+                android:layout_gravity="top"/>
 
 
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Не указано"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
         <TextView
             android:id="@+id/website"
-            android:layout_width="match_parent"
+            android:layout_width="226dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
@@ -101,21 +135,60 @@
             android:onClick="goToTextView"
             android:text="Не указано"
             android:textColor="@android:color/holo_purple"
-            android:textSize="18sp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"/>
+            android:textSize="12sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"/>
 
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp">
+
+            <TextView
+                android:layout_marginTop="2dp"
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rectangleshape_purple"
+                android:gravity="bottom"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="2500.0 kм"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+        </LinearLayout>
+
+        <at.blogc.android.views.ExpandableTextView
             android:id="@+id/summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="5dp"
+            android:maxLines="6"
             android:text="Description"
             android:textColor="@android:color/black"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"/>
+            android:textSize="12sp"
+            app:animation_duration="1000" />
+        <TextView
+            android:text="Читать дальше"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/openCollapse"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            android:layout_marginBottom="20dp"/>
 
 
         <fragment
@@ -187,6 +260,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:onClick="CallTaxiEvent"/>
+            android:onClick="CallTaxiEvent"
+            android:layout_marginBottom="20dp"/>
     </LinearLayout>
 </ScrollView>

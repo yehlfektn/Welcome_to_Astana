@@ -5,11 +5,15 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
 
 import java.util.List;
@@ -28,13 +33,15 @@ import java.util.List;
  * Created by nurdaulet on 5/5/17.
  */
 
-public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdapter.ViewHolder> {
+public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdapter.ViewHolder> implements LocationListener {
 
-    private List<HotelsListItem> HotelslistItems;
+    private List<HotelsListItem> hotelsListItems;
     private final Context context;
+    double lat2, lng2;
+    double distanceDouble;
 
-    public HotelsRecycleAdapter(List<HotelsListItem> HotelslistItems, Context context) {
-        this.HotelslistItems = HotelslistItems;
+    public HotelsRecycleAdapter(List<HotelsListItem> hotelsListItems, Context context) {
+        this.hotelsListItems = hotelsListItems;
         this.context = context;
     }
 
@@ -48,7 +55,7 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
     @Override
     public void onBindViewHolder(HotelsRecycleAdapter.ViewHolder holder, int position) {
 
-        final HotelsListItem hotelsListItem = HotelslistItems.get(position);
+        final HotelsListItem hotelsListItem = hotelsListItems.get(position);
         holder.name.setText(hotelsListItem.getName());
         holder.category.setText(hotelsListItem.getCategory());
         holder.location.setText(hotelsListItem.getAddress());
@@ -74,14 +81,75 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
         setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context, R.color.background));
         // Empty stars
         setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, R.color.background));
-        holder.ratingBar.setRating(HotelslistItems.get(position).getStars());
+        holder.ratingBar.setRating(hotelsListItems.get(position).getStars());
+
+        Location startPoint=new Location("locationA");
+        if(MainActivity.gpsLocation != null){
+
+            lat2 = MainActivity.gpsLocation.getLatitude();
+            lng2 = MainActivity.gpsLocation.getLongitude();
+
+        }
+        startPoint.setLatitude(lat2);
+        startPoint.setLongitude(lng2);
+
+
+        Location endPoint=new Location("locationB");
+        if(hotelsListItem.getLat().equals("null")){
+            holder.distance.setVisibility(View.GONE);
+        }else {
+            endPoint.setLatitude(Double.parseDouble(hotelsListItem.getLat()));
+            endPoint.setLongitude(Double.parseDouble(hotelsListItem.getLon()));
+
+            distanceDouble = startPoint.distanceTo(endPoint);
+            //Intent intent = new Intent(get, DescriptionActivity.class);
+
+            if(distanceDouble > 5000000){
+                holder.distance.setVisibility(View.GONE);
+
+            }else{
+                if (distanceDouble > 1000) {
+                    holder.distance.setText(" " + (int) distanceDouble / 1000 + "." + (int) ((distanceDouble % 1000) / 100) + "км ");
+                } else {
+                    holder.distance.setText(" " + (int) distanceDouble + "м ");
+                }
+            }}
+
+
+
 
 
     }
 
     @Override
     public int getItemCount() {
-        return HotelslistItems.size();
+        return hotelsListItems.size();
+    }
+
+    @Override
+    public void onLocationChanged(Location loc)
+    {
+        lat2=loc.getLatitude();
+        lng2=loc.getLongitude();
+        String Text = "My current location is: " +"Latitud = "+ loc.getLatitude() +"Longitud = " + loc.getLongitude();
+
+        Log.d("LAAAAT AND LONGIT", Text);
+        //Toast.makeText( getApplicationContext(), Text,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -93,7 +161,7 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
         private TextView phone;
         private TextView location;
         private RatingBar ratingBar;
-
+        public TextView distance;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -105,8 +173,11 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
             phone = (TextView)itemView.findViewById(R.id.phoneGde);
             location = (TextView)itemView.findViewById(R.id.locationGde);
             ratingBar = (RatingBar)itemView.findViewById(R.id.ratingBar);
+            distance = (TextView)itemView.findViewById(R.id.distance);
         }
     }
+
+
     private void setRatingStarColor(Drawable drawable, @ColorInt int color)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

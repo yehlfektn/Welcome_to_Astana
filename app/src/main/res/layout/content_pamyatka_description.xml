@@ -21,31 +21,51 @@
         <ImageView
             android:id="@+id/imagePamyatka"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="201dp"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/image"/>
 
 
         <TextView
-            android:text="Name"
-            android:layout_width="337dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
             android:id="@+id/name"
-            android:layout_weight="0.15" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Name"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="10dp"/>
 
 
-        <TextView
+        <at.blogc.android.views.ExpandableTextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="5dp"
+            android:maxLines="6"
             android:text="Description"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            app:animation_duration="1000" />
+        <TextView
+            android:text="Читать дальше"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:textColor="@android:color/black"
-            android:id="@+id/summary"
+            android:id="@+id/openCollapse"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
             android:layout_marginBottom="20dp"/>
 
 

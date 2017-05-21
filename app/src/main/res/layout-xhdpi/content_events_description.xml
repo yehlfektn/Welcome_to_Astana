@@ -23,7 +23,7 @@
             android:textSize="15sp"
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="185dp"
             android:background="@drawable/circle"/>
 
 
@@ -115,7 +115,7 @@
 
 
             <at.blogc.android.views.ExpandableTextView
-                android:text="Description asdas asd asd asd asd asd asd as dasdasd asd ad asd asd asd asd asd asd asd asd asd asd asd asd asd asd "
+                android:text="Description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"

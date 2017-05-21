@@ -5,11 +5,15 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -55,6 +59,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nurdaulet.project.MainActivity;
 import com.nurdaulet.project.R;
+import com.nurdaulet.project.utility.DashedUnderlineSpan;
 import com.nurdaulet.project.utility.ViewPagerAdapter;
 
 import org.json.JSONArray;
@@ -62,6 +67,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import at.blogc.android.views.ExpandableTextView;
 
 public class GdePoestDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -96,7 +103,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
         TextView name = (TextView) findViewById(R.id.name);
         TextView category = (TextView) findViewById(R.id.category);
-        TextView summary = (TextView) findViewById(R.id.summary);
         final TextView distance  = (TextView) findViewById(R.id.distance);
         TextView phone =  (TextView)findViewById(R.id.phone);
         TextView address = (TextView)findViewById(R.id.address);
@@ -104,16 +110,104 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         address.setText(getIntent().getStringExtra("address"));
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
-        summary.setText(getIntent().getStringExtra("description"));
         phone.setText(getIntent().getStringExtra("phone"));
         final String Url=getIntent().getStringExtra("url");
         Log.d("GdePoestDescription", Url);
+        if(MainActivity.gpsLocation != null){
 
-        //latStr = getIntent().getStringExtra("latit");
-        //lngStr = getIntent().getStringExtra("longit");
-        if(getIntent().getStringExtra("description").length()>10){
-            makeTextViewResizable(summary, 3, "Читать дальше", true);
+            lat2 = MainActivity.gpsLocation.getLatitude();
+            lng2 = MainActivity.gpsLocation.getLongitude();
+            Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
+
         }
+
+        //---------------Text Animation---------------------------
+        final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
+        final String big = getIntent().getStringExtra("description");
+        expandableTextView.setText(big);
+        final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
+
+
+        final Shader p = expandableTextView.getPaint().getShader();
+        final Shader textShader=new LinearGradient(0, 100, 0, 250, new int[]{Color.BLACK,Color.WHITE}, new float[]{0, 1}, Shader.TileMode.CLAMP);
+        expandableTextView.getPaint().setShader(textShader);
+
+
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+
+        int intSpannableStringBuilderLength = spannableStringBuilder.length();
+
+        spannableStringBuilder.setSpan(
+                new DashedUnderlineSpan(OpenCollapse, ContextCompat.getColor(this, R.color.gray),
+                        getResources().getDimension(R.dimen.dus_stroke_thickness),
+                        getResources().getDimension(R.dimen.dus_dash_path),
+                        getResources().getDimension(R.dimen.dus_offset_y),
+                        getResources().getDimension(R.dimen.dus_spacing_extra)), 0,
+                intSpannableStringBuilderLength, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        OpenCollapse.setText(spannableStringBuilder);
+
+
+        expandableTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v){
+                if (expandableTextView.isExpanded())
+                {
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+                    OpenCollapse.setText("");
+                }
+            }
+
+        });
+        OpenCollapse.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View v)
+            {
+                if (expandableTextView.isExpanded())
+                {
+                    //expandableTextView.getPaint().setShader(textShader);
+                    expandableTextView.collapse();
+                    OpenCollapse.setText(spannableStringBuilder);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (expandableTextView.isExpanded()) {
+                                expandableTextView.getPaint().setShader(textShader);
+                            }
+                        }
+                    }, 1000);
+                }
+                else
+                {
+                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
+                    expandableTextView.setText(big);
+                    expandableTextView.getPaint().setShader(p);
+                    expandableTextView.expand();
+
+                    OpenCollapse.setText("");
+                }
+            }
+        });
+
+        //---------------TextAnimation End---------------------------
 
 
         if (googleServicesAvailable()) {
@@ -132,16 +226,13 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                Log.d("GdePoestDescription", Url);
+                Log.d("DescriptionActivity", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    Log.d("GdePoestDescription", "try-places");
                     for (int i = 0; i < array.length(); i++) {
-
                         JSONObject o = array.getJSONObject(i);
-
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
                             latStr = o.getString("lat");
@@ -154,9 +245,29 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
 
+                            Location startPoint=new Location("locationA");
+                            Log.d("DescriptionActivity", "lat: "+lat+"lon: "+lng);
+                            startPoint.setLatitude(lat2);
+                            startPoint.setLongitude(lng2);
+                            Location endPoint=new Location("locationB");
+                            endPoint.setLatitude(lat);
+                            endPoint.setLongitude(lng);
+
+
+                            float distanceDouble=startPoint.distanceTo(endPoint);
+                            Log.d("DescriptionActivity", "distance: "+distanceDouble);
+                            if(distanceDouble/1000 > 6000){
+                                distance.setVisibility(View.GONE);
+                            }else {
+                                if (distanceDouble > 1000) {
+                                    distance.setText(" " + (int) distanceDouble / 1000 + "." + (int) ((distanceDouble % 1000) / 100) + "км ");
+                                } else {
+                                    distance.setText(" " + (int) distanceDouble + "м ");
+                                }
+                            }
                             goToLocationZoom(lat, lng, 15);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
-                            Log.d("GdePoestDescription", "size: "+arr.length());
+                            Log.d("DescriptionActivity", "size: "+arr.length());
                             if(arr.length()==0){
 
                                 imageUrls.add("http://imgur.com/bpx2TrL");
