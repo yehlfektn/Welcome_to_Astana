@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1E1E1E"
     android:fitsSystemWindows="true"
-    tools:context="com.nurdaulet.project.MainActivity"
-    android:background="#1E1E1E">
+    tools:context="kz.welcometoastana.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -25,9 +24,9 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/wta_logo_white"
                 android:layout_marginLeft="65dp"
                 android:layout_marginStart="65dp"
+                android:src="@drawable/wta_logo_white"
                 />
 
 
@@ -41,10 +40,10 @@
 
 
     <FrameLayout
+        android:id="@+id/mainFrame"
         android:layout_width="match_parent"
-        android:layout_marginTop="55dp"
         android:layout_height="match_parent"
-        android:id="@+id/mainFrame">
+        android:layout_marginTop="55dp">
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

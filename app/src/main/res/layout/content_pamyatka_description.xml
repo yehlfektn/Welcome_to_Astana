@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:fillViewport="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,12 +11,12 @@
         android:id="@+id/content_description_"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.nurdaulet.recycleview.Description_Activity"
-        tools:showIn="@layout/activity_description"
-        android:orientation="vertical"
         android:background="@android:color/white"
-        android:weightSum="1">
+        android:orientation="vertical"
+        android:weightSum="1"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="kz.recycleview.Description_Activity"
+        tools:showIn="@layout/activity_description">
 
         <ImageView
             android:id="@+id/imagePamyatka"
@@ -31,15 +31,15 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="10dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="Name"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="10dp"/>
+            android:textSize="18sp" />
 
 
         <at.blogc.android.views.ExpandableTextView
@@ -58,15 +58,15 @@
             android:textSize="12sp"
             app:animation_duration="1000" />
         <TextView
-            android:text="Читать дальше"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
+            android:id="@+id/openCollapse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/openCollapse"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Читать дальше"
             android:textColor="@color/gray"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="12sp" />
 
 
     </LinearLayout>

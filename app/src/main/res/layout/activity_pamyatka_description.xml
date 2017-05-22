@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.nurdaulet.project.Pamyatka.PamyatkaDescription">
+    tools:context="kz.welcometoastana.Pamyatka.PamyatkaDescription">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,12 +21,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ПАМЯТКА ТУРИСТУ"
-            android:textSize="18sp"
-            android:textColor="@android:color/white"
-            android:typeface="sans"
+            android:layout_weight="0.13"
             android:foregroundGravity="left"
-            android:layout_weight="0.13" />
+            android:text="ПАМЯТКА ТУРИСТУ"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:typeface="sans" />
 
         </android.support.v7.widget.Toolbar>
 

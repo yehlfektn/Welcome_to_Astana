@@ -17,9 +17,9 @@
     <string name="title_activity_gde_ostanovitsya_description">GdeOstanovitsyaDescription</string>
     <string name="title_activity_events_description">СОБЫТИЯ</string>
     <string name="title_activity_taxi">TaxiActivity</string>
-    <string name="taksi">В Астане, как и в других городах Казахстана, жители очень легко относятся к услугам такси. Многие жители «ловят» автомобили прямо на улице, пользуясь услугами не профессиональных таксистов. Но сейчас все большую популярность набирают официальные службы такси по вызову, так как это является гарантией безопасности и качества предоставляемых услуг.</string>
     <string name="share">Поделиться</string>
     <string name="call_taxi">Вызвать такси</string>
     <string name="make_way">Проложить маршрут</string>
     <string name="buy">КУПИТЬ</string>
+
 </resources>
