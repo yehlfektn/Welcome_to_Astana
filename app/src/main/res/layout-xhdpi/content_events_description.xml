@@ -97,21 +97,7 @@
                 android:textColor="#B9B9B9"
                 android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/money"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginStart="20dp"
-                android:drawableLeft="@drawable/ic_money_purse_icon"
-                android:drawablePadding="5dp"
-                android:drawableStart="@drawable/ic_money_purse_icon"
-                android:text="от 5000"
-                android:textColor="#B9B9B9"
-                android:textSize="12sp" />
+
 
 
             <at.blogc.android.views.ExpandableTextView
@@ -122,6 +108,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
                 android:ellipsize="end"
                 android:lineSpacingExtra="5dp"
                 android:maxLines="6"

@@ -98,7 +98,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         TextView name = (TextView) findViewById(R.id.name);
         TextView address = (TextView) findViewById(R.id.address);
         TextView date = (TextView)findViewById(R.id.date);
-        TextView money = (TextView)findViewById(R.id.money);
         Button frameButton = (Button)findViewById(R.id.buttonFrame);
         frameButton.bringToFront();
 
@@ -109,7 +108,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         }
 
         date.setText(getIntent().getStringExtra("date"));
-        money.setText(getIntent().getStringExtra("money"));
         name.setText(getIntent().getStringExtra("name"));
 
         final String Url=getIntent().getStringExtra("url");
@@ -506,7 +504,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     }
     public void CallTaxiEvent(View view){
 
-        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "+77017123386"));
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "15800"));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
 

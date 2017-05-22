@@ -541,7 +541,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     }
     public void CallTaxiPoest(View view){
 
-        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "+77017123386"));
+        Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "15800"));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
 
