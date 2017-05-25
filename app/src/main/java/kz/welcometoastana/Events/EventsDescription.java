@@ -1,6 +1,7 @@
 package kz.welcometoastana.Events;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,6 +14,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -59,6 +61,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.MainActivity;
@@ -99,7 +102,15 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         TextView address = (TextView) findViewById(R.id.address);
         TextView date = (TextView)findViewById(R.id.date);
         Button frameButton = (Button)findViewById(R.id.buttonFrame);
+        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
         frameButton.bringToFront();
+        String loc = getCurrentLocale().toString();
+        if (loc.startsWith("kk")) {
+            int pixels = (int) (18 * scale + 0.5f);
+            frameButton.setCompoundDrawablePadding(-pixels);
+            pixels = (int) (10 * scale + 0.5f);
+            frameButton.setPadding(0, 0, 0, pixels);
+        }
 
         if (getIntent().getStringExtra("address").length() < 2) {
             address.setVisibility(View.GONE);
@@ -508,6 +519,16 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
     }
 
 }

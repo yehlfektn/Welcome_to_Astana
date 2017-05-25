@@ -6,62 +6,69 @@
     android:background="@android:color/white"
     tools:context="kz.welcometoastana.Pamyatka.Expo">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="258dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="30dp"
-            app:srcCompat="@drawable/expo" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView2"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:text="@string/expo"
-            android:textColor="@android:color/black" />
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_height="match_parent">
 
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="258dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="60dp"
+                app:srcCompat="@drawable/expo" />
 
             <TextView
-                android:id="@+id/distance"
-                android:layout_width="300dp"
-                android:layout_height="40dp"
-                android:layout_gravity="bottom"
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView2"
+                android:layout_marginEnd="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/bluebutton"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
-                android:onClick="goToExpo"
-                android:text="@string/learn_more" />
+                android:text="@string/expo"
+                android:textColor="@android:color/black" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
 
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bluebutton"
+                    android:gravity="center"
+                    android:onClick="goToExpo"
+                    android:text="@string/learn_more" />
+
+            </LinearLayout>
 
 
-    </RelativeLayout>
+        </RelativeLayout>
+
+
+    </ScrollView>
 
 </FrameLayout>

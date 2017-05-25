@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Welcome to Astana</string>
+    <string name="Concerts">Concerts</string>
+    <string name="Nochnye_cluby">Night clubs</string>
+    <string name="Otdyh">Out of town vacation</string>
+    <string name="all_events">All events</string>
+    <string name="all_hotels">All hotels</string>
+    <string name="all_places_cafe">All places</string>
+    <string name="aparments">Apartments</string>
+    <string name="bar">Bars</string>
+    <string name="cafe">Cafe</string>
+    <string name="hostels">Hostels</string>
+    <string name="hotels">Hotels</string>
+    <string name="Expo">EXPO</string>
+    <string name="kuda_shodit">WHERE TO GO</string>
+    <string name="gde_poest">WHERE TO EAT</string>
+    <string name="buy">BUY</string>
+    <string name="Zona_otdyha">Recreation ares</string>
+    <string name="beaches">Beaches</string>
+    <string name="call_taxi">Book a taxi</string>
+    <string name="cinemas">Cinema</string>
+    <string name="city_ways">City tours</string>
+    <string name="developed_in">Developed by</string>
+    <string name="eng">ENG</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="events">Events</string>
+    <string name="excursions">Excursions</string>
+    <string name="expo">"On June 10, 2017 the International Specialized Exhibition “Astana EXPO-2017” will open its doors. 100 countries and more than 10 international organizations will take part in the preparation of the pavilions.
+
+The main theme of EXPO-2017 is “Future Energy”. It reflects the preoccupation of the international community with the problem of energy consumption, which is having an increasing impact on our planet. The main objective of the exhibition is to call for responsibility, to foster a discussion and to develop knowledge enabling people to plan and control energy consumption on our planet and to minimize damage to the environment.
+
+The International Specialized Exhibition EXPO-2017 in Astana will start its work on June 10, 2017 and will end on September 10, 2017. EXPO 2017 is the largest project of the Independent Kazakhstan. Astana was chosen to host the International Specialized Exhibition EXPO-2017 on November 22, 2012 during the 152nd General Assembly of the International Exhibition Bureau (IEB) in a secret ballot of representatives of 161 states - members of the International Exhibition Bureau. Application of Astana was supported by 103 countries. Future exhibition has become a truly national project, in which all regions of the country will take part.</string>
+    <string name="expo_event">EXPO events</string>
+    <string name="kaz">KAZ</string>
+    <string name="learn_more">Learn more</string>
+    <string name="make_way">Directions</string>
+    <string name="pamyatka">TOURIST INFORMATION</string>
+    <string name="poleznaya">Helpful Information</string>
+    <string name="prebyvanie">Arrival</string>
+    <string name="press_Back">Press Back button again to exit</string>
+    <string name="restourant">Restaurants</string>
+    <string name="rus">RUS</string>
+    <string name="share">Share</string>
+    <string name="shopping_and">Shopping and Entertainment</string>
+    <string name="sightseegins">Sights</string>
+    <string name="sport_events">Sporting events</string>
+    <string name="theatre">Theatre performance</string>
+    <string name="torgoviy_centres">Shopping centers</string>
+    <string name="tours">Tours around Kazakhstan</string>
+    <string name="transport">Transport</string>
+    <string name="vystavky">Exhibition</string>
+    <string name="what_are_you_looking_for">What are you looking for?</string>
+    <string name="extrennaya">Emergency services</string>
+    <string name="gde_ostanovitsya">WHERE TO STAY</string>
+</resources>

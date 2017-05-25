@@ -37,7 +37,7 @@ public class GdeOstanovitsya extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerHotel);
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         int position = getArguments().getInt("position");
         viewPager.setCurrentItem(position);
         try {

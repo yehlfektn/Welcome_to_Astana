@@ -38,7 +38,7 @@ public class GdePoest extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerCafe);
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         int position = getArguments().getInt("position");
         viewPager.setCurrentItem(position);
         try {

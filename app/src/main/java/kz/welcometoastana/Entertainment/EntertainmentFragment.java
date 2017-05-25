@@ -26,7 +26,6 @@ public class EntertainmentFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class EntertainmentFragment extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerEnter);
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         try {
             Field mScroller;
             mScroller = ViewPager.class.getDeclaredField("mScroller");

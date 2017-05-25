@@ -1,7 +1,9 @@
 package kz.welcometoastana.Pamyatka;
 
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,7 +24,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
@@ -69,12 +75,7 @@ public class Extrennaya extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
-                            intent.putExtra("name", pamyatkaListItems.get(position).getName());
-                            intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
-                            intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
-                            startActivityForResult(intent, 0);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            onClick(position);
                         }
 
                         @Override
@@ -116,12 +117,7 @@ public class Extrennaya extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
-                                    intent.putExtra("name", pamyatkaListItems.get(position).getName());
-                                    intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
-                                    intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
-                                    startActivityForResult(intent, 0);
-                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    onClick(position);
                                 }
 
                                 @Override
@@ -144,9 +140,42 @@ public class Extrennaya extends Fragment {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
+    private void onClick(int position) {
+        Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
+        intent.putExtra("name", pamyatkaListItems.get(position).getName());
+        intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
+        intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
+        startActivityForResult(intent, 0);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

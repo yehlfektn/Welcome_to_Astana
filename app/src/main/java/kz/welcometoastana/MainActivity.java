@@ -1,16 +1,19 @@
 package kz.welcometoastana;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,16 +21,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -44,17 +48,17 @@ import kz.welcometoastana.Pamyatka.Poleznaya;
 import kz.welcometoastana.Pamyatka.Prebyvanie;
 import kz.welcometoastana.Pamyatka.Transport;
 import kz.welcometoastana.Sightseeings.SightSeeingsFragment;
+import kz.welcometoastana.utility.LocaleHelper;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
 
     public static Location  gpsLocation;
-    String TAG = "MainActivity";
     private Boolean exit = false;
-
-
+    private View headerView;
+    private ExpandableListView elv;
+    private Boolean changed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +73,59 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            /**
+             * Called when a drawer has settled in a completely closed state.
+             */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                if (changed) {
+                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+                    FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
+                    Fragment newFragment = null;
+                    if (currentFragment instanceof EntertainmentFragment) {
+                        newFragment = new EntertainmentFragment();
+                    } else if (currentFragment instanceof EventsFragment) {
+                        newFragment = new EventsFragment();
+                    } else if (currentFragment instanceof SightSeeingsFragment) {
+                        newFragment = new SightSeeingsFragment();
+                    } else if (currentFragment instanceof ExcursionsFragment) {
+                        newFragment = new ExcursionsFragment();
+                    } else if (currentFragment instanceof GdeOstanovitsya) {
+                        newFragment = new GdeOstanovitsya();
+                        newFragment.setArguments(currentFragment.getArguments());
+                    } else if (currentFragment instanceof GdePoest) {
+                        newFragment = new GdePoest();
+                        newFragment.setArguments(currentFragment.getArguments());
+                    } else if (currentFragment instanceof Prebyvanie) {
+                        newFragment = new Prebyvanie();
+                    } else if (currentFragment instanceof Transport) {
+                        newFragment = new Transport();
+                    } else if (currentFragment instanceof Poleznaya) {
+                        newFragment = new Poleznaya();
+                    } else if (currentFragment instanceof Extrennaya) {
+                        newFragment = new Extrennaya();
+                    } else if (currentFragment instanceof Expo) {
+                        newFragment = new Expo();
+                    }
+
+                    if (newFragment != null) {
+                        fragTransaction.replace(R.id.mainFrame, newFragment);
+                        fragTransaction.addToBackStack(null);
+                        fragTransaction.commit();
+                        changed = false;
+                    }
+                }
+            }
+        };
+
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
         //end of generated code
 
-
+        //Finding location using SmartLocation
         SmartLocation.with(this).location()
                 .start(new OnLocationUpdatedListener() {
                     @Override
@@ -89,12 +137,29 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+        //Getting access to the header view
+        headerView = navigationView.getHeaderView(0);
+
+
+        //language determination
+        String loc = getCurrentLocale().toString();
+        Log.d("MainActivity", "loc: " + loc);
+        if (loc.startsWith("en")) {
+            TextView en = (TextView) headerView.findViewById(R.id.txtEng);
+            en.setTextColor(Color.BLACK);
+        } else if (loc.startsWith("kk")) {
+            TextView kz = (TextView) headerView.findViewById(R.id.txtKaz);
+            kz.setTextColor(Color.BLACK);
+        } else {
+            TextView ru = (TextView) headerView.findViewById(R.id.txtRus);
+            ru.setTextColor(Color.BLACK);
+        }
 
         //THE EXPANDABLELIST
-        View headerView = navigationView.getHeaderView(0);
-        final ExpandableListView elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
+        elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
         final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
+        //getting the data
         final ArrayList<group> group = getData();
 
         //layout Parameters
@@ -172,27 +237,26 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
 
-
-
         //SET ONCLICK LISTENER just for debugging
         elv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
 
+                changed=false;
                 FragmentManager fm = getSupportFragmentManager();
 
                 for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                    if(fm.getBackStackEntryAt(0)!=null){
-                    if( getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName())!=null){
-                        getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDetach();
-                        getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDestroy();
+                    if (fm.getBackStackEntryAt(0) != null) {
+                        if (getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()) != null) {
+                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDetach();
+                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDestroy();
                     }
                     }
-                    if(fm.getBackStackEntryAt(i)!=null){
-                        if( getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName())!=null){
-                            getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDetach();
-                            getFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDestroy();
+                    if (fm.getBackStackEntryAt(i) != null) {
+                        if (getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()) != null) {
+                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDetach();
+                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDestroy();
                         }
                     }
                 }
@@ -231,7 +295,6 @@ public class MainActivity extends AppCompatActivity
                         fragment = new GdePoest();
                         fragment.setArguments(bundle);
                         transaction.replace(R.id.mainFrame, fragment);
-
                     }else if(childPos == 1){
                         bundle.putInt("position",2);
                         fragment = new GdePoest();
@@ -286,11 +349,8 @@ public class MainActivity extends AppCompatActivity
 
                     transaction.addToBackStack(null);
                     transaction.commit();
-
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-
-
                 return false;
             }
         });
@@ -309,7 +369,6 @@ public class MainActivity extends AppCompatActivity
                         // close drawer
                         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                         drawer.closeDrawer(GravityCompat.START);
-                        Toast.makeText(getApplicationContext(), "EditTextWasActivated", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 }
@@ -322,26 +381,25 @@ public class MainActivity extends AppCompatActivity
 
     //ADD AND GET DATA
     private ArrayList<group> getData() {
-        group t1 = new group("КУДА СХОДИТЬ");
-        t1.items.add("События");
-        t1.items.add("Достопримечательности");
-        t1.items.add("Экскурсии");
-        t1.items.add("Шоппинг и Развлечения");
-
-        group t2 = new group("ГДЕ ПОЕСТЬ");
-        t2.items.add("Кафе");
-        t2.items.add("Рестораны");
-        t2.items.add("Бары");
-        group t3 = new group("ГДЕ ОСТАНОВИТЬСЯ");
-        t3.items.add("Гостиницы");
-        t3.items.add("Хостелы");
-        t3.items.add("Апартаменты");
-        group t4 = new group("ПАМЯТКА ТУРИСТУ");
-        t4.items.add("Пребывание");
-        t4.items.add("Транспорт");
-        t4.items.add("Полезная информация");
-        t4.items.add("Экстренная помощь");
-        group t5 = new group("EXPO");
+        group t1 = new group(getResources().getString(R.string.kuda_shodit));
+        t1.items.add(getResources().getString(R.string.events));
+        t1.items.add(getResources().getString(R.string.sightseegins));
+        t1.items.add(getResources().getString(R.string.excursions));
+        t1.items.add(getResources().getString(R.string.shopping_and));
+        group t2 = new group(getString(R.string.gde_poest));
+        t2.items.add(getResources().getString(R.string.cafe));
+        t2.items.add(getResources().getString(R.string.restourant));
+        t2.items.add(getResources().getString(R.string.bar));
+        group t3 = new group(getString(R.string.gde_ostanovitsya));
+        t3.items.add(getResources().getString(R.string.hotels));
+        t3.items.add(getResources().getString(R.string.hostels));
+        t3.items.add(getResources().getString(R.string.aparments));
+        group t4 = new group(getString(R.string.pamyatka));
+        t4.items.add(getResources().getString(R.string.prebyvanie));
+        t4.items.add(getResources().getString(R.string.transport));
+        t4.items.add(getResources().getString(R.string.poleznaya));
+        t4.items.add(getResources().getString(R.string.extrennaya));
+        group t5 = new group(getString(R.string.Expo));
 
         ArrayList<group> allGroups = new ArrayList<group>();
         allGroups.add(t1);
@@ -386,10 +444,8 @@ public class MainActivity extends AppCompatActivity
 
 
     public void Xbutton(View v) {
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
     }
 
     public void goToFacebook(View view) {
@@ -401,7 +457,11 @@ public class MainActivity extends AppCompatActivity
     public void goToVk(View view) {
         goToUrl("https://vk.com/welcometoastana");
     }
-    public void goToExpo(View view){goToUrl("https://tickets.expo2017astana.com");}
+    public void goToExpo(View view) {
+        goToUrl("https://tickets.expo2017astana.com");
+    }
+
+    public void goToIbec(View view){goToUrl("http://www.ibecsystems.com/");}
 
 
     private void goToUrl(String url) {
@@ -410,15 +470,67 @@ public class MainActivity extends AppCompatActivity
         startActivity(launchBrowser);
     }
 
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    public void onChangeToRuClicked(View view) {
+        updateViews("ru_RU");
     }
 
+    public void onChangeToEnClicked(View view) {
+        updateViews("en");
+    }
+
+    public void onChangeToKzClicked(View view) {
+        updateViews("kk_KZ");
+    }
+
+    private void updateViews(String loc) {
+        changed = true;
+        Log.d("MainActivity", "before: " + getCurrentLocale().toString());
+        LocaleHelper.setLocale(this, loc);
+        Log.d("MainActivity", "after setting: " + getCurrentLocale().toString());
+        TextView en = (TextView) headerView.findViewById(R.id.txtEng);
+        TextView kz = (TextView) headerView.findViewById(R.id.txtKaz);
+        TextView ru = (TextView) headerView.findViewById(R.id.txtRus);
+        EditText editText = (EditText) headerView.findViewById(R.id.searchTxt);
+        TextView dev = (TextView) headerView.findViewById(R.id.developed);
+        if (loc.startsWith("en")) {
+            en.setTextColor(Color.BLACK);
+            kz.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+            ru.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+        } else if (loc.startsWith("kk")) {
+            kz.setTextColor(Color.BLACK);
+            en.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+            ru.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+        } else {
+            ru.setTextColor(Color.BLACK);
+            kz.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+            en.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+        }
+        en.setText(getResources().getString(R.string.eng));
+        ru.setText(getResources().getString(R.string.rus));
+        kz.setText(getResources().getString(R.string.kaz));
+        editText.setHint(getResources().getString(R.string.what_are_you_looking_for));
+        dev.setText(getResources().getString(R.string.developed_in));
+        final ArrayList<group> group = getData();
+        CustomAdapter adapter = new CustomAdapter(this, group);
+        elv.setAdapter(adapter);
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
+        fragTransaction.detach(currentFragment);
+        fragTransaction.attach(currentFragment);
+        fragTransaction.commit();
+
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
 
 }

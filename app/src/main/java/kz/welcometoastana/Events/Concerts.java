@@ -1,7 +1,9 @@
 package kz.welcometoastana.Events;
 
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,7 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
@@ -41,13 +47,10 @@ public class Concerts extends Fragment {
     public Concerts() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
-
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -57,10 +60,7 @@ public class Concerts extends Fragment {
             eventsItemLists = new ArrayList<>();
         }
         if(eventsItemLists.size()==0){
-
-            Log.d("AllEvents","Startingloadingdata");
             loadRecyclerView();
-
         }else{
 
             adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
@@ -95,15 +95,13 @@ public class Concerts extends Fragment {
                         }
                     })
             );
+
         }
 
         return v;
     }
 
     private void loadRecyclerView() {
-
-
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -112,20 +110,17 @@ public class Concerts extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
 
-                    for (int i=0; i<array.length();i++) {
-
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
-
-
-                            String lon;
-                            String lat;
-                            if (o.getJSONArray("points").length() > 0) {
-                                lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
-                                lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
-                            } else {
-                                lon = "null";
-                                lat = "null";
-                            }
+                        String lon;
+                        String lat;
+                        if (o.getJSONArray("points").length() > 0) {
+                            lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                            lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                        } else {
+                            lon = "null";
+                            lat = "null";
+                        }
 
                         EventsItemList item = new EventsItemList(
                                 o.getString("name"),
@@ -141,10 +136,9 @@ public class Concerts extends Fragment {
                                 o.getString("url")
                         );
 
-
                         eventsItemLists.add(item);
 
-                        }
+                    }
 
 
                     adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
@@ -189,13 +183,37 @@ public class Concerts extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 Log.d("Sightseeings",error.toString());
 
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
 }

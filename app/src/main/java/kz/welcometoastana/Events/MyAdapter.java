@@ -1,18 +1,23 @@
 package kz.welcometoastana.Events;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import kz.welcometoastana.R;
 
 /**
  * Created by Nurdaulet on 3/1/2017.
  */
 
 public class MyAdapter extends FragmentPagerAdapter {
+    private Context context;
 
 
-    public MyAdapter(FragmentManager fm) {
+    public MyAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -21,15 +26,15 @@ public class MyAdapter extends FragmentPagerAdapter {
             case 0:
                 return new AllEvents();
             case 1:
-                return new Concerts();
-            case 2:
-                return new Vystavki();
-            case 3:
-                return new Theatre();
-            case 4:
-                return new Sports();
-            case 5:
                 return new ExpoEvent();
+            case 2:
+                return new Concerts();
+            case 3:
+                return new Vystavki();
+            case 4:
+                return new Theatre();
+            case 5:
+                return new Sports();
 
         }
         return null;
@@ -45,17 +50,17 @@ public class MyAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Все события";
+                return context.getString(R.string.all_events);
             case 1:
-                return "Концерты";
+                return context.getString(R.string.expo_event);
             case 2:
-                return "Выставки";
+                return context.getString(R.string.Concerts);
             case 3:
-                return "Театральная постановка";
+                return context.getString(R.string.vystavky);
             case 4:
-                return "Спортивные мероприятия";
+                return context.getString(R.string.theatre);
             case 5:
-                return "Мероприятия Expo";
+                return context.getString(R.string.sport_events);
         }
 
         return null;

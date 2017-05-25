@@ -1,8 +1,9 @@
 package kz.welcometoastana.Entertainment;
 
 
-import android.app.ProgressDialog;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,7 +25,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.R;
@@ -44,8 +49,6 @@ public class ZonyOtdyhaFragment extends Fragment {
     public ZonyOtdyhaFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,37 +60,20 @@ public class ZonyOtdyhaFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
         if(kudaShoditListItems ==null) {
             kudaShoditListItems = new ArrayList<>();
         }
         if(kudaShoditListItems.size()==0){
-
             loadRecyclerView();
-
         }else{
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
                         @Override
                         public void onItemClick(View view, int position) {
-                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                            intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                            intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                            intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                            intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                            intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                            intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                            intent.putExtra("url",Url);
-                            intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
-                            startActivityForResult(intent, 0);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            onClick(position);
                         }
-
                         @Override
                         public void onLongItemClick(View view, int position) {
                             // do whatever
@@ -95,19 +81,13 @@ public class ZonyOtdyhaFragment extends Fragment {
                     })
             );
         }
-
         return v;
     }
 
     private void loadRecyclerView() {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -136,19 +116,7 @@ public class ZonyOtdyhaFragment extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                                    intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                                    intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                                    intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                                    intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                                    intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                                    intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                                    intent.putExtra("url",Url);
-                                    intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
-                                    startActivityForResult(intent, 0);
-                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    onClick(position);
                                 }
 
                                 @Override
@@ -169,13 +137,52 @@ public class ZonyOtdyhaFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                loadRecyclerView();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
+    }
+
+    private void onClick(int position) {
+
+        Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+        intent.putExtra("name", kudaShoditListItems.get(position).getName());
+        intent.putExtra("id", kudaShoditListItems.get(position).getId());
+        intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+        intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+        intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+        intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+        intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+        intent.putExtra("url", Url);
+        intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
+        startActivityForResult(intent, 0);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
     }
 
 }

@@ -33,7 +33,7 @@ public class EventsFragment extends Fragment {
 
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
 
         try {
             Field mScroller;

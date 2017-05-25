@@ -57,58 +57,58 @@ public class CustomAdapter extends BaseExpandableListAdapter {
         //GET TEAM NAME
         String groupName= getGroup(groupPos).toString();
         //ASSIGN IMAGES TO PLAYERS ACCORDING TO THEIR NAMES AN TEAMS
-        if(groupName=="КУДА СХОДИТЬ")
+        if (groupName.equals(c.getResources().getString(R.string.kuda_shodit)))
         {
-            if(child=="Шоппинг и Развлечения")
+            if (child.equals(c.getString(R.string.shopping_and)))
             {
                 img.setImageResource(R.mipmap.icon_end_orange)  ;
-            }else if(child=="Достопримечательности")
+            } else if (child.equals(c.getString(R.string.sightseegins)))
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
-            }else if(child=="События")
+            } else if (child.equals(c.getString(R.string.events)))
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
-            }else if(child=="Экскурсии")
+            } else if (child.equals(c.getString(R.string.excursions)))
             {
                 img.setImageResource(R.mipmap.icon_bw_orange)  ;
             }
 
-        }else if(groupName=="ГДЕ ПОЕСТЬ")
+        } else if (groupName.equals(c.getResources().getString(R.string.gde_poest)))
         {
-            if(child=="Кафе")
+            if (child.equals(c.getString(R.string.cafe)))
             {
                 img.setImageResource(R.mipmap.icon_bw_green)  ;
-            }else if(child=="Рестораны")
+            } else if (child.equals(c.getString(R.string.restourant)))
             {
                 img.setImageResource(R.mipmap.icon_bw_green)  ;
-            }else if(child=="Бары")
+            } else if (child.equals(c.getString(R.string.bar)))
             {
                 img.setImageResource(R.mipmap.icon_end_green)  ;
             }
-        }else if(groupName=="ГДЕ ОСТАНОВИТЬСЯ")
+        } else if (groupName.contains(c.getResources().getString(R.string.gde_ostanovitsya)))
         {
-            if(child=="Гостиницы")
+            if (child.equals(c.getResources().getString(R.string.hotels)))
             {
                 img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Хостелы")
+            } else if (child.equals(c.getResources().getString(R.string.hostels)))
             {
                 img.setImageResource(R.mipmap.icon_land_bw)  ;
-            }else if(child=="Апартаменты")
+            } else if (child.equals(c.getResources().getString(R.string.aparments)))
             {
                 img.setImageResource(R.mipmap.icon_land_end)  ;
             }
-        }else if(groupName=="ПАМЯТКА ТУРИСТУ")
+        } else if (groupName.equals(c.getResources().getString(R.string.pamyatka)))
         {
-            if(child=="Пребывание")
+            if (child.equals(c.getString(R.string.prebyvanie)))
             {
                 img.setImageResource(R.mipmap.icon_bw_yellow)  ;
-            }else if(child=="Транспорт")
+            } else if (child.equals(c.getString(R.string.transport)))
             {
                 img.setImageResource(R.mipmap.icon_bw_yellow)  ;
-            }else if(child=="Полезная информация")
+            } else if (child.equals(c.getString(R.string.poleznaya)))
             {
                 img.setImageResource(R.mipmap.icon_bw_yellow)  ;
-            }else if(child=="Экстренная помощь")
+            } else if (child.equals(c.getString(R.string.extrennaya)))
             {
                 img.setImageResource(R.mipmap.icon_end_yellow)  ;
             }
@@ -159,29 +159,29 @@ public class CustomAdapter extends BaseExpandableListAdapter {
 
         if(isExpanded){
 
-            if (name == "КУДА СХОДИТЬ") {
+            if (name.equals(c.getResources().getString(R.string.kuda_shodit))) {
                 img.setImageResource(R.mipmap.icon_landscape_opened);
-            } else if (name == "ГДЕ ПОЕСТЬ") {
+            } else if (name.equals(c.getResources().getString(R.string.gde_poest))) {
                 img.setImageResource(R.mipmap.icon_burger_opened);
-            } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {
+            } else if (name.contains(c.getResources().getString(R.string.gde_ostanovitsya))) {
                 img.setImageResource(R.mipmap.icon_location_opened);
-            } else if (name == "ПАМЯТКА ТУРИСТУ") {
+            } else if (name.equals(c.getResources().getString(R.string.pamyatka))) {
                 img.setImageResource(R.mipmap.icon_medical_opened);
-            } else if (name == "EXPO") {
+            } else if (name.equals(c.getResources().getString(R.string.expo))) {
                 img.setImageResource(R.mipmap.icon_expo);
             }
 
         }else {
 
-            if (name == "КУДА СХОДИТЬ") {
+            if (name.equals(c.getResources().getString(R.string.kuda_shodit))) {
                 img.setImageResource(R.mipmap.icon_landscape_collapsed);
-            } else if (name == "ГДЕ ПОЕСТЬ") {
+            } else if (name.equals(c.getResources().getString(R.string.gde_poest))) {
                 img.setImageResource(R.mipmap.icon_burger);
-            } else if (name == "ГДЕ ОСТАНОВИТЬСЯ") {
+            } else if (name.contains(c.getResources().getString(R.string.gde_ostanovitsya))) {
                 img.setImageResource(R.mipmap.icon_location);
-            } else if (name == "ПАМЯТКА ТУРИСТУ") {
+            } else if (name.equals(c.getResources().getString(R.string.pamyatka))) {
                 img.setImageResource(R.mipmap.icon_medical);
-            } else if (name == "EXPO") {
+            } else if (name.equals(c.getResources().getString(R.string.Expo))) {
                 img.setImageResource(R.mipmap.icon_expo);
             }
         }

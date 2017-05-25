@@ -1,8 +1,11 @@
 package kz.welcometoastana.GdeOstanovitsya;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import kz.welcometoastana.R;
 
 /**
  * Created by Nurdaulet on 3/1/2017.
@@ -10,9 +13,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class MyAdapter extends FragmentPagerAdapter {
 
+    private Context context;
 
-    public MyAdapter(FragmentManager fm) {
+    public MyAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -40,15 +45,13 @@ public class MyAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Все отели";
+                return context.getString(R.string.all_hotels);
             case 1:
-                return "Гостиницы";
+                return context.getString(R.string.hotels);
             case 2:
-                return "Хостелы";
+                return context.getString(R.string.hostels);
             case 3:
-                return "Апартаменты";
-
-
+                return context.getString(R.string.aparments);
         }
 
         return null;

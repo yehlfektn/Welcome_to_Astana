@@ -198,69 +198,116 @@
             android:layout_height="200dp"
             />
 
-        <TextView
+        <RelativeLayout
             android:id="@+id/shareButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="48dp"
             android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/rectangleshape_purple"
-            android:drawableLeft="@drawable/ic_share_symbol"
-            android:drawablePadding="10dp"
-            android:drawableStart="@drawable/ic_share_symbol"
-            android:gravity="left"
-            android:onClick="ShareGde"
-            android:padding="15dp"
-            android:paddingLeft="110dp"
-            android:paddingStart="110dp"
-            android:text="@string/share" />
+            android:background="@drawable/custom_button_selector_purple"
+            android:clickable="true"
+            android:onClick="ShareGde">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-        <TextView
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_share_symbol" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/share"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/wayButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="48dp"
             android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/rectangleshape_purple"
-            android:drawableLeft="@drawable/ic_location_on_road"
-            android:drawablePadding="10dp"
-            android:drawableStart="@drawable/ic_location_on_road"
-            android:gravity="left"
-            android:onClick="GoogleMapGde"
-            android:padding="15dp"
-            android:paddingLeft="90dp"
-            android:paddingStart="90dp"
-            android:text="@string/make_way" />
+            android:background="@drawable/custom_button_selector_purple"
+            android:clickable="true"
+            android:onClick="GoogleMapGde">
 
-        <TextView
-            android:id="@+id/taxiButton"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_location_on_road" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/make_way"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/patient_list_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="48dp"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/rectangleshape_purple"
-            android:drawableLeft="@drawable/ic_cab"
-            android:drawablePadding="10dp"
-            android:drawableStart="@drawable/ic_cab"
-            android:gravity="left"
-            android:onClick="CallTaxiGdeOst"
-            android:padding="15dp"
-            android:paddingLeft="110dp"
-            android:paddingStart="110dp"
-            android:text="@string/call_taxi" />
+            android:background="@drawable/custom_button_selector_purple"
+            android:clickable="true"
+            android:onClick="CallTaxiGdeOst">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_cab" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/call_taxi"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

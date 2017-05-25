@@ -1,8 +1,11 @@
 package kz.welcometoastana.Entertainment;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import kz.welcometoastana.R;
 
 /**
  * Created by Nurdaulet on 3/1/2017.
@@ -10,9 +13,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class MyAdapter extends FragmentPagerAdapter {
 
+    private Context context;
 
-    public MyAdapter(FragmentManager fm) {
+    public MyAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -44,18 +49,17 @@ public class MyAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Торговые центры";
+                return context.getString(R.string.torgoviy_centres);
             case 1:
-                return "Зоны отдыха";
+                return context.getString(R.string.Zona_otdyha);
             case 2:
-                return "Пляжи";
+                return context.getString(R.string.beaches);
             case 3:
-                return "Ночные клубы";
+                return context.getString(R.string.Nochnye_cluby);
             case 4:
-                return "Кинотеатры";
+                return context.getString(R.string.cinemas);
             case 5:
-                return "Развлечения";
-
+                return context.getString(R.string.entertainment);
 
         }
 

@@ -38,7 +38,7 @@ public class ExcursionsFragment extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerExcursion);
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         try {
             Field mScroller;
             mScroller = ViewPager.class.getDeclaredField("mScroller");

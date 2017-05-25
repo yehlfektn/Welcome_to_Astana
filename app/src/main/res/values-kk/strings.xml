@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Welcome to Astana</string>
+    <string name="events">Іс-шаралар</string>
+    <string name="Concerts">Концерттер</string>
+    <string name="Expo">EXPO</string>
+    <string name="Nochnye_cluby">Түнгі клубтар</string>
+    <string name="Otdyh">Қала сыртындағы демалыс</string>
+    <string name="Zona_otdyha">Демалыс аймақтары</string>
+    <string name="all_events">Барлық іс-шаралар</string>
+    <string name="all_hotels">Барлық Қонақ үйлер</string>
+    <string name="all_places_cafe">Барлық жерлер</string>
+    <string name="aparments">Апартаменттер</string>
+    <string name="bar">Барлар</string>
+    <string name="beaches">Жағажайлар</string>
+    <string name="buy">Сатып алу</string>
+    <string name="cafe">Кафелер</string>
+    <string name="call_taxi">Такси шақыру</string>
+    <string name="cinemas">Кинотеатрлар</string>
+    <string name="city_ways">Қалалық бағдарлар</string>
+    <string name="developed_in">Дайындаған</string>
+    <string name="eng">ENG</string>
+    <string name="entertainment">Ойын-сауық</string>
+    <string name="excursions">Экскурсиялар</string>
+    <string name="expo">2017 жылғы 10 маусымда «Астана ЭКСПО-2017» халықаралық мамандандырылған көрме өз есігін айқара ашады. Павильондар дайындауға 100 ел мен 10-нан астам халықаралық ұйым қатысады.
+
+ЭКСПО-2017 негізгі тақырыбы – «Болашақ энергиясы». Ол халықаралық қоғамдастықтың планетаға күн өткен сайын әсер етіп отырған энергия тұтыну проблемасына алаңдаушылығын білдіреді. Көрменің басты мақсаты – жауаптылыққа шақыру, пікірталастар тудыру және адамдардың табиғат үшін келетін зиянды барынша азайтып энергия тұтынуды жоспарлап бақылау білуге үйрету білімін қалыптастыру.
+
+Астана қаласында ЭКСПО-2017 халықаралық мамандандырылған көрме өз жұмысын 2017 жылғы 10 маусымда бастайды және 10 қыркүйекте аяқтайды.
+
+ЭКСПО-2017 көрмесі – Тәуелсіз Қазақстанның ең көлемді жобасы. Астана Халықаралық көрмелер бюросына мүше 161 мемлекет өкілдерінің құпия дауысқа салу барысында Халықаралық Көрме Бюросының (ХКБ) 152 Жалпы Ассамблеясы кезінде 2012 жылғы 22 қарашада ЭКСПО-2017 халықаралық мамандандырылған көрмені өткізудің орны ретінде таңдалды. Астана өтініміне 103 ел қолдау көрсетті. Алдағы көрме елдің барлық өңірлері қатысатын ұлттық жоба болып табылады.</string>
+    <string name="gde_ostanovitsya">ҚАЙДА ТҰРУ</string>
+    <string name="gde_poest">ҚАЙДА ТАМАҚТАНУ</string>
+    <string name="hostels">Хостелдер</string>
+    <string name="hotels">Қонақ үйлер</string>
+    <string name="expo_event">EXPO іс-шаралары</string>
+    <string name="kaz">ҚАЗ</string>
+    <string name="kuda_shodit">ҚАЙДА БАРУҒА БОЛАДЫ</string>
+    <string name="learn_more">Көбірек білу</string>
+    <string name="make_way">Бағыттар</string>
+    <string name="pamyatka">ТУРИСТТІК АҚПАРАТ</string>
+    <string name="poleznaya">Пайдалы ақпарат</string>
+    <string name="prebyvanie">Мекендеу</string>
+    <string name="press_Back">Шығу үшін қайта артқа басыңыз</string>
+    <string name="restourant">Мейрамханалар</string>
+    <string name="rus">РУС</string>
+    <string name="share">Бөлісу</string>
+    <string name="shopping_and">Шопинг және ойын-сауық</string>
+    <string name="sightseegins">Көрнекті орындар</string>
+    <string name="sport_events">Спорттық іс-шаралар</string>
+    <string name="theatre">Театр қойылымы</string>
+    <string name="torgoviy_centres">Сауда орталықтары</string>
+    <string name="tours">Қазақстан бойынша турлар</string>
+    <string name="transport">Көлік</string>
+    <string name="vystavky">Көрмелер</string>
+    <string name="what_are_you_looking_for">Не іздеп жүрсіз?</string>
+    <string name="extrennaya">Шұғыл қызмет</string>
+</resources>

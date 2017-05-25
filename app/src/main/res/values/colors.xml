@@ -6,4 +6,5 @@
     <color name="foreground"> #EFB201 </color>
     <color name="background"> #DAD9D5 </color>
     <color name="gray">#AAAAAA</color>
+    <color name="txtColor">#C1C1C1</color>
 </resources>
