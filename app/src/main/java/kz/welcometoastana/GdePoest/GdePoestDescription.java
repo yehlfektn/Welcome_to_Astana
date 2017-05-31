@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -130,7 +129,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         expandableTextView.getPaint().setShader(textShader);
 
 
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
 
         int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -391,23 +390,12 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
-
                 }
-
                 @Override
                 public void onMarkerDrag(Marker marker) {
-
                 }
-
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-
-                    Geocoder gc = new Geocoder(GdePoestDescription.this);
-                    LatLng ll = marker.getPosition();
-                    double lat = ll.latitude;
-                    double lng = ll.longitude;
-
-
                     marker.setTitle(getIntent().getStringExtra("name"));
                     marker.showInfoWindow();
                 }
@@ -415,7 +403,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
 
             mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter(){
-
                 @Override
                 public View getInfoWindow(Marker marker) {
                     return null;
@@ -444,7 +431,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker_green", 50, 50)))
                 .position(new LatLng(lat, lng));
 
-        mGoogleMap.addMarker(options);
+        mGoogleMap.addMarker(options).showInfoWindow();
 
     }
 
@@ -461,7 +448,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,

@@ -157,7 +157,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         expandableTextView.getPaint().setShader(textShader);
         final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
 
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
 
         int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -190,8 +190,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
+
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
                     OpenCollapse.setText("");
@@ -206,7 +205,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
             {
                 if (expandableTextView.isExpanded())
                 {
-                    //expandableTextView.getPaint().setShader(textShader);
+
                     expandableTextView.collapse();
                     OpenCollapse.setText(spannableStringBuilder);
                     final Handler handler = new Handler();
@@ -221,8 +220,6 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
 
@@ -492,7 +489,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker_purple", 50, 50)))
                 .position(new LatLng(lat, lng));
 
-        mGoogleMap.addMarker(options);
+        mGoogleMap.addMarker(options).showInfoWindow();
 
     }
 

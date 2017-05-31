@@ -61,7 +61,7 @@ public class PamyatkaDescription extends AppCompatActivity {
         expandableTextView.getPaint().setShader(textShader);
         final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
 
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
 
         int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -94,7 +94,6 @@ public class PamyatkaDescription extends AppCompatActivity {
                 }
                 else
                 {
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
                     OpenCollapse.setText("");
@@ -123,7 +122,6 @@ public class PamyatkaDescription extends AppCompatActivity {
                 }
                 else
                 {
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
 

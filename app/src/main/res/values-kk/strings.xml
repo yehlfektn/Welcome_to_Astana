@@ -7,7 +7,7 @@
     <string name="Nochnye_cluby">Түнгі клубтар</string>
     <string name="Otdyh">Қала сыртындағы демалыс</string>
     <string name="Zona_otdyha">Демалыс аймақтары</string>
-    <string name="all_events">Барлық іс-шаралар</string>
+    <string name="all_events">Алдағы іс-шаралар</string>
     <string name="all_hotels">Барлық Қонақ үйлер</string>
     <string name="all_places_cafe">Барлық жерлер</string>
     <string name="aparments">Апартаменттер</string>
@@ -55,4 +55,8 @@
     <string name="vystavky">Көрмелер</string>
     <string name="what_are_you_looking_for">Не іздеп жүрсіз?</string>
     <string name="extrennaya">Шұғыл қызмет</string>
+    <string name="read_more">Ары қарай оқу</string>
+    <string name="from">бастап</string>
+    <string name="to">дейін</string>
+    <string name="reset_filter">фильтрді тазалау</string>
 </resources>

@@ -1,22 +1,22 @@
 <resources>
     <string name="app_name">Welcome to Astana</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="what_are_you_looking_for">Что вы ищете?</string>
     <string name="kaz">КАЗ</string>
     <string name="rus">РУС</string>
     <string name="eng">ENG</string>
     <string name="developed_in">Разработано в</string>
     <string name="press_Back">Нажмите назад еще раз чтобы выйти</string>
-    <string name="title_activity_description">ДОСТОПРИМЕЧАТЕЛЬНОСТИ</string>
+    <string name="title_activity_description" translatable="false">ДОСТОПРИМЕЧАТЕЛЬНОСТИ</string>
     <string name="expo">10 июня 2017 года откроет свои двери Международная специализированная Выставка «Астана ЭСКПО-2017». В подготовке павильонов примут участие 100 стран и более 10 международных организаций.</string>
     <string name="learn_more">Узнать больше</string>
-    <string name="title_activity_pamyatka_description">PamyatkaDescription</string>
-    <string name="title_activity_gde_poest_description">GdePoestDescription</string>
-    <string name="title_activity_gde_ostanovitsya_description">GdeOstanovitsyaDescription</string>
-    <string name="title_activity_events_description">СОБЫТИЯ</string>
-    <string name="title_activity_taxi">TaxiActivity</string>
+    <string name="title_activity_pamyatka_description" translatable="false">PamyatkaDescription</string>
+    <string name="title_activity_gde_poest_description" translatable="false">GdePoestDescription</string>
+    <string name="title_activity_gde_ostanovitsya_description" translatable="false">GdeOstanovitsyaDescription</string>
+    <string name="title_activity_events_description" translatable="false">СОБЫТИЯ</string>
+    <string name="title_activity_taxi" translatable="false">TaxiActivity</string>
     <string name="share">Поделиться</string>
     <string name="call_taxi">Вызвать такси</string>
     <string name="make_way">Проложить маршрут</string>
@@ -30,7 +30,7 @@
     <string name="all_events">БЛИЖАЙШИЕ СОБЫТИЯ</string>
     <string name="Concerts">Концерты</string>
     <string name="vystavky">Выставки</string>
-    <string name="theatre">Театральная постановка</string>
+    <string name="theatre">Театральные постановки</string>
     <string name="sport_events">Спортивные мероприятия</string>
     <string name="expo_event">Мероприятия Expo</string>
     <string name="city_ways">Городские маршруты</string>
@@ -57,5 +57,13 @@
     <string name="poleznaya">Полезная информация</string>
     <string name="extrennaya">Экстренная помощь</string>
     <string name="Expo">EXPO</string>
+    <string name="chinese" translatable="false">旅遊信息</string>
+    <string name="read_more">Читать дальше</string>
+    <string name="from">От</string>
+    <string name="to">До</string>
+    <string name="reset_filter">Сбросить фильтр</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -53,4 +53,8 @@ The International Specialized Exhibition EXPO-2017 in Astana will start its work
     <string name="what_are_you_looking_for">What are you looking for?</string>
     <string name="extrennaya">Emergency services</string>
     <string name="gde_ostanovitsya">WHERE TO STAY</string>
+    <string name="read_more">Read more</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="reset_filter">Reset filter</string>
 </resources>

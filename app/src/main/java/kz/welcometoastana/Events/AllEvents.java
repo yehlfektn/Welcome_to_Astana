@@ -72,23 +72,7 @@ public class AllEvents extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), EventsDescription.class);
-                            final EventsItemList eventsItemList = eventsItemLists.get(position);
-                            intent.putExtra("name", eventsItemList.getName());
-                            intent.putExtra("id", eventsItemList.getId());
-                            intent.putExtra("description", eventsItemList.getSummary());
-                            intent.putExtra("imageUrl", eventsItemList.getImageUrl());
-                            intent.putExtra("category", eventsItemList.getCategory());
-                            intent.putExtra("longit", eventsItemList.getLon());
-                            intent.putExtra("latit", eventsItemList.getLat());
-                            intent.putExtra("url",Url);
-                            intent.putExtra("address",eventsItemList.getAddress());
-                            intent.putExtra("money",eventsItemList.getMoney());
-                            intent.putExtra("date",eventsItemList.getDate());
-                            intent.putExtra("urlItem",eventsItemList.getUrl());
-                            startActivityForResult(intent, 0);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            onClick(position);
                         }
 
                         @Override
@@ -155,23 +139,7 @@ public class AllEvents extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), EventsDescription.class);
-                                    final EventsItemList eventsItemList = eventsItemLists.get(position);
-                                    intent.putExtra("name", eventsItemList.getName());
-                                    intent.putExtra("id", eventsItemList.getId());
-                                    intent.putExtra("description", eventsItemList.getSummary());
-                                    intent.putExtra("imageUrl", eventsItemList.getImageUrl());
-                                    intent.putExtra("category", eventsItemList.getCategory());
-                                    intent.putExtra("longit", eventsItemList.getLon());
-                                    intent.putExtra("latit", eventsItemList.getLat());
-                                    intent.putExtra("url",Url);
-                                    intent.putExtra("address",eventsItemList.getAddress());
-                                    intent.putExtra("money",eventsItemList.getMoney());
-                                    intent.putExtra("date",eventsItemList.getDate());
-                                    intent.putExtra("urlItem",eventsItemList.getUrl());
-                                    startActivityForResult(intent, 0);
-                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    onClick(position);
                                 }
 
                                 @Override
@@ -215,6 +183,25 @@ public class AllEvents extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
+    }
+
+    private void onClick(int position) {
+        Intent intent = new Intent(getActivity(), EventsDescription.class);
+        final EventsItemList eventsItemList = eventsItemLists.get(position);
+        intent.putExtra("name", eventsItemList.getName());
+        intent.putExtra("id", eventsItemList.getId());
+        intent.putExtra("description", eventsItemList.getSummary());
+        intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+        intent.putExtra("category", eventsItemList.getCategory());
+        intent.putExtra("longit", eventsItemList.getLon());
+        intent.putExtra("latit", eventsItemList.getLat());
+        intent.putExtra("url", Url);
+        intent.putExtra("address", eventsItemList.getAddress());
+        intent.putExtra("money", eventsItemList.getMoney());
+        intent.putExtra("date", eventsItemList.getDate());
+        intent.putExtra("urlItem", eventsItemList.getUrl());
+        startActivityForResult(intent, 0);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @TargetApi(Build.VERSION_CODES.N)

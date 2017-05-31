@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -27,10 +27,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,12 +68,17 @@ import java.util.Locale;
 import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
+import kz.welcometoastana.utility.AdapterforNearby;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.ViewPagerAdapter;
+import kz.welcometoastana.utility.listItemNearby;
 
 
 public class EventsDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public TabLayout tabLayout;
+    public ViewPager viewPagerNext;
+    public ScrollView mScrollView;
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
     double lat, lng;
@@ -98,7 +105,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF5800, 0xffFF8B00});
         getSupportActionBar().setBackgroundDrawable(g);
 
-        TextView name = (TextView) findViewById(R.id.name);
+        final TextView name = (TextView) findViewById(R.id.name);
         TextView address = (TextView) findViewById(R.id.address);
         TextView date = (TextView)findViewById(R.id.date);
         Button frameButton = (Button)findViewById(R.id.buttonFrame);
@@ -141,7 +148,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         expandableTextView.getPaint().setShader(textShader);
         final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
 
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
 
         int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -174,8 +181,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
                     OpenCollapse.setText("");
@@ -190,7 +195,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             {
                 if (expandableTextView.isExpanded())
                 {
-                    //expandableTextView.getPaint().setShader(textShader);
+                    //
                     expandableTextView.collapse();
                     OpenCollapse.setText(spannableStringBuilder);
                     final Handler handler = new Handler();
@@ -205,11 +210,8 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
-
                     OpenCollapse.setText("");
                 }
             }
@@ -220,7 +222,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
 
         if (googleServicesAvailable()) {
-            //Toast.makeText(this, "Perfect!", Toast.LENGTH_LONG).show();
             initMap();
         }
 
@@ -234,7 +235,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("DescriptionActivity", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -245,17 +245,14 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                             JSONArray arr = o.getJSONArray("images");
                             latStr = getIntent().getStringExtra("latit");
                             lngStr = getIntent().getStringExtra("longit");
-                            Log.d("EventsDescription","latitude: "+latStr+"longitude: "+lngStr);
                             if (lngStr.equals("null")) {
                                 lngStr = "0";
                                 latStr = "0";
                             }
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
-
                             goToLocationZoom(lat, lng, 15);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
-                            Log.d("DescriptionActivity", "size: "+arr.length());
                             if(arr.length()==0){
 
                                 imageUrls.add("http://imgur.com/bpx2TrL");
@@ -269,7 +266,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                     }
 
                     viewPager = (ViewPager) findViewById(R.id.viewPager);
-
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), imageUrls);
                     viewPager.setAdapter(viewPagerAdapter);
                     dotscount = viewPagerAdapter.getCount();
@@ -294,12 +290,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                         @Override
                         public void onPageSelected(int position) {
-
                             for (int i = 0; i < dotscount; i++) {
                                 dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
                             dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-
                         }
 
                         @Override
@@ -311,9 +305,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
                     }
-
                 } catch (JSONException e) {
-
                     e.printStackTrace();
                 }
 
@@ -324,8 +316,106 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
+        StringRequest nearbyRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=51&lon=41", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                ArrayList<listItemNearby> arrayListImage = new ArrayList<>();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONObject object = jsonObject.getJSONObject("data");
+                    JSONArray array = object.getJSONArray("sightseeings");
+
+                    arrayListImage.add(new listItemNearby(
+                            array.getJSONObject(0).getString("name"),
+                            array.getJSONObject(1).getString("name"),
+                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(0).getJSONObject("category").getString("name")
+
+                    ));
+
+                    array = object.getJSONArray("hotels");
+                    arrayListImage.add(new listItemNearby(
+                            array.getJSONObject(0).getString("name"),
+                            array.getJSONObject(1).getString("name"),
+                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(0).getJSONObject("category").getString("name")
+
+                    ));
+
+                    array = object.getJSONArray("foods");
+                    arrayListImage.add(new listItemNearby(
+                            array.getJSONObject(0).getString("name"),
+                            array.getJSONObject(1).getString("name"),
+                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
+                            array.getJSONObject(0).getJSONObject("category").getString("name")
+
+                    ));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
+                viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
+                mScrollView = (ScrollView) findViewById(R.id.scrollView);
+                viewPagerNext.setAdapter(new AdapterforNearby(getApplicationContext(), arrayListImage));
+                viewPagerNext.setOnTouchListener(new View.OnTouchListener() {
+
+                    int dragthreshold = 30;
+                    int downX;
+                    int downY;
+
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                downX = (int) event.getRawX();
+                                downY = (int) event.getRawY();
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                int distanceX = Math.abs((int) event.getRawX() - downX);
+                                int distanceY = Math.abs((int) event.getRawY() - downY);
+
+                                if (distanceY > distanceX && distanceY > dragthreshold) {
+                                    viewPagerNext.getParent().requestDisallowInterceptTouchEvent(false);
+                                    mScrollView.getParent().requestDisallowInterceptTouchEvent(true);
+                                } else if (distanceX > distanceY && distanceX > dragthreshold) {
+                                    viewPagerNext.getParent().requestDisallowInterceptTouchEvent(true);
+                                    mScrollView.getParent().requestDisallowInterceptTouchEvent(false);
+                                }
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                mScrollView.getParent().requestDisallowInterceptTouchEvent(false);
+                                viewPagerNext.getParent().requestDisallowInterceptTouchEvent(false);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                tabLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabLayout.setupWithViewPager(viewPagerNext);
+                    }
+                });
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+        requestQueue.add(nearbyRequest);
 
     }
 
@@ -337,19 +427,14 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public boolean onSupportNavigateUp() {
-
         onBackPressed();
         return true;
     }
-
     @Override
     public void onBackPressed() {
-
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_righ);
     }
-
-
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int isAvailable = api.isGooglePlayServicesAvailable(this);
@@ -382,50 +467,29 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
-
                 }
-
                 @Override
                 public void onMarkerDrag(Marker marker) {
-
                 }
-
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-
-                    Geocoder gc = new Geocoder(EventsDescription.this);
-                    LatLng ll = marker.getPosition();
-                    double lat = ll.latitude;
-                    double lng = ll.longitude;
-
-
                     marker.setTitle(getIntent().getStringExtra("name"));
                     marker.showInfoWindow();
                 }
             });
-
-
             mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter(){
-
                 @Override
                 public View getInfoWindow(Marker marker) {
                     return null;
                 }
-
                 @Override
                 public View getInfoContents(Marker marker) {
                     return null;
                 }
             });
         }
-
     }
 
-    private void goToLocation(double lat, double lng) {
-        LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLng(ll);
-        mGoogleMap.moveCamera(update);
-    }
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
@@ -439,15 +503,12 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker", 50, 50)))
                 .position(new LatLng(lat, lng));
-
-        mGoogleMap.addMarker(options);
-
+        mGoogleMap.addMarker(options).showInfoWindow();
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
 
     @Override
@@ -457,7 +518,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -472,18 +532,14 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
-
         if(location == null){
             Toast.makeText(this, "Can't get current location", Toast.LENGTH_LONG).show();
         } else {
@@ -500,25 +556,19 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("http://maps.google.com/maps?daddr="+lat+","+lng+""));
         startActivity(intent);
-
-
     }
     public void ShareEvents(View view) {
-
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         String shareBody = getIntent().getStringExtra("name") + getIntent().getStringExtra("urlItem");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
-
     }
     public void CallTaxiEvent(View view){
-
         Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "15800"));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)

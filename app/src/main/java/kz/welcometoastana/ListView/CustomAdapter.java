@@ -169,6 +169,8 @@ public class CustomAdapter extends BaseExpandableListAdapter {
                 img.setImageResource(R.mipmap.icon_medical_opened);
             } else if (name.equals(c.getResources().getString(R.string.expo))) {
                 img.setImageResource(R.mipmap.icon_expo);
+            } else if (name.equals(c.getResources().getString(R.string.chinese))) {
+                img.setImageResource(R.drawable.info_marker);
             }
 
         }else {
@@ -183,6 +185,8 @@ public class CustomAdapter extends BaseExpandableListAdapter {
                 img.setImageResource(R.mipmap.icon_medical);
             } else if (name.equals(c.getResources().getString(R.string.Expo))) {
                 img.setImageResource(R.mipmap.icon_expo);
+            } else if (name.equals(c.getResources().getString(R.string.chinese))) {
+                img.setImageResource(R.drawable.info_marker);
             }
         }
         //SET TEAM ROW BACKGROUND COLOR

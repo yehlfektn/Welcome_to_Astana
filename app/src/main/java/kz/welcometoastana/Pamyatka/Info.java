@@ -42,12 +42,13 @@ import kz.welcometoastana.utility.DashedUnderlineSpan;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Extrennaya extends Fragment {
+public class Info extends Fragment {
 
 
-    public Extrennaya() {
+    public Info() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,7 +57,7 @@ public class Extrennaya extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
         progressDialog.show();
-        final String Url = "http://89.219.32.107/api/v1/tourist/1013";
+        final String Url = "http://89.219.32.107/api/v1/tourist/1809";
         final ImageView imageView = (ImageView) v.findViewById(R.id.imagePamyatka);
         final ExpandableTextView expandableTextView = (ExpandableTextView) v.findViewById(R.id.summary);
         final TextView name = (TextView) v.findViewById(R.id.name);
@@ -96,7 +97,7 @@ public class Extrennaya extends Fragment {
                 expandableTextView.getPaint().setShader(textShader);
 
 
-                final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
+                final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("阅读更多");
 
                 int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -151,7 +152,6 @@ public class Extrennaya extends Fragment {
                         } else {
                             expandableTextView.getPaint().setShader(p);
                             expandableTextView.expand();
-
                             OpenCollapse.setText("");
                         }
                     }
@@ -159,6 +159,7 @@ public class Extrennaya extends Fragment {
 
                 progressDialog.dismiss();
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -196,5 +197,6 @@ public class Extrennaya extends Fragment {
             return getResources().getConfiguration().locale;
         }
     }
-
 }
+
+

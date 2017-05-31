@@ -30,9 +30,7 @@ public class EventsFragment extends Fragment {
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabsEvent);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerEvent);
-
-        //set an adpater
-
+        //set an adapter
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
 
         try {
@@ -40,22 +38,17 @@ public class EventsFragment extends Fragment {
             mScroller = ViewPager.class.getDeclaredField("mScroller");
             mScroller.setAccessible(true);
             FixedSpeedScroller scroller = new FixedSpeedScroller(viewPager.getContext());
-            // scroller.setFixedDuration(5000);
             mScroller.set(viewPager, scroller);
         } catch (NoSuchFieldException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
         }
-
-
         tabLayout.post(new Runnable() {
             @Override
             public void run() {
                 tabLayout.setupWithViewPager(viewPager);
             }
         });
-
-
         return v;
     }
     @Override

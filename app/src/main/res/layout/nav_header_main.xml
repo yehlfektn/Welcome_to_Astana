@@ -89,22 +89,10 @@
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/searchTxt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
-        android:drawableRight="@drawable/ic_right_arrow"
-        android:ems="10"
-        android:hint="@string/what_are_you_looking_for"
-        android:textColorHint="#C1C1C1" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray"/>
 
     <ExpandableListView

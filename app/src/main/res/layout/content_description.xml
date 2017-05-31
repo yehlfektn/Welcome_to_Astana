@@ -124,7 +124,7 @@
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:text="Читать дальше"
+            android:text="@string/learn_more"
             android:textColor="@color/gray"
             android:textSize="12sp" />
 
@@ -248,5 +248,7 @@
 
             </LinearLayout>
         </RelativeLayout>
+
+
     </LinearLayout>
 </ScrollView>

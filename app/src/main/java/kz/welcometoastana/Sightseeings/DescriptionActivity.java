@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -96,10 +95,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-
-
-
-
         TextView name = (TextView) findViewById(R.id.name);
         TextView category = (TextView) findViewById(R.id.category);
         TextView summary = (TextView) findViewById(R.id.summary);
@@ -135,7 +130,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         expandableTextView.getPaint().setShader(textShader);
         final TextView OpenCollapse = (TextView)this.findViewById(R.id.openCollapse);
 
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("Читать дальше");
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.read_more));
 
         int intSpannableStringBuilderLength = spannableStringBuilder.length();
 
@@ -168,8 +163,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
                     OpenCollapse.setText("");
@@ -184,7 +177,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
             {
                 if (expandableTextView.isExpanded())
                 {
-                    //expandableTextView.getPaint().setShader(textShader);
                     expandableTextView.collapse();
                     OpenCollapse.setText(spannableStringBuilder);
                     final Handler handler = new Handler();
@@ -199,11 +191,9 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                 }
                 else
                 {
-                    //expandableTextView.setText("Here is what worked for me using some of the above responses (I am using ButterKnife in the example):asd as das dasdasdasdasd asdas das dasd asd sad sad Here is what worked for me using some of the above responses (I am using ButterKnife in the example):Here is what worked for me using some of the above responses (I am using ButterKnife in the example):");
-                    expandableTextView.setText(big);
+
                     expandableTextView.getPaint().setShader(p);
                     expandableTextView.expand();
-
                     OpenCollapse.setText("");
                 }
             }
@@ -406,13 +396,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-
-                    Geocoder gc = new Geocoder(DescriptionActivity.this);
-                    LatLng ll = marker.getPosition();
-                    double lat = ll.latitude;
-                    double lng = ll.longitude;
-
-
                     marker.setTitle(getIntent().getStringExtra("name"));
                     marker.showInfoWindow();
                 }
@@ -448,14 +431,13 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker", 50, 50)))
                 .position(new LatLng(lat, lng));
 
-        mGoogleMap.addMarker(options);
+        mGoogleMap.addMarker(options).showInfoWindow();
 
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
 
     @Override
@@ -465,27 +447,19 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
-
     @Override
     public void onLocationChanged(Location location) {
-
-
         if(location == null){
             Toast.makeText(this, "Can't get current location", Toast.LENGTH_LONG).show();
         } else {
@@ -505,21 +479,17 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         startActivity(intent);
     }
     public void Share(View view) {
-
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         String shareBody = getIntent().getStringExtra("description");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
-
     }
     public void CallTaxi(View view){
-
         Intent i = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "15800"));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-
     }
 
 

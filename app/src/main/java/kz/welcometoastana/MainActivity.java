@@ -1,6 +1,7 @@
 package kz.welcometoastana;
 
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -21,16 +22,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
@@ -44,6 +46,7 @@ import kz.welcometoastana.ListView.CustomAdapter;
 import kz.welcometoastana.ListView.group;
 import kz.welcometoastana.Pamyatka.Expo;
 import kz.welcometoastana.Pamyatka.Extrennaya;
+import kz.welcometoastana.Pamyatka.Info;
 import kz.welcometoastana.Pamyatka.Poleznaya;
 import kz.welcometoastana.Pamyatka.Prebyvanie;
 import kz.welcometoastana.Pamyatka.Transport;
@@ -55,6 +58,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static Location  gpsLocation;
+    Calendar dateTime = Calendar.getInstance();
+    SimpleDateFormat formatDateTime = new SimpleDateFormat("dd MMM yyyy");
+    DatePickerDialog.OnDateSetListener from = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dateTime.set(Calendar.YEAR, year);
+            dateTime.set(Calendar.MONTH, monthOfYear);
+            dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+            ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(formatDateTime.format(dateTime.getTime()));
+        }
+    };
+    DatePickerDialog.OnDateSetListener to = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dateTime.set(Calendar.YEAR, year);
+            dateTime.set(Calendar.MONTH, monthOfYear);
+            dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+            ((TextView) current.getView().findViewById(R.id.txtTo)).setText(formatDateTime.format(dateTime.getTime()));
+        }
+    };
     private Boolean exit = false;
     private View headerView;
     private ExpandableListView elv;
@@ -69,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
 
         //THE EXPANDABLELIST
         elv = (ExpandableListView) headerView.findViewById(R.id.expandableListView1);
-        final EditText edt = (EditText) headerView.findViewById(R.id.searchTxt);
 
         //getting the data
         final ArrayList<group> group = getData();
@@ -193,37 +218,44 @@ public class MainActivity extends AppCompatActivity {
 
                 previousItem = groupPosition;
                 if(groupPosition == 0){
-                    pixels = (int) (730 * scale + 0.5f);
+                    pixels = (int) (740 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 1 || groupPosition==2){
-                    pixels = (int) (700 * scale + 0.5f);
+                    pixels = (int) (710 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 3){
-                    pixels = (int) (730 * scale + 0.5f);
+                    pixels = (int) (740 * scale + 0.5f);
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 4){
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xff366AFE, 0xff1A44BD});
+                    getSupportActionBar().setBackgroundDrawable(g);
+
+                    Fragment fragment = new Expo();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.mainFrame, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
                     elv.collapseGroup(4);
-                    FragmentManager fm = getSupportFragmentManager();
-                    for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                        fm.popBackStack();
-                    }
-                    pixels = (int) (580 * scale + 0.5f);
-                    params.height=pixels;
-                    linearLayout.setLayoutParams(params);
-                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff366AFE, 0xff1A44BD});
+                } else if (groupPosition == 5) {
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF00AA, 0xffFF00AA});
                     getSupportActionBar().setBackgroundDrawable(g);
-                    Fragment fragment = new Expo();
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
+                    Fragment fragment = new Info();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.mainFrame, fragment);
                     transaction.addToBackStack(null);
                     transaction.commit();
+
+
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                    elv.collapseGroup(5);
 
                 }
             }
@@ -355,26 +387,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //setting onTouchListener to EditText
-        edt.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getRawX() >= (edt.getRight() - edt.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        // close drawer
-                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                        drawer.closeDrawer(GravityCompat.START);
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
 
     }
@@ -400,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
         t4.items.add(getResources().getString(R.string.poleznaya));
         t4.items.add(getResources().getString(R.string.extrennaya));
         group t5 = new group(getString(R.string.Expo));
+        group t6 = new group(getResources().getString(R.string.chinese));
 
         ArrayList<group> allGroups = new ArrayList<group>();
         allGroups.add(t1);
@@ -407,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
         allGroups.add(t3);
         allGroups.add(t4);
         allGroups.add(t5);
+        allGroups.add(t6);
         return allGroups;
     }
 
@@ -442,7 +456,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
     public void Xbutton(View v) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -451,18 +464,20 @@ public class MainActivity extends AppCompatActivity {
     public void goToFacebook(View view) {
         goToUrl("https://www.facebook.com/welcometoastana/");
     }
+
     public void goToInsta(View view) {
         goToUrl("https://www.instagram.com/welcometoastana/");
     }
+
     public void goToVk(View view) {
         goToUrl("https://vk.com/welcometoastana");
     }
+
     public void goToExpo(View view) {
         goToUrl("https://tickets.expo2017astana.com");
     }
 
     public void goToIbec(View view){goToUrl("http://www.ibecsystems.com/");}
-
 
     private void goToUrl(String url) {
         Uri uriUrl = Uri.parse(url);
@@ -482,6 +497,26 @@ public class MainActivity extends AppCompatActivity {
         updateViews("kk_KZ");
     }
 
+    public void from(View view) {
+        new DatePickerDialog(this, from, dateTime.get(Calendar.YEAR), dateTime.get(Calendar.MONTH), dateTime.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    public void to(View view) {
+        new DatePickerDialog(this, to, dateTime.get(Calendar.YEAR), dateTime.get(Calendar.MONTH), dateTime.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    public void ok(View view) {
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.GONE);
+        (current.getView().findViewById(R.id.filter)).setVisibility(View.GONE);
+    }
+
+    public void resetFilter(View view) {
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        ((TextView) current.getView().findViewById(R.id.txtTo)).setText(getResources().getString(R.string.to));
+        ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(getResources().getString(R.string.from));
+    }
+
     private void updateViews(String loc) {
         changed = true;
         Log.d("MainActivity", "before: " + getCurrentLocale().toString());
@@ -490,7 +525,6 @@ public class MainActivity extends AppCompatActivity {
         TextView en = (TextView) headerView.findViewById(R.id.txtEng);
         TextView kz = (TextView) headerView.findViewById(R.id.txtKaz);
         TextView ru = (TextView) headerView.findViewById(R.id.txtRus);
-        EditText editText = (EditText) headerView.findViewById(R.id.searchTxt);
         TextView dev = (TextView) headerView.findViewById(R.id.developed);
         if (loc.startsWith("en")) {
             en.setTextColor(Color.BLACK);
@@ -508,7 +542,6 @@ public class MainActivity extends AppCompatActivity {
         en.setText(getResources().getString(R.string.eng));
         ru.setText(getResources().getString(R.string.rus));
         kz.setText(getResources().getString(R.string.kaz));
-        editText.setHint(getResources().getString(R.string.what_are_you_looking_for));
         dev.setText(getResources().getString(R.string.developed_in));
         final ArrayList<group> group = getData();
         CustomAdapter adapter = new CustomAdapter(this, group);
