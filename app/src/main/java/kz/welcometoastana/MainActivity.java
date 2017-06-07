@@ -14,11 +14,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +27,8 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.akexorcist.localizationactivity.LocalizationActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,10 +51,9 @@ import kz.welcometoastana.Pamyatka.Poleznaya;
 import kz.welcometoastana.Pamyatka.Prebyvanie;
 import kz.welcometoastana.Pamyatka.Transport;
 import kz.welcometoastana.Sightseeings.SightSeeingsFragment;
-import kz.welcometoastana.utility.LocaleHelper;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends LocalizationActivity {
 
 
     public static Location  gpsLocation;
@@ -81,12 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private Boolean exit = false;
-    private View headerView;
     private ExpandableListView elv;
-    private Boolean changed = false;
+    private Boolean visible = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
         //setting navigation drawer code was generated
         super.onCreate(savedInstanceState);
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-
+        View headerView;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -105,43 +103,6 @@ public class MainActivity extends AppCompatActivity {
              */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                if (changed) {
-                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
-                    FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
-                    Fragment newFragment = null;
-                    if (currentFragment instanceof EntertainmentFragment) {
-                        newFragment = new EntertainmentFragment();
-                    } else if (currentFragment instanceof EventsFragment) {
-                        newFragment = new EventsFragment();
-                    } else if (currentFragment instanceof SightSeeingsFragment) {
-                        newFragment = new SightSeeingsFragment();
-                    } else if (currentFragment instanceof ExcursionsFragment) {
-                        newFragment = new ExcursionsFragment();
-                    } else if (currentFragment instanceof GdeOstanovitsya) {
-                        newFragment = new GdeOstanovitsya();
-                        newFragment.setArguments(currentFragment.getArguments());
-                    } else if (currentFragment instanceof GdePoest) {
-                        newFragment = new GdePoest();
-                        newFragment.setArguments(currentFragment.getArguments());
-                    } else if (currentFragment instanceof Prebyvanie) {
-                        newFragment = new Prebyvanie();
-                    } else if (currentFragment instanceof Transport) {
-                        newFragment = new Transport();
-                    } else if (currentFragment instanceof Poleznaya) {
-                        newFragment = new Poleznaya();
-                    } else if (currentFragment instanceof Extrennaya) {
-                        newFragment = new Extrennaya();
-                    } else if (currentFragment instanceof Expo) {
-                        newFragment = new Expo();
-                    }
-
-                    if (newFragment != null) {
-                        fragTransaction.replace(R.id.mainFrame, newFragment);
-                        fragTransaction.addToBackStack(null);
-                        fragTransaction.commit();
-                        changed = false;
-                    }
-                }
             }
         };
 
@@ -274,8 +235,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
-
-                changed=false;
                 FragmentManager fm = getSupportFragmentManager();
 
                 for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
@@ -486,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onChangeToRuClicked(View view) {
-        updateViews("ru_RU");
+        updateViews("ru");
     }
 
     public void onChangeToEnClicked(View view) {
@@ -494,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onChangeToKzClicked(View view) {
-        updateViews("kk_KZ");
+        updateViews("kk");
     }
 
     public void from(View view) {
@@ -517,43 +476,29 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(getResources().getString(R.string.from));
     }
 
-    private void updateViews(String loc) {
-        changed = true;
-        Log.d("MainActivity", "before: " + getCurrentLocale().toString());
-        LocaleHelper.setLocale(this, loc);
-        Log.d("MainActivity", "after setting: " + getCurrentLocale().toString());
-        TextView en = (TextView) headerView.findViewById(R.id.txtEng);
-        TextView kz = (TextView) headerView.findViewById(R.id.txtKaz);
-        TextView ru = (TextView) headerView.findViewById(R.id.txtRus);
-        TextView dev = (TextView) headerView.findViewById(R.id.developed);
-        if (loc.startsWith("en")) {
-            en.setTextColor(Color.BLACK);
-            kz.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
-            ru.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
-        } else if (loc.startsWith("kk")) {
-            kz.setTextColor(Color.BLACK);
-            en.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
-            ru.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
-        } else {
-            ru.setTextColor(Color.BLACK);
-            kz.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
-            en.setTextColor(ContextCompat.getColor(this, R.color.txtColor));
+    public void filterButton(View view) {
+
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        if (current instanceof EventsFragment) {
+            if (visible) {
+                (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.GONE);
+                (current.getView().findViewById(R.id.filter)).setVisibility(View.GONE);
+                visible = false;
+            } else {
+                (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.VISIBLE);
+                (current.getView().findViewById(R.id.filter)).setVisibility(View.VISIBLE);
+                visible = true;
+            }
         }
-        en.setText(getResources().getString(R.string.eng));
-        ru.setText(getResources().getString(R.string.rus));
-        kz.setText(getResources().getString(R.string.kaz));
-        dev.setText(getResources().getString(R.string.developed_in));
-        final ArrayList<group> group = getData();
-        CustomAdapter adapter = new CustomAdapter(this, group);
-        elv.setAdapter(adapter);
-
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
-        FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
-        fragTransaction.detach(currentFragment);
-        fragTransaction.attach(currentFragment);
-        fragTransaction.commit();
+    }
 
 
+    private void updateViews(String loc) {
+        elv.collapseGroup(0);
+        elv.collapseGroup(1);
+        elv.collapseGroup(2);
+        elv.collapseGroup(3);
+        setLanguage(loc);
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -565,5 +510,4 @@ public class MainActivity extends AppCompatActivity {
             return getResources().getConfiguration().locale;
         }
     }
-
 }

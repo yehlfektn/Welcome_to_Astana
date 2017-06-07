@@ -137,7 +137,6 @@ public class Apartments extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                loadRecyclerView();
             }
         }) {
             @Override

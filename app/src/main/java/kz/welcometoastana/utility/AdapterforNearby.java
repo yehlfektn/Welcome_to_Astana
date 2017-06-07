@@ -2,6 +2,7 @@ package kz.welcometoastana.utility;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-
 import kz.welcometoastana.R;
 
 /**
@@ -20,22 +19,19 @@ import kz.welcometoastana.R;
  */
 
 public class AdapterforNearby extends PagerAdapter {
-    Context context;
-    LayoutInflater layoutInflater;
-    ArrayList<listItemNearby> arrayList;
+    private Context context;
+    private LayoutInflater layoutInflater;
+    private listItemNearby listItemNearby;
 
-    public AdapterforNearby(Context context, ArrayList<listItemNearby> arrayList) {
+    public AdapterforNearby(Context context, listItemNearby listItemNearby) {
         this.context = context;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.arrayList = arrayList;
+        this.listItemNearby = listItemNearby;
     }
 
     @Override
     public int getCount() {
-        if (arrayList != null) {
-            return arrayList.size();
-        }
-        return 0;
+        return 3;
     }
 
     @Override
@@ -44,34 +40,41 @@ public class AdapterforNearby extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
+
         View itemView = layoutInflater.inflate(R.layout.pager_layout_nearby, container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.image1);
-        ImageView imageView2 = (ImageView) itemView.findViewById(R.id.image2);
+
+        Log.d("AdadterNearby", "eventsSize: " + listItemNearby.getEvents().get(0).getName());
+
+
         TextView name = (TextView) itemView.findViewById(R.id.name1);
         TextView name2 = (TextView) itemView.findViewById(R.id.name2);
+
         TextView category = (TextView) itemView.findViewById(R.id.category);
         TextView category2 = (TextView) itemView.findViewById(R.id.category2);
 
-        listItemNearby listItemNearby = arrayList.get(position);
-        Glide.with(context).load(listItemNearby.getFirstImg())
-                .centerCrop()
-                .bitmapTransform(new RoundedCornersTransformation(context, 40, 2))
+        ImageView imageView = (ImageView) itemView.findViewById(R.id.image1);
+        ImageView imageView2 = (ImageView) itemView.findViewById(R.id.image2);
+
+        name.setText(listItemNearby.getEvents().get(0).getName());
+        name2.setText(listItemNearby.getEvents().get(1).getName());
+
+        category.setText(listItemNearby.getEvents().get(0).getCategory());
+        category2.setText(listItemNearby.getEvents().get(0).getCategory());
+
+        Glide.with(context)
+                .load(listItemNearby.getEvents().get(0).getImageUrl())
+                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
                 .into(imageView);
 
-        Glide.with(context).load(listItemNearby.getSecondImg())
-                .bitmapTransform(new RoundedCornersTransformation(context, 40, 2))
+        Glide.with(context)
+                .load(listItemNearby.getEvents().get(1).getImageUrl())
+                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
                 .into(imageView2);
-
-        name.setText(listItemNearby.getFirstName());
-        name2.setText(listItemNearby.getSecondName());
-        category.setText(listItemNearby.getCategory());
-        category2.setText(listItemNearby.getCategory());
 
 
         container.addView(itemView);
-
         return itemView;
     }
 

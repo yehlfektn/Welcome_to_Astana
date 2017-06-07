@@ -11,7 +11,6 @@
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:weightSum="1"
-
     tools:context=".MainActivity">
 
 
@@ -111,12 +110,12 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="50dp"
         android:layout_marginTop="30dp"
         android:background="#F6FAFB"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="25dp"
         android:background="#F6FAFB"
         android:gravity="center"
         android:orientation="horizontal"
@@ -145,34 +144,11 @@
             android:src="@mipmap/ic_vk" />
 
     </LinearLayout>
-    <LinearLayout
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginBottom="10dp"
-        android:background="#F6FAFB"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent"
+        android:background="#F6FAFB" />
 
-        <TextView
-            android:id="@+id/developed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/developed_in"
-            android:textColor="#C1C1C1"
-            android:textSize="16sp"
-            />
-
-        <ImageView
-            android:id="@+id/ibec"
-            android:layout_width="160dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:onClick="goToIbec"
-            android:src="@drawable/ibec" />
-
-    </LinearLayout>
 
 </LinearLayout>

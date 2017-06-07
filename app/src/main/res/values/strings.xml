@@ -62,8 +62,13 @@
     <string name="from">От</string>
     <string name="to">До</string>
     <string name="reset_filter">Сбросить фильтр</string>
+    <string name="all_objects">Все Объекты</string>
+    <string name="Culture">Культура</string>
+    <string name="History">История</string>
+    <string name="Dohovnost">Духовность</string>
+    <string name="Dosug">Досуг</string>
+    <string name="Interesting_places">Интересные Места</string>
+    <string name="architecture">Архитектура</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

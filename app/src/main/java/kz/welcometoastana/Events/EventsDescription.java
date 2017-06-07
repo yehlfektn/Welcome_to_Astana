@@ -66,10 +66,13 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import at.blogc.android.views.ExpandableTextView;
+import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
+import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.AdapterforNearby;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
 import kz.welcometoastana.utility.listItemNearby;
 
@@ -231,8 +234,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         linearLayout = (LinearLayout) findViewById(R.id.LinearSlider);
 
 
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -313,57 +315,100 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("EventsDescription", error.toString());
             }
         });
 
-        StringRequest nearbyRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=51&lon=41", new Response.Listener<String>() {
+        StringRequest nearbyRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=51&lon=41", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                ArrayList<listItemNearby> arrayListImage = new ArrayList<>();
+
+                ArrayList<EventsItemList> arrayListEvents = new ArrayList<>();
+                ArrayList<HotelsListItem> hotelsListItems = new ArrayList<>();
+                ArrayList<GdePoestListItem> gdePoestListItems = new ArrayList<>();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONObject object = jsonObject.getJSONObject("data");
                     JSONArray array = object.getJSONArray("sightseeings");
 
-                    arrayListImage.add(new listItemNearby(
-                            array.getJSONObject(0).getString("name"),
-                            array.getJSONObject(1).getString("name"),
-                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(0).getJSONObject("category").getString("name")
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        EventsItemList item = new EventsItemList(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat"),
+                                o.getInt("id"),
+                                o.getString("date"),
+                                o.getString("address"),
+                                "от 5000тг",
+                                o.getString("url")
+                        );
 
-                    ));
+                        arrayListEvents.add(item);
+                    }
+
 
                     array = object.getJSONArray("hotels");
-                    arrayListImage.add(new listItemNearby(
-                            array.getJSONObject(0).getString("name"),
-                            array.getJSONObject(1).getString("name"),
-                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(0).getJSONObject("category").getString("name")
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        HotelsListItem item = new HotelsListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat"),
+                                o.optString("phone"),
+                                o.optString("address"),
+                                o.getInt("stars"),
+                                o.optString("site"),
+                                o.getInt("id")
+                        );
 
-                    ));
+                        hotelsListItems.add(item);
+
+                    }
 
                     array = object.getJSONArray("foods");
-                    arrayListImage.add(new listItemNearby(
-                            array.getJSONObject(0).getString("name"),
-                            array.getJSONObject(1).getString("name"),
-                            array.getJSONObject(0).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(1).getJSONArray("images").get(0).toString(),
-                            array.getJSONObject(0).getJSONObject("category").getString("name")
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if (o.getJSONArray("images").length() > 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
+                        GdePoestListItem item = new GdePoestListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                image,
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat"),
+                                o.optString("phone"),
+                                o.optString("address"),
+                                o.getInt("id")
+                        );
 
-                    ));
+                        gdePoestListItems.add(item);
 
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Log.d("EventsDescription", "eventsSize: " + arrayListEvents.size());
 
+                listItemNearby list = new listItemNearby(arrayListEvents, hotelsListItems, gdePoestListItems);
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
                 mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(getApplicationContext(), arrayListImage));
+                viewPagerNext.setAdapter(new AdapterforNearby(getApplicationContext(), list));
                 viewPagerNext.setOnTouchListener(new View.OnTouchListener() {
 
                     int dragthreshold = 30;
@@ -410,21 +455,19 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("EventsDescription", error.toString());
             }
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
         requestQueue.add(nearbyRequest);
-
     }
 
     private void initMap() {
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -462,8 +505,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                     EventsDescription.this.setMarker("Local", latLng.latitude, latLng.longitude);
                 }
             });
-
-
             mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDragStart(Marker marker) {

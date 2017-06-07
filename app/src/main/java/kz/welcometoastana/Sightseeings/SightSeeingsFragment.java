@@ -38,7 +38,7 @@ public class SightSeeingsFragment extends Fragment {
         viewPager = (ViewPager) v.findViewById(R.id.viewpager);
         //set an adpater
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         try {
             Field mScroller;
             mScroller = ViewPager.class.getDeclaredField("mScroller");

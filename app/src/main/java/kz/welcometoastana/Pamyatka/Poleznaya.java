@@ -2,6 +2,7 @@ package kz.welcometoastana.Pamyatka;
 
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,10 +47,10 @@ public class Poleznaya extends Fragment {
     public Poleznaya() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
 
@@ -73,7 +75,12 @@ public class Poleznaya extends Fragment {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            onClick(position);
+                            Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
+                            intent.putExtra("name", pamyatkaListItems.get(position).getName());
+                            intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
+                            intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
+                            startActivityForResult(intent, 0);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         }
 
                         @Override
@@ -87,25 +94,31 @@ public class Poleznaya extends Fragment {
         return v;
     }
     private void loadRecyclerView() {
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                progressDialog.dismiss();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    JSONObject o = jsonObject.getJSONObject("place");
+                    JSONArray array = jsonObject.getJSONArray("places");
 
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        PamyatkaListItem item = new PamyatkaListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name")
+                        );
 
-                    PamyatkaListItem item = new PamyatkaListItem(
-                            o.getString("name"),
-                            o.getString("description"),
-                            o.getJSONArray("images").get(0).toString(),
-                            o.getJSONObject("category").getString("name")
-                    );
+                        pamyatkaListItems.add(item);
 
-                    pamyatkaListItems.add(item);
-
+                    }
 
                     adapter = new PamyatkaRecycleAdapter(pamyatkaListItems,getContext());
                     recyclerView.setAdapter(adapter);
@@ -114,7 +127,12 @@ public class Poleznaya extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    onClick(position);
+                                    Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
+                                    intent.putExtra("name", pamyatkaListItems.get(position).getName());
+                                    intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
+                                    intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
+                                    startActivityForResult(intent, 0);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
 
                                 @Override
@@ -135,6 +153,7 @@ public class Poleznaya extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
 
             }
         }) {
@@ -152,27 +171,19 @@ public class Poleznaya extends Fragment {
                 return params;
             }
         };
+        ;
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    private Locale getCurrentLocale() {
+    public Locale getCurrentLocale() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return getResources().getConfiguration().getLocales().get(0);
         } else {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
-    }
-
-    private void onClick(int position) {
-        Intent intent = new Intent(getActivity(), PamyatkaDescription.class);
-        intent.putExtra("name", pamyatkaListItems.get(position).getName());
-        intent.putExtra("description", pamyatkaListItems.get(position).getSummary());
-        intent.putExtra("imageUrl", pamyatkaListItems.get(position).getImageUrl());
-        startActivityForResult(intent, 0);
-        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

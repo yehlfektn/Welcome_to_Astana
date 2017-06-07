@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.13"
             android:foregroundGravity="left"
-            android:text="ПАМЯТКА ТУРИСТУ"
+            android:text="@string/pamyatka"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:typeface="sans" />

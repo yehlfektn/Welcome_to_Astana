@@ -38,6 +38,7 @@ import java.util.Map;
 import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
+import kz.welcometoastana.utility.MyRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +64,7 @@ public class Info extends Fragment {
         final TextView name = (TextView) v.findViewById(R.id.name);
         final TextView OpenCollapse = (TextView) v.findViewById(R.id.openCollapse);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 String img = "";

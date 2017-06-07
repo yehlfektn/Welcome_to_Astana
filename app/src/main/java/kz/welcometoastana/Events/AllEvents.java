@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import kz.welcometoastana.R;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
 /**
@@ -93,7 +94,7 @@ public class AllEvents extends Fragment {
         progressDialog.show();
 
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 

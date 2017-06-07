@@ -1,42 +1,36 @@
 package kz.welcometoastana.utility;
 
+import java.util.List;
+
+import kz.welcometoastana.Events.EventsItemList;
+import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
+import kz.welcometoastana.GdePoest.GdePoestListItem;
+
 /**
  * Created by nurdaulet on 5/31/17.
  */
 
 public class listItemNearby {
-    private String firstName;
-    private String secondName;
-    private String firstImg;
-    private String secondImg;
-    private String category;
+    private List<EventsItemList> events;
+    private List<HotelsListItem> hotels;
+    private List<GdePoestListItem> foods;
 
-    public listItemNearby(String firstName, String secondName, String firstImg, String secondImg, String category) {
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.firstImg = firstImg;
-        this.secondImg = secondImg;
-        this.category = category;
+    public listItemNearby(List<EventsItemList> events, List<HotelsListItem> hotels, List<GdePoestListItem> foods) {
+        this.events = events;
+        this.hotels = hotels;
+        this.foods = foods;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public List<EventsItemList> getEvents() {
+        return events;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public List<HotelsListItem> getHotels() {
+        return hotels;
     }
 
-    public String getFirstImg() {
-        return firstImg;
-    }
-
-    public String getSecondImg() {
-        return secondImg;
-    }
-
-    public String getCategory() {
-        return category;
+    public List<GdePoestListItem> getFoods() {
+        return foods;
     }
 }
 

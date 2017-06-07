@@ -1,18 +1,22 @@
 package kz.welcometoastana.Sightseeings;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import kz.welcometoastana.R;
 
 /**
  * Created by Nurdaulet on 3/1/2017.
  */
 
 public class MyAdapter extends FragmentPagerAdapter {
+    private Context context;
 
-
-    public MyAdapter(FragmentManager fm) {
+    public MyAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -48,19 +52,19 @@ public class MyAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Все объекты";
+                return context.getString(R.string.all_objects);
             case 1:
-                return "Культура";
+                return context.getString(R.string.Culture);
             case 2:
-                return "История";
+                return context.getString(R.string.History);
             case 3:
-                return "Духовность";
+                return context.getString(R.string.Dohovnost);
             case 4:
-                return "Досуг";
+                return context.getString(R.string.Dosug);
             case 5:
-                return "Интересные Места";
+                return context.getString(R.string.Interesting_places);
             case 6:
-                return "Архитектура";
+                return context.getString(R.string.architecture);
 
         }
 

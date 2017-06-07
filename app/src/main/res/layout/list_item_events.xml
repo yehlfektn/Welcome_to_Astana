@@ -6,15 +6,15 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="258dp">
+        android:layout_height="245dp">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="258dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/image"
-            android:adjustViewBounds="false" />
+            android:src="@drawable/placeholder" />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,74 +23,71 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="bottom">
+                android:gravity="bottom"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="104dp"
-                    tools:text="Концерт Филиппа Киркорова"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginLeft="@dimen/marginLeft"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginStart="@dimen/marginLeft"
+                    android:gravity="bottom"
                     android:textColor="@android:color/background_light"
                     android:textSize="16sp"
                     android:textStyle="normal|bold"
-                    android:layout_marginLeft="@dimen/marginLeft"
-                    android:layout_marginStart="@dimen/marginLeft"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
-                    android:layout_marginBottom="5dp"
+                    tools:text="Концерт Филиппа Киркорова"
                     />
 
-
-
-
                 <TextView
-                    android:text="23 апреля"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/date"
-                    android:textSize="12sp"
-                    android:drawableLeft="@drawable/ic_calendar"
-                    android:drawableStart="@drawable/ic_calendar"
-                    android:layout_marginLeft="@dimen/marginLeft"
-                    android:layout_marginStart="@dimen/marginLeft"
-                    android:drawablePadding="5dp"
-                    android:layout_gravity="bottom"
-                    />
-                <TextView
-                    android:text="пр. Туран 10. в здании Fitness Palace.asdasdasda sd asd asd asd asd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/address"
                     android:layout_gravity="bottom"
-                    android:drawableLeft="@drawable/ic_map_marker"
-                    android:drawableStart="@drawable/ic_map_marker"
-                    android:drawablePadding="5dp"
-                    android:textSize="12sp"
                     android:layout_marginLeft="@dimen/marginLeft"
                     android:layout_marginStart="@dimen/marginLeft"
-                    android:maxLines="1"/>
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/ic_calendar"
+                    android:text="23 апреля"
+                    android:textSize="12sp"
+                    />
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="@dimen/marginLeft"
+                    android:layout_marginStart="@dimen/marginLeft"
+                    android:drawableLeft="@drawable/ic_map_marker"
+                    android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/ic_map_marker"
+                    android:maxLines="1"
+                    android:text="пр. Туран 10. в здании Fitness Palace.asdasdasda sd asd asd asd asd"
+                    android:textSize="12sp" />
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="21.5dp"
-                    android:layout_marginStart="21.5dp">
+                    android:layout_marginStart="21.5dp"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:text="Астана"
+                        android:id="@+id/category"
                         android:layout_width="198dp"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/bullet"
+                        android:layout_gravity="top"
                         android:drawableLeft="@drawable/bullet"
+                        android:drawablePadding="6dp"
+                        android:drawableStart="@drawable/bullet"
+                        android:text="Астана"
                         android:textColor="@android:color/holo_orange_dark"
                         android:textSize="12sp"
-                        android:id="@+id/category"
-                        android:layout_gravity="top"
-                        android:drawablePadding="6dp"
                         />
 
                     <LinearLayout
@@ -100,12 +97,12 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_marginTop="2dp"
                             android:id="@+id/distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:layout_marginRight="10dp"
+                            android:layout_marginTop="2dp"
                             android:background="@drawable/rectangleshape"
                             android:gravity="bottom"
                             android:paddingLeft="5dp"

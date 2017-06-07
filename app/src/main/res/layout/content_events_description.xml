@@ -17,7 +17,7 @@
             android:layout_gravity="end"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="190dp"
             android:background="@drawable/circle"
             android:drawableBottom="@drawable/ic_right_arrow_white"
             android:drawablePadding="-30dp"
@@ -266,7 +266,6 @@
                 android:id="@+id/viewpagerEvent"
                 android:layout_width="match_parent"
                 android:layout_height="150dp">
-
             </android.support.v4.view.ViewPager>
 
         </LinearLayout>

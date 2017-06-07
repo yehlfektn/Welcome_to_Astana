@@ -188,7 +188,6 @@ public class ExpoEvent extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Sightseeings",error.toString());
-
             }
         }) {
             @Override
