@@ -268,6 +268,20 @@
                 android:layout_height="150dp">
             </android.support.v4.view.ViewPager>
 
+            <TextView
+                android:id="@+id/txtShowMore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/black"
+                android:gravity="center"
+                android:onClick="showMore"
+                android:text="Посмотреть все"
+                android:textColor="@color/txtColor" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@android:color/black" />
         </LinearLayout>
     </FrameLayout>
 

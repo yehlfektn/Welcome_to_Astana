@@ -45,20 +45,30 @@
             android:textSize="16sp" />
 
 
-        <TextView
-            android:id="@+id/address"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
-            android:drawableLeft="@drawable/ic_map_marker"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_map_marker"
-            android:text="Не указано"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_map_marker" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:text="Не указано"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -248,6 +258,39 @@
 
             </LinearLayout>
         </RelativeLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabsEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            app:tabGravity="fill"
+            app:tabIndicatorHeight="0dp"
+            app:tabMaxWidth="0dp"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@android:color/holo_orange_dark"
+            app:tabTextColor="@android:color/darker_gray" />
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpagerEvent"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"></android.support.v4.view.ViewPager>
+
+        <TextView
+            android:id="@+id/txtShowMore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            android:gravity="center"
+            android:onClick="showMore"
+            android:text="Посмотреть все"
+            android:textColor="@color/txtColor" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@android:color/black" />
 
 
     </LinearLayout>

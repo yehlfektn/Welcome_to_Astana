@@ -436,8 +436,6 @@ public class MainActivity extends LocalizationActivity {
         goToUrl("https://tickets.expo2017astana.com");
     }
 
-    public void goToIbec(View view){goToUrl("http://www.ibecsystems.com/");}
-
     private void goToUrl(String url) {
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);

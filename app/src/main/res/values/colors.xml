@@ -7,4 +7,6 @@
     <color name="background"> #DAD9D5 </color>
     <color name="gray">#AAAAAA</color>
     <color name="txtColor">#C1C1C1</color>
+    <color name="purple">#8219ED</color>
+    <color name="green">#5ABC05</color>
 </resources>

@@ -27,8 +27,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +36,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -63,14 +64,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
+import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.AdapterforNearby;
+import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
@@ -79,19 +84,19 @@ import kz.welcometoastana.utility.listItemNearby;
 
 public class EventsDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    public TabLayout tabLayout;
-    public ViewPager viewPagerNext;
-    public ScrollView mScrollView;
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
     double lat, lng;
-    //= 51.128249084968,lng = 71.430494032634;
     String lngStr, latStr;
     int id;
     ViewPager viewPager;
     LinearLayout linearLayout;
     double lat2, lng2;
     LocationRequest mLocationRequest;
+    listItemNearby list;
+    private TabLayout tabLayout;
+    private ViewPager viewPagerNext;
+    private ScrollView mScrollView;
     private int dotscount;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
@@ -132,15 +137,30 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         name.setText(getIntent().getStringExtra("name"));
 
         final String Url=getIntent().getStringExtra("url");
-        Log.d("DescriptionActivity", Url);
+
 
         if(MainActivity.gpsLocation != null){
 
             lat2 = MainActivity.gpsLocation.getLatitude();
             lng2 = MainActivity.gpsLocation.getLongitude();
-            Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
+
 
         }
+
+        TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
+
+        SpannableStringBuilder span = new SpannableStringBuilder(getResources().getString(R.string.show_more));
+        int length = span.length();
+        span.setSpan(
+                new DashedUnderlineSpan(txtShowMore, ContextCompat.getColor(this, R.color.gray),
+                        getResources().getDimension(R.dimen.dus_stroke_thickness),
+                        getResources().getDimension(R.dimen.dus_dash_path),
+                        getResources().getDimension(R.dimen.dus_offset_y),
+                        getResources().getDimension(R.dimen.dus_spacing_extra)), 0,
+                length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        txtShowMore.setText(span);
+
+
         //---------------Animated text--------------
         final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
         final String big = getIntent().getStringExtra("description");
@@ -282,7 +302,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         linearLayout.addView(dots[i], params);
 
                     }
-                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                    if (dots.length != 0) {
+                        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                    }
+
 
                     viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                         @Override
@@ -317,9 +340,23 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             public void onErrorResponse(VolleyError error) {
                 Log.d("EventsDescription", error.toString());
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
 
-        StringRequest nearbyRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=51&lon=41", new Response.Listener<String>() {
+        StringRequest nearbyRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=" + lat + "&lon=" + lng, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -327,6 +364,8 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 ArrayList<EventsItemList> arrayListEvents = new ArrayList<>();
                 ArrayList<HotelsListItem> hotelsListItems = new ArrayList<>();
                 ArrayList<GdePoestListItem> gdePoestListItems = new ArrayList<>();
+                ArrayList<KudaShoditListItem> kudaShoditListItems = new ArrayList<>();
+
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -335,21 +374,18 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
-                        EventsItemList item = new EventsItemList(
+                        KudaShoditListItem item = new KudaShoditListItem(
                                 o.getString("name"),
                                 o.getString("description"),
                                 o.getJSONArray("images").get(0).toString(),
                                 o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
+                                o.getString("lon"),
+                                o.getString("lat"),
                                 o.getInt("id"),
-                                o.getString("date"),
-                                o.getString("address"),
-                                "от 5000тг",
-                                o.getString("url")
+                                o.getString("address")
                         );
 
-                        arrayListEvents.add(item);
+                        kudaShoditListItems.add(item);
                     }
 
 
@@ -398,51 +434,46 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         gdePoestListItems.add(item);
 
                     }
+                    array = object.getJSONArray("events");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        String lon;
+                        String lat;
+                        if (o.getJSONArray("points").length() > 0) {
+                            lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                            lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                        } else {
+                            lon = "null";
+                            lat = "null";
+                        }
+
+                        EventsItemList item = new EventsItemList(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                lon,
+                                lat,
+                                o.getInt("id"),
+                                o.getString("date"),
+                                o.getString("address"),
+                                "от 5000тг",
+                                o.getString("url")
+                        );
+
+                        arrayListEvents.add(item);
+
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.d("EventsDescription", "eventsSize: " + arrayListEvents.size());
 
-                listItemNearby list = new listItemNearby(arrayListEvents, hotelsListItems, gdePoestListItems);
+                list = new listItemNearby(arrayListEvents, hotelsListItems, gdePoestListItems, kudaShoditListItems);
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
                 mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(getApplicationContext(), list));
-                viewPagerNext.setOnTouchListener(new View.OnTouchListener() {
-
-                    int dragthreshold = 30;
-                    int downX;
-                    int downY;
-
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                downX = (int) event.getRawX();
-                                downY = (int) event.getRawY();
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                int distanceX = Math.abs((int) event.getRawX() - downX);
-                                int distanceY = Math.abs((int) event.getRawY() - downY);
-
-                                if (distanceY > distanceX && distanceY > dragthreshold) {
-                                    viewPagerNext.getParent().requestDisallowInterceptTouchEvent(false);
-                                    mScrollView.getParent().requestDisallowInterceptTouchEvent(true);
-                                } else if (distanceX > distanceY && distanceX > dragthreshold) {
-                                    viewPagerNext.getParent().requestDisallowInterceptTouchEvent(true);
-                                    mScrollView.getParent().requestDisallowInterceptTouchEvent(false);
-                                }
-                                break;
-                            case MotionEvent.ACTION_UP:
-                                mScrollView.getParent().requestDisallowInterceptTouchEvent(false);
-                                viewPagerNext.getParent().requestDisallowInterceptTouchEvent(false);
-                                break;
-                        }
-                        return false;
-                    }
-                });
+                viewPagerNext.setAdapter(new AdapterforNearby(EventsDescription.this, list));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -457,7 +488,21 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             public void onErrorResponse(VolleyError error) {
                 Log.d("EventsDescription", error.toString());
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
@@ -587,8 +632,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             lat2=location.getLatitude();
             lng2=location.getLongitude();
-            Log.d("myLat", String.valueOf(location.getLatitude()));
-            Log.d("myLng", String.valueOf(location.getLongitude()));
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
             mGoogleMap.animateCamera(update);
         }
@@ -621,5 +664,17 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             return getResources().getConfiguration().locale;
         }
     }
+
+    public void showMore(View view) {
+        int position = viewPagerNext.getCurrentItem();
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setCurrentItem(position);
+        ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
+        float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        params.height = (int) (400 * scale + 0.5f);
+        viewPagerNext.setLayoutParams(params);
+        (findViewById(view.getId())).setVisibility(View.GONE);
+    }
+
 
 }

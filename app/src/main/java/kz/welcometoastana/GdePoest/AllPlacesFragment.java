@@ -38,7 +38,7 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class AllPlacesFragment extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/foods?limit=100&page=1";
+    private final String Url = "http://89.219.32.107/api/v1/foods?limit=2000&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;

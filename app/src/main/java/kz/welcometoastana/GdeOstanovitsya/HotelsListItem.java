@@ -1,10 +1,12 @@
 package kz.welcometoastana.GdeOstanovitsya;
 
+import kz.welcometoastana.utility.mainListItem;
+
 /**
  * Created by nurdaulet on 5/13/17.
  */
 
-public class HotelsListItem {
+public class HotelsListItem extends mainListItem {
     private String name;
     private String summary;
     private String imageUrl;

@@ -1,10 +1,12 @@
 package kz.welcometoastana;
 
+import kz.welcometoastana.utility.mainListItem;
+
 /**
  * Created by nurdaulet on 5/5/17.
  */
 
-public class KudaShoditListItem {
+public class KudaShoditListItem extends mainListItem {
 
     private String name;
     private String summary;

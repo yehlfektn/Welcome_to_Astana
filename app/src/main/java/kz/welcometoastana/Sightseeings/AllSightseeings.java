@@ -44,7 +44,7 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class AllSightseeings extends Fragment implements LocationListener {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=200&page=1";
+    private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1";
     double lat2, lng2;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;

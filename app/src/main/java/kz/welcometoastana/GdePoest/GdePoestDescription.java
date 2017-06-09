@@ -1,6 +1,7 @@
 package kz.welcometoastana.GdePoest;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,10 +14,12 @@ import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -26,11 +29,14 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -58,12 +64,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import at.blogc.android.views.ExpandableTextView;
+import kz.welcometoastana.Events.EventsItemList;
+import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
+import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
+import kz.welcometoastana.utility.AdapterforNearby;
+import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
+import kz.welcometoastana.utility.listItemNearby;
 
 public class GdePoestDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -77,9 +93,13 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     double lat2, lng2;
     Marker marker;
     LocationRequest mLocationRequest;
+    listItemNearby list;
     private int dotscount;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
+    private ViewPager viewPagerNext;
+    private ScrollView mScrollView;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +130,23 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         final String Url=getIntent().getStringExtra("url");
         Log.d("GdePoestDescription", Url);
         if(MainActivity.gpsLocation != null){
-
             lat2 = MainActivity.gpsLocation.getLatitude();
             lng2 = MainActivity.gpsLocation.getLongitude();
             Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
-
         }
+
+        TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
+
+        SpannableStringBuilder span = new SpannableStringBuilder(getResources().getString(R.string.show_more));
+        int length = span.length();
+        span.setSpan(
+                new DashedUnderlineSpan(txtShowMore, ContextCompat.getColor(this, R.color.gray),
+                        getResources().getDimension(R.dimen.dus_stroke_thickness),
+                        getResources().getDimension(R.dimen.dus_dash_path),
+                        getResources().getDimension(R.dimen.dus_offset_y),
+                        getResources().getDimension(R.dimen.dus_spacing_extra)), 0,
+                length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        txtShowMore.setText(span);
 
         //---------------Text Animation---------------------------
         final ExpandableTextView expandableTextView = (ExpandableTextView) this.findViewById(R.id.summary);
@@ -334,8 +365,157 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             }
         });
 
+        StringRequest nearbyRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/nearby?lat=" + lat + "&lon=" + lng, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                ArrayList<EventsItemList> arrayListEvents = new ArrayList<>();
+                ArrayList<HotelsListItem> hotelsListItems = new ArrayList<>();
+                ArrayList<GdePoestListItem> gdePoestListItems = new ArrayList<>();
+                ArrayList<KudaShoditListItem> kudaShoditListItems = new ArrayList<>();
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONObject object = jsonObject.getJSONObject("data");
+                    JSONArray array = object.getJSONArray("sightseeings");
+
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        KudaShoditListItem item = new KudaShoditListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.getString("lon"),
+                                o.getString("lat"),
+                                o.getInt("id"),
+                                o.getString("address")
+                        );
+
+                        kudaShoditListItems.add(item);
+                    }
+
+
+                    array = object.getJSONArray("hotels");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        HotelsListItem item = new HotelsListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat"),
+                                o.optString("phone"),
+                                o.optString("address"),
+                                o.getInt("stars"),
+                                o.optString("site"),
+                                o.getInt("id")
+                        );
+
+                        hotelsListItems.add(item);
+
+                    }
+
+                    array = object.getJSONArray("foods");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if (o.getJSONArray("images").length() > 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
+                        GdePoestListItem item = new GdePoestListItem(
+                                o.getString("name"),
+                                o.getString("description"),
+                                image,
+                                o.getJSONObject("category").getString("name"),
+                                o.optString("lon"),
+                                o.optString("lat"),
+                                o.optString("phone"),
+                                o.optString("address"),
+                                o.getInt("id")
+                        );
+
+                        gdePoestListItems.add(item);
+
+                    }
+                    array = object.getJSONArray("events");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        String lon;
+                        String lat;
+                        if (o.getJSONArray("points").length() > 0) {
+                            lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                            lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                        } else {
+                            lon = "null";
+                            lat = "null";
+                        }
+
+                        EventsItemList item = new EventsItemList(
+                                o.getString("name"),
+                                o.getString("description"),
+                                o.getJSONArray("images").get(0).toString(),
+                                o.getJSONObject("category").getString("name"),
+                                lon,
+                                lat,
+                                o.getInt("id"),
+                                o.getString("date"),
+                                o.getString("address"),
+                                "от 5000тг",
+                                o.getString("url")
+                        );
+
+                        arrayListEvents.add(item);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                list = new listItemNearby(arrayListEvents, hotelsListItems, gdePoestListItems, kudaShoditListItems);
+
+                tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
+                viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
+                mScrollView = (ScrollView) findViewById(R.id.scrollView);
+                viewPagerNext.setAdapter(new AdapterforNearby(GdePoestDescription.this, list));
+                tabLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tabLayout.setupWithViewPager(viewPagerNext);
+                    }
+                });
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("EventsDescription", error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String loc = getCurrentLocale().toString();
+                if (loc.startsWith("en")) {
+                    params.put("Accept-Language", "en");
+                } else if (loc.startsWith("kk")) {
+                    params.put("Accept-Language", "kz");
+                } else {
+                    params.put("Accept-Language", "ru");
+                }
+                return params;
+            }
+        };
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+        requestQueue.add(nearbyRequest);
 
     }
 
@@ -448,12 +628,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -509,6 +683,27 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
 
+    }
+
+    public void showMore(View view) {
+        int position = viewPagerNext.getCurrentItem();
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setCurrentItem(position);
+        ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
+        float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        params.height = (int) (400 * scale + 0.5f);
+        viewPagerNext.setLayoutParams(params);
+        (findViewById(view.getId())).setVisibility(View.GONE);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Locale getCurrentLocale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return getResources().getConfiguration().locale;
+        }
     }
 
 }

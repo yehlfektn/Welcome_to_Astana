@@ -1,9 +1,11 @@
 package kz.welcometoastana.Events;
 
+import kz.welcometoastana.utility.mainListItem;
+
 /**
  * Created by nurdaulet on 5/15/17.
  */
-public class EventsItemList {
+public class EventsItemList extends mainListItem {
 
     private String name;
     private String summary;
