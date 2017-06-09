@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +43,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -73,13 +74,13 @@ import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
+import kz.welcometoastana.Nearby.AdapterforNearby;
+import kz.welcometoastana.Nearby.AdapterforNearby5;
+import kz.welcometoastana.Nearby.listItemNearby;
 import kz.welcometoastana.R;
-import kz.welcometoastana.utility.AdapterforNearby;
-import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
-import kz.welcometoastana.utility.listItemNearby;
 
 
 public class EventsDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -96,10 +97,11 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     listItemNearby list;
     private TabLayout tabLayout;
     private ViewPager viewPagerNext;
-    private ScrollView mScrollView;
     private int dotscount;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
+    private EventsItemList nextItem;
+    private String Url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +138,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         date.setText(getIntent().getStringExtra("date"));
         name.setText(getIntent().getStringExtra("name"));
 
-        final String Url=getIntent().getStringExtra("url");
+        Url = getIntent().getStringExtra("url");
 
 
         if(MainActivity.gpsLocation != null){
@@ -284,6 +286,34 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                                     imageUrls.add(arr.get(j).toString());
                                 }
                             }
+
+                            if ((i + 1) != array.length()) {
+                                o = array.getJSONObject(i + 1);
+
+                                String lon;
+                                String lat;
+                                if (o.getJSONArray("points").length() > 0) {
+                                    lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                                    lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                                } else {
+                                    lon = "null";
+                                    lat = "null";
+                                }
+
+                                nextItem = new EventsItemList(
+                                        o.getString("name"),
+                                        o.getString("description"),
+                                        o.getJSONArray("images").get(0).toString(),
+                                        o.getJSONObject("category").getString("name"),
+                                        lon,
+                                        lat,
+                                        o.getInt("id"),
+                                        o.getString("date"),
+                                        o.getString("address"),
+                                        "от 5000тг",
+                                        o.getString("url")
+                                );
+                        }
                         }
                     }
 
@@ -330,6 +360,24 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
                     }
+
+
+                    if (nextItem != null) {
+                        ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
+                        TextView nameNext = (TextView) findViewById(R.id.nameNext);
+                        TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
+
+                        nameNext.setText(nextItem.getName());
+                        categoryNext.setText(nextItem.getCategory());
+                        Glide.with(getApplicationContext())
+                                .load(nextItem.getImageUrl())
+                                .centerCrop()
+                                .into(imageViewNext);
+                    } else {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.GONE);
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -472,8 +520,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
-                mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(EventsDescription.this, list));
+                viewPagerNext.setAdapter(new AdapterforNearby(EventsDescription.this, list, "orange"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -604,12 +651,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         mLocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -667,13 +708,32 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, ""));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-        params.height = (int) (400 * scale + 0.5f);
+        params.height = (int) (360 * scale + 0.5f);
         viewPagerNext.setLayoutParams(params);
         (findViewById(view.getId())).setVisibility(View.GONE);
+        (findViewById(R.id.view)).setVisibility(View.GONE);
+    }
+
+    public void NextItem(View view) {
+        Intent intent = new Intent(this, EventsDescription.class);
+        intent.putExtra("name", nextItem.getName());
+        intent.putExtra("id", nextItem.getId());
+        intent.putExtra("description", nextItem.getSummary());
+        intent.putExtra("imageUrl", nextItem.getImageUrl());
+        intent.putExtra("category", nextItem.getCategory());
+        intent.putExtra("longit", nextItem.getLon());
+        intent.putExtra("latit", nextItem.getLat());
+        intent.putExtra("url", Url);
+        intent.putExtra("address", nextItem.getAddress());
+        intent.putExtra("money", nextItem.getMoney());
+        intent.putExtra("date", nextItem.getDate());
+        intent.putExtra("urlItem", nextItem.getUrl());
+        startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
 

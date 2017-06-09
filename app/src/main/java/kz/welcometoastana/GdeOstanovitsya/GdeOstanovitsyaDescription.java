@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +50,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -80,13 +81,13 @@ import kz.welcometoastana.Events.EventsItemList;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
+import kz.welcometoastana.Nearby.AdapterforNearby;
+import kz.welcometoastana.Nearby.AdapterforNearby5;
+import kz.welcometoastana.Nearby.listItemNearby;
 import kz.welcometoastana.R;
-import kz.welcometoastana.utility.AdapterforNearby;
-import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
-import kz.welcometoastana.utility.listItemNearby;
 
 public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -106,8 +107,9 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
     private ViewPager viewPagerNext;
-    private ScrollView mScrollView;
     private TabLayout tabLayout;
+    private HotelsListItem nextItem;
+    private String Url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +147,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         name.setText(getIntent().getStringExtra("name"));
         summary.setText(getIntent().getStringExtra("description"));
         phone.setText(getIntent().getStringExtra("phone"));
-        final String Url=getIntent().getStringExtra("url");
-        Log.d("GdePoestDescription", Url);
+        Url = getIntent().getStringExtra("url");
+
 
         LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
 
@@ -330,6 +332,22 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                                     Log.d("MainActivity", arr.get(j).toString());
                                 }
                             }
+                            if ((i + 1) != array.length()) {
+                                o = array.getJSONObject(i + 1);
+                                nextItem = new HotelsListItem(
+                                        o.getString("name"),
+                                        o.getString("description"),
+                                        o.getJSONArray("images").get(0).toString(),
+                                        o.getJSONObject("category").getString("name"),
+                                        o.optString("lon"),
+                                        o.optString("lat"),
+                                        o.optString("phone"),
+                                        o.optString("address"),
+                                        o.getInt("stars"),
+                                        o.optString("site"),
+                                        o.getInt("id")
+                                );
+                            }
                         }
                     }
 
@@ -381,6 +399,23 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                     e.printStackTrace();
                 }
 
+
+                if (nextItem != null) {
+                    ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
+                    TextView nameNext = (TextView) findViewById(R.id.nameNext);
+                    TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
+
+                    nameNext.setText(nextItem.getName());
+                    categoryNext.setText(nextItem.getCategory());
+                    Glide.with(getApplicationContext())
+                            .load(nextItem.getImageUrl())
+                            .centerCrop()
+                            .into(imageViewNext);
+                } else {
+                    RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                    relativeLayout.setVisibility(View.GONE);
+
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -505,8 +540,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
-                mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(GdeOstanovitsyaDescription.this, list));
+                viewPagerNext.setAdapter(new AdapterforNearby(GdeOstanovitsyaDescription.this, list, "purple"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -744,7 +778,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, "purple"));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -763,4 +797,21 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         }
     }
 
+    public void NextItem(View view) {
+        Intent intent = new Intent(this, GdeOstanovitsyaDescription.class);
+        intent.putExtra("name", nextItem.getName());
+        intent.putExtra("id", nextItem.getId());
+        intent.putExtra("description", nextItem.getSummary());
+        intent.putExtra("imageUrl", nextItem.getImageUrl());
+        intent.putExtra("category", nextItem.getCategory());
+        intent.putExtra("longit", nextItem.getLon());
+        intent.putExtra("latit", nextItem.getLat());
+        intent.putExtra("address", nextItem.getAddress());
+        intent.putExtra("url", Url);
+        intent.putExtra("phone", nextItem.getPhone());
+        intent.putExtra("website", nextItem.getWebsite());
+        intent.putExtra("stars", nextItem.getStars());
+        startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+    }
 }

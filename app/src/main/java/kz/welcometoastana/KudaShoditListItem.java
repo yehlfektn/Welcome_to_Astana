@@ -1,6 +1,6 @@
 package kz.welcometoastana;
 
-import kz.welcometoastana.utility.mainListItem;
+import kz.welcometoastana.Nearby.mainListItem;
 
 /**
  * Created by nurdaulet on 5/5/17.

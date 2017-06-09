@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +41,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -72,13 +73,13 @@ import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
+import kz.welcometoastana.Nearby.AdapterforNearby;
+import kz.welcometoastana.Nearby.AdapterforNearby5;
+import kz.welcometoastana.Nearby.listItemNearby;
 import kz.welcometoastana.R;
-import kz.welcometoastana.utility.AdapterforNearby;
-import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
-import kz.welcometoastana.utility.listItemNearby;
 
 
 public class DescriptionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -98,7 +99,8 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
     private ArrayList<String> imageUrls;
     private TabLayout tabLayout;
     private ViewPager viewPagerNext;
-    private ScrollView mScrollView;
+    private KudaShoditListItem nextItem;
+    private String Url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +130,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         summary.setText(getIntent().getStringExtra("description"));
-        final String Url=getIntent().getStringExtra("url");
+        Url = getIntent().getStringExtra("url");
         if(MainActivity.gpsLocation != null){
 
             lat2 = MainActivity.gpsLocation.getLatitude();
@@ -276,9 +278,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                             endPoint.setLatitude(lat);
                             endPoint.setLongitude(lng);
 
-
                             float distanceDouble=startPoint.distanceTo(endPoint);
-
                             if(distanceDouble/1000>6000){
                                 distance.setVisibility(View.GONE);
                             }else {
@@ -299,6 +299,20 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                                 for (int j = 0; j < arr.length(); j++) {
                                     imageUrls.add(arr.get(j).toString());
                                 }
+                            }
+
+                            if ((i + 1) != array.length()) {
+                                o = array.getJSONObject(i + 1);
+                                nextItem = new KudaShoditListItem(
+                                        o.getString("name"),
+                                        o.getString("description"),
+                                        o.getJSONArray("images").get(0).toString(),
+                                        o.getJSONObject("category").getString("name"),
+                                        o.getString("lon"),
+                                        o.getString("lat"),
+                                        o.getInt("id"),
+                                        o.getString("address")
+                                );
                             }
                         }
                     }
@@ -344,6 +358,24 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                     });
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
+                    }
+
+
+                    if (nextItem != null) {
+                        ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
+                        TextView nameNext = (TextView) findViewById(R.id.nameNext);
+                        TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
+
+                        nameNext.setText(nextItem.getName());
+                        categoryNext.setText(nextItem.getCategory());
+                        Glide.with(getApplicationContext())
+                                .load(nextItem.getImageUrl())
+                                .centerCrop()
+                                .into(imageViewNext);
+                    } else {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.GONE);
+
                     }
 
                 } catch (JSONException e) {
@@ -474,8 +506,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
-                mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(DescriptionActivity.this, list));
+                viewPagerNext.setAdapter(new AdapterforNearby(DescriptionActivity.this, list, "orange"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -669,7 +700,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, ""));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -688,5 +719,18 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-
+    public void NextItem(View view) {
+        Intent intent = new Intent(this, DescriptionActivity.class);
+        intent.putExtra("name", nextItem.getName());
+        intent.putExtra("id", nextItem.getId());
+        intent.putExtra("description", nextItem.getSummary());
+        intent.putExtra("imageUrl", nextItem.getImageUrl());
+        intent.putExtra("category", nextItem.getCategory());
+        intent.putExtra("longit", nextItem.getLon());
+        intent.putExtra("latit", nextItem.getLat());
+        intent.putExtra("url", Url);
+        intent.putExtra("address", nextItem.getAddress());
+        startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+    }
 }

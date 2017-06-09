@@ -1,4 +1,4 @@
-package kz.welcometoastana.utility;
+package kz.welcometoastana.Nearby;
 
 /**
  * Created by nurdaulet on 6/8/17.

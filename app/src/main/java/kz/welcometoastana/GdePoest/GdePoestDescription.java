@@ -32,7 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +43,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -73,13 +74,13 @@ import kz.welcometoastana.Events.EventsItemList;
 import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.MainActivity;
+import kz.welcometoastana.Nearby.AdapterforNearby;
+import kz.welcometoastana.Nearby.AdapterforNearby5;
+import kz.welcometoastana.Nearby.listItemNearby;
 import kz.welcometoastana.R;
-import kz.welcometoastana.utility.AdapterforNearby;
-import kz.welcometoastana.utility.AdapterforNearby5;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
-import kz.welcometoastana.utility.listItemNearby;
 
 public class GdePoestDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -98,8 +99,9 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
     private ViewPager viewPagerNext;
-    private ScrollView mScrollView;
     private TabLayout tabLayout;
+    private GdePoestListItem nextItem;
+    private String Url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +129,10 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         phone.setText(getIntent().getStringExtra("phone"));
-        final String Url=getIntent().getStringExtra("url");
-        Log.d("GdePoestDescription", Url);
+        Url = getIntent().getStringExtra("url");
         if(MainActivity.gpsLocation != null){
             lat2 = MainActivity.gpsLocation.getLatitude();
             lng2 = MainActivity.gpsLocation.getLongitude();
-            Log.d("DescriptionActivity", "lat: "+lat2+"lon: "+lng2);
         }
 
         TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
@@ -305,6 +305,26 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                                     Log.d("MainActivity", arr.get(j).toString());
                                 }
                             }
+                            if ((i + 1) != array.length()) {
+                                o = array.getJSONObject(i + 1);
+                                String image;
+                                if (o.getJSONArray("images").length() > 0) {
+                                    image = o.getJSONArray("images").get(0).toString();
+                                } else {
+                                    image = "http://imgur.com/a/jkAwJ";
+                                }
+                                nextItem = new GdePoestListItem(
+                                        o.getString("name"),
+                                        o.getString("description"),
+                                        image,
+                                        o.getJSONObject("category").getString("name"),
+                                        o.optString("lon"),
+                                        o.optString("lat"),
+                                        o.optString("phone"),
+                                        o.optString("address"),
+                                        o.getInt("id")
+                                );
+                        }
                         }
                     }
 
@@ -350,6 +370,24 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
+                    }
+
+
+                    if (nextItem != null) {
+                        ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
+                        TextView nameNext = (TextView) findViewById(R.id.nameNext);
+                        TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
+
+                        nameNext.setText(nextItem.getName());
+                        categoryNext.setText(nextItem.getCategory());
+                        Glide.with(getApplicationContext())
+                                .load(nextItem.getImageUrl())
+                                .centerCrop()
+                                .into(imageViewNext);
+                    } else {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.GONE);
+
                     }
 
                 } catch (JSONException e) {
@@ -481,8 +519,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
-                mScrollView = (ScrollView) findViewById(R.id.scrollView);
-                viewPagerNext.setAdapter(new AdapterforNearby(GdePoestDescription.this, list));
+                viewPagerNext.setAdapter(new AdapterforNearby(GdePoestDescription.this, list, "green"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -687,7 +724,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list));
+        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, "green"));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -704,6 +741,22 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    public void NextItem(View view) {
+        Intent intent = new Intent(this, GdePoestDescription.class);
+        intent.putExtra("name", nextItem.getName());
+        intent.putExtra("id", nextItem.getId());
+        intent.putExtra("description", nextItem.getSummary());
+        intent.putExtra("imageUrl", nextItem.getImageUrl());
+        intent.putExtra("category", nextItem.getCategory());
+        intent.putExtra("longit", nextItem.getLon());
+        intent.putExtra("latit", nextItem.getLat());
+        intent.putExtra("address", nextItem.getAddress());
+        intent.putExtra("url", Url);
+        intent.putExtra("phone", nextItem.getPhone());
+        startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
 }

@@ -32,7 +32,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="name"
-                android:textSize="12sp" />
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/category"
@@ -83,7 +85,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="name"
-                android:textSize="12sp" />
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/category2"

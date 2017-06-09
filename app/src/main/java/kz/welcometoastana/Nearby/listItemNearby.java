@@ -1,4 +1,4 @@
-package kz.welcometoastana.utility;
+package kz.welcometoastana.Nearby;
 
 import java.util.List;
 
