@@ -26,12 +26,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
@@ -41,7 +44,8 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class AllEvents extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1";
+    SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd");
+    private String Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
@@ -56,52 +60,41 @@ public class AllEvents extends Fragment {
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        if(eventsItemLists == null) {
-            eventsItemLists = new ArrayList<>();
-        }
-        if(eventsItemLists.size()==0){
-
-            Log.d("AllEvents","Startingloadingdata");
-            loadRecyclerView();
-
-        }else{
-
-            adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            // do whatever
-                        }
-                    })
-            );
-
-        }
-
+        eventsItemLists = new ArrayList<>();
+        loadRecyclerView();
         return v;
     }
 
     private void loadRecyclerView() {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
         progressDialog.show();
 
+        if (MainActivity.dateTimeFrom != null) {
+            Calendar dateFrom = MainActivity.dateTimeFrom;
+            if (MainActivity.dateTimeTo != null) {
+                Calendar dateTo = MainActivity.dateTimeTo;
+                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+            } else {
+                Calendar dateTo = Calendar.getInstance();
+                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+            }
 
+        }
+
+        Log.d("AllEvents", Url);
         StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
-
+                    Log.d("AllEvents", "size of array: " + array.length());
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
                         String lon;

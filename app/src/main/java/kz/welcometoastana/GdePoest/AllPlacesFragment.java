@@ -2,6 +2,7 @@ package kz.welcometoastana.GdePoest;
 
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -88,6 +89,12 @@ public class AllPlacesFragment extends Fragment {
     }
 
     private void loadRecyclerView() {
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
+        progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
@@ -139,6 +146,7 @@ public class AllPlacesFragment extends Fragment {
                                 }
                             })
                     );
+                    progressDialog.dismiss();
 
 
                 } catch (JSONException e) {
@@ -151,6 +159,7 @@ public class AllPlacesFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
             }
         }) {
             @Override

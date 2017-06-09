@@ -94,6 +94,9 @@ public class TorgovyiFragment extends Fragment {
     private void loadRecyclerView() {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
         progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {

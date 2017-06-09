@@ -111,6 +111,9 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         setSupportActionBar(toolbar);
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
         progressDialog.show();
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
         getSupportActionBar().setBackgroundDrawable(g);

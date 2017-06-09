@@ -57,6 +57,9 @@ public class Info extends Fragment {
         View v = inflater.inflate(R.layout.extrennaya_fragment, container, false);
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
         progressDialog.show();
         final String Url = "http://89.219.32.107/api/v1/tourist/1809";
         final ImageView imageView = (ImageView) v.findViewById(R.id.imagePamyatka);

@@ -57,26 +57,27 @@ public class MainActivity extends LocalizationActivity {
 
 
     public static Location  gpsLocation;
-    Calendar dateTime = Calendar.getInstance();
+    public static Calendar dateTimeFrom;
+    public static Calendar dateTimeTo;
     SimpleDateFormat formatDateTime = new SimpleDateFormat("dd MMM yyyy");
     DatePickerDialog.OnDateSetListener from = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            dateTime.set(Calendar.YEAR, year);
-            dateTime.set(Calendar.MONTH, monthOfYear);
-            dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            dateTimeFrom.set(Calendar.YEAR, year);
+            dateTimeFrom.set(Calendar.MONTH, monthOfYear);
+            dateTimeFrom.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
-            ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(formatDateTime.format(dateTime.getTime()));
+            ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(formatDateTime.format(dateTimeFrom.getTime()));
         }
     };
     DatePickerDialog.OnDateSetListener to = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            dateTime.set(Calendar.YEAR, year);
-            dateTime.set(Calendar.MONTH, monthOfYear);
-            dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            dateTimeTo.set(Calendar.YEAR, year);
+            dateTimeTo.set(Calendar.MONTH, monthOfYear);
+            dateTimeTo.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
-            ((TextView) current.getView().findViewById(R.id.txtTo)).setText(formatDateTime.format(dateTime.getTime()));
+            ((TextView) current.getView().findViewById(R.id.txtTo)).setText(formatDateTime.format(dateTimeTo.getTime()));
         }
     };
     private Boolean exit = false;
@@ -455,15 +456,21 @@ public class MainActivity extends LocalizationActivity {
     }
 
     public void from(View view) {
-        new DatePickerDialog(this, from, dateTime.get(Calendar.YEAR), dateTime.get(Calendar.MONTH), dateTime.get(Calendar.DAY_OF_MONTH)).show();
+        dateTimeFrom = Calendar.getInstance();
+        new DatePickerDialog(this, from, dateTimeFrom.get(Calendar.YEAR), dateTimeFrom.get(Calendar.MONTH), dateTimeFrom.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     public void to(View view) {
-        new DatePickerDialog(this, to, dateTime.get(Calendar.YEAR), dateTime.get(Calendar.MONTH), dateTime.get(Calendar.DAY_OF_MONTH)).show();
+        dateTimeTo = Calendar.getInstance();
+        new DatePickerDialog(this, to, dateTimeTo.get(Calendar.YEAR), dateTimeTo.get(Calendar.MONTH), dateTimeTo.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     public void ok(View view) {
         Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(current);
+        ft.attach(current);
+        ft.commit();
         (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.GONE);
         (current.getView().findViewById(R.id.filter)).setVisibility(View.GONE);
     }
