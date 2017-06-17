@@ -83,6 +83,7 @@ public class MainActivity extends LocalizationActivity {
     private Boolean exit = false;
     private ExpandableListView elv;
     private Boolean visible = false;
+    private Boolean mapVisible = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -504,6 +505,22 @@ public class MainActivity extends LocalizationActivity {
         elv.collapseGroup(2);
         elv.collapseGroup(3);
         setLanguage(loc);
+    }
+
+    public void turnMap(View view) {
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        if (current instanceof EventsFragment) {
+            if (mapVisible) {
+                (current.getView().findViewById(R.id.mapView)).setVisibility(View.GONE);
+                (current.getView().findViewById(R.id.viewpagerEvent)).setVisibility(View.VISIBLE);
+                mapVisible = false;
+            } else {
+                (current.getView().findViewById(R.id.mapView)).setVisibility(View.VISIBLE);
+                (current.getView().findViewById(R.id.viewpagerEvent)).setVisibility(View.GONE);
+                mapVisible = true;
+            }
+        }
+
     }
 
     @TargetApi(Build.VERSION_CODES.N)

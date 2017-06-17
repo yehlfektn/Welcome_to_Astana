@@ -683,9 +683,11 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         startActivity(intent);
     }
     public void ShareEvents(View view) {
+        String urlItem = getIntent().getStringExtra("urlItem");
+        urlItem = urlItem.replace("89.219.32.107", "welcometoastana.kz");
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        String shareBody = getIntent().getStringExtra("name") + getIntent().getStringExtra("urlItem");
+        String shareBody = getIntent().getStringExtra("name") + "\n\n" + urlItem;
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getIntent().getStringArrayExtra("name"));
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, "Share via"));

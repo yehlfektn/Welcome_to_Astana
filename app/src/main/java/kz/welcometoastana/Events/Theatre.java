@@ -125,11 +125,16 @@ public class Theatre extends Fragment {
                             lon = "null";
                             lat = "null";
                         }
-
+                        String image;
+                        if (o.getJSONArray("images").length() != 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
                         EventsItemList item = new EventsItemList(
                                 o.getString("name"),
                                 o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
+                                image,
                                 o.getJSONObject("category").getString("name"),
                                 lon,
                                 lat,
@@ -139,7 +144,6 @@ public class Theatre extends Fragment {
                                 "от 5000тг",
                                 o.getString("url")
                         );
-
                         eventsItemLists.add(item);
 
                     }

@@ -37,6 +37,14 @@
 
                 <ImageView
                     android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:onClick="turnMap"
+                    android:src="@drawable/map_icon" />
+
+                <ImageView
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"

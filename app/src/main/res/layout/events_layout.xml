@@ -1,17 +1,28 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    >
+        tools:context=".MainActivity">
 
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabsEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/black"
         app:tabGravity="fill"
         app:tabIndicatorHeight="0dp"
         app:tabMaxWidth="0dp"
@@ -132,16 +143,16 @@
             android:onClick="resetFilter"
             android:text="@string/reset_filter"
             android:textColor="@color/txtColor" />
-
-
     </LinearLayout>
 
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpagerEvent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
     </android.support.v4.view.ViewPager>
 
 </LinearLayout>
+</FrameLayout>
