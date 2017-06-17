@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ public class AllPlacesFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public AllPlacesFragment() {
         // Required empty public constructor
@@ -84,6 +86,13 @@ public class AllPlacesFragment extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -147,19 +156,16 @@ public class AllPlacesFragment extends Fragment {
                             })
                     );
                     progressDialog.dismiss();
-
-
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
-
                     e.printStackTrace();
                 }
-
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override

@@ -5,7 +5,29 @@
     android:layout_marginTop="56dp"
     android:fillViewport="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonFrame"
+            android:layout_width="90dp"
+            android:layout_height="80dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="190dp"
+            android:background="@drawable/circle_purple"
+            android:drawableBottom="@drawable/ic_right_arrow_white"
+            android:drawablePadding="0dp"
+            android:gravity="center"
+            android:onClick="Book"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp"
+            android:text="@string/book"
+            android:textSize="12sp" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/content_description_"
@@ -70,6 +92,7 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/address_image"
                 android:layout_width="wrap_content"
                 android:layout_height="15dp"
                 android:layout_gravity="top"
@@ -323,10 +346,10 @@
             app:tabTextColor="@android:color/darker_gray" />
 
 
-        <android.support.v4.view.ViewPager
+            <kz.welcometoastana.utility.WrapContentHeightViewPager
             android:id="@+id/viewpagerEvent"
             android:layout_width="match_parent"
-            android:layout_height="145dp"></android.support.v4.view.ViewPager>
+                android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/txtShowMore"
             android:layout_width="match_parent"
@@ -398,11 +421,11 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="10dp"
-                            android:drawableLeft="@drawable/bullet"
+                            android:drawableLeft="@drawable/bulletpurple"
                             android:drawablePadding="5dp"
-                            android:drawableStart="@drawable/bullet"
+                            android:drawableStart="@drawable/bulletpurple"
                             android:text="Астана"
-                            android:textColor="#FF8B00"
+                            android:textColor="@android:color/holo_purple"
                             android:textSize="12sp" />
 
                         <LinearLayout
@@ -427,4 +450,5 @@
             </FrameLayout>
         </RelativeLayout>
     </LinearLayout>
+    </FrameLayout>
 </ScrollView>

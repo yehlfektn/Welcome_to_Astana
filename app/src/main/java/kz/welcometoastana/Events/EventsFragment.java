@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +71,10 @@ public class EventsFragment extends Fragment {
     private String Url;
     private List<EventsItemList> eventsItemLists;
 
+    private static String makeFragmentName(int viewId, int position) {
+        return "android:switcher:" + viewId + ":" + position;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +83,7 @@ public class EventsFragment extends Fragment {
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabsEvent);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerEvent);
+        getActivity().findViewById(R.id.calendar).setVisibility(View.VISIBLE);
         //set an adapter
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
 
@@ -122,6 +128,7 @@ public class EventsFragment extends Fragment {
                             marker.remove();
                         }
                         eventsItemLists.clear();
+                        markerLocation.clear();
                         // For dropping a marker at a point on the Map
 
                         int a = tabLayout.getSelectedTabPosition();
@@ -198,10 +205,7 @@ public class EventsFragment extends Fragment {
                                                         @Override
                                                         public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                                                             Bitmap bitmap1 = getCircularBitmap(bitmap);
-                                                            Log.d("coordinator", "Before: lat:" + lat + " lng:" + lng);
-                                                            LatLng latLng = coordinateForMarker(lat, lng);
-                                                            Log.d("coordinator", "After: lat " + latLng.latitude + "lng:" + latLng.longitude);
-                                                            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(eventsItemList.getName()));
+                                                            Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(eventsItemList.getName()));
                                                             marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
                                                             markerList.add(marker);
                                                         }
@@ -260,6 +264,7 @@ public class EventsFragment extends Fragment {
 
         return v;
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -396,5 +401,31 @@ public class EventsFragment extends Fragment {
             markerLocation.put(location, location);
             return false;
         }
+    }
+
+    public void load() {
+
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                if (viewPagerFragment instanceof AllEvents) {
+                    ((AllEvents) viewPagerFragment).loadRecyclerView();
+                } else if (viewPagerFragment instanceof ExpoEvent) {
+                    ((ExpoEvent) viewPagerFragment).loadRecyclerView();
+                } else if (viewPagerFragment instanceof Concerts) {
+                    ((Concerts) viewPagerFragment).loadRecyclerView();
+                } else if (viewPagerFragment instanceof Vystavki) {
+                    ((Vystavki) viewPagerFragment).loadRecyclerView();
+                } else if (viewPagerFragment instanceof Theatre) {
+                    ((Theatre) viewPagerFragment).loadRecyclerView();
+                } else if (viewPagerFragment instanceof Sports) {
+                    ((Sports) viewPagerFragment).loadRecyclerView();
+                }
+            }
+        }
+
     }
 }

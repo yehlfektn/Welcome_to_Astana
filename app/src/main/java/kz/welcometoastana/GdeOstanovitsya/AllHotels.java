@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import kz.welcometoastana.R;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
 /**
@@ -43,6 +45,7 @@ public class AllHotels extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<HotelsListItem> hotelsListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public AllHotels() {
         // Required empty public constructor
@@ -75,11 +78,17 @@ public class AllHotels extends Fragment {
 
                         @Override
                         public void onLongItemClick(View view, int position) {
-                            // do whatever
                         }
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -91,7 +100,7 @@ public class AllHotels extends Fragment {
         }
         progressDialog.show();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
@@ -112,7 +121,8 @@ public class AllHotels extends Fragment {
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -131,11 +141,10 @@ public class AllHotels extends Fragment {
 
                                 @Override
                                 public void onLongItemClick(View view, int position) {
-                                    // do whatever
                                 }
                             })
                     );
-
+                    swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
 
@@ -148,7 +157,7 @@ public class AllHotels extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-                loadRecyclerView();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override
@@ -194,6 +203,7 @@ public class AllHotels extends Fragment {
         intent.putExtra("phone", hotelsListItems.get(position).getPhone());
         intent.putExtra("website", hotelsListItems.get(position).getWebsite());
         intent.putExtra("stars", hotelsListItems.get(position).getStars());
+        intent.putExtra("urlItem", hotelsListItems.get(position).getBook_url());
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 

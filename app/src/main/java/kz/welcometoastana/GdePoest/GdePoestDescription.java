@@ -128,14 +128,21 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         TextView phone =  (TextView)findViewById(R.id.phone);
         TextView address = (TextView)findViewById(R.id.address);
 
-        address.setText(getIntent().getStringExtra("address"));
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         phone.setText(getIntent().getStringExtra("phone"));
         Url = getIntent().getStringExtra("url");
+        latStr = getIntent().getStringExtra("latit");
+        lngStr = getIntent().getStringExtra("longit");
         if(MainActivity.gpsLocation != null){
             lat2 = MainActivity.gpsLocation.getLatitude();
             lng2 = MainActivity.gpsLocation.getLongitude();
+        }
+        if (getIntent().getStringExtra("address").length() < 2) {
+            address.setVisibility(View.GONE);
+            findViewById(R.id.address_image).setVisibility(View.GONE);
+        } else {
+            address.setText(getIntent().getStringExtra("address"));
         }
 
         TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
@@ -241,8 +248,13 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
 
         if (googleServicesAvailable()) {
-            //Toast.makeText(this, "Perfect!", Toast.LENGTH_LONG).show();
-            initMap();
+            if (latStr.equals("null")) {
+                findViewById(R.id.map).setVisibility(View.GONE);
+                findViewById(R.id.wayButton).setVisibility(View.GONE);
+                initMap();
+            } else {
+                initMap();
+            }
         }
 
         id = getIntent().getIntExtra("id", 0);
@@ -390,7 +402,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                     } else {
                         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
                         relativeLayout.setVisibility(View.GONE);
-
                     }
 
                 } catch (JSONException e) {
@@ -467,7 +478,8 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -654,7 +666,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.moveCamera(update);
+        mGoogleMap.animateCamera(update);
     }
 
 
@@ -750,6 +762,8 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         params.height = (int) (400 * scale + 0.5f);
         viewPagerNext.setLayoutParams(params);
         (findViewById(view.getId())).setVisibility(View.GONE);
+        (findViewById(R.id.view)).setVisibility(View.GONE);
+        (findViewById(R.id.txtShowMore)).setVisibility(View.GONE);
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -776,6 +790,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         intent.putExtra("phone", nextItem.getPhone());
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        finish();
     }
 
 }

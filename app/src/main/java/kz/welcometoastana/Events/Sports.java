@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,12 +26,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
@@ -39,10 +43,12 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class Sports extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
+    SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd");
+    private String Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public Sports() {
         // Required empty public constructor
@@ -51,10 +57,11 @@ public class Sports extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
-
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
         if(eventsItemLists == null) {
             eventsItemLists = new ArrayList<>();
         }
@@ -66,41 +73,43 @@ public class Sports extends Fragment {
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
                         @Override
                         public void onItemClick(View view, int position) {
-                            //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), EventsDescription.class);
-                            final EventsItemList eventsItemList = eventsItemLists.get(position);
-                            intent.putExtra("name", eventsItemList.getName());
-                            intent.putExtra("id", eventsItemList.getId());
-                            intent.putExtra("description", eventsItemList.getSummary());
-                            intent.putExtra("imageUrl", eventsItemList.getImageUrl());
-                            intent.putExtra("category", eventsItemList.getCategory());
-                            intent.putExtra("longit", eventsItemList.getLon());
-                            intent.putExtra("latit", eventsItemList.getLat());
-                            intent.putExtra("url",Url);
-                            intent.putExtra("address",eventsItemList.getAddress());
-                            intent.putExtra("money",eventsItemList.getMoney());
-                            intent.putExtra("date",eventsItemList.getDate());
-                            intent.putExtra("urlItem",eventsItemList.getUrl());
-                            startActivityForResult(intent, 0);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            onClick(position);
                         }
-
                         @Override
                         public void onLongItemClick(View view, int position) {
-                            // do whatever
                         }
                     })
             );
-
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
 
-    private void loadRecyclerView() {
+    public void loadRecyclerView() {
+        eventsItemLists.clear();
+        if (MainActivity.dateTimeFrom != null) {
+            Calendar dateFrom = MainActivity.dateTimeFrom;
+            if (MainActivity.dateTimeTo != null) {
+                Calendar dateTo = MainActivity.dateTimeTo;
+                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1&category=68" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+            } else {
+                Calendar dateTo = Calendar.getInstance();
+                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1&category=68" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+            }
+        } else {
+            Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
+        }
+        Log.d("ExpoEvent", "URL: " + Url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -137,7 +146,7 @@ public class Sports extends Fragment {
                                 o.getString("date"),
                                 o.getString("address"),
                                 "от 5000тг",
-                                o.getString("url")
+                                o.getString("url_ticketon")
                         );
                         eventsItemLists.add(item);
 
@@ -151,23 +160,7 @@ public class Sports extends Fragment {
 
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    //Toast.makeText(getContext(), "You clicked " + eventsItemLists.get(position).getName(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), EventsDescription.class);
-                                    final EventsItemList eventsItemList = eventsItemLists.get(position);
-                                    intent.putExtra("name", eventsItemList.getName());
-                                    intent.putExtra("id", eventsItemList.getId());
-                                    intent.putExtra("description", eventsItemList.getSummary());
-                                    intent.putExtra("imageUrl", eventsItemList.getImageUrl());
-                                    intent.putExtra("category", eventsItemList.getCategory());
-                                    intent.putExtra("longit", eventsItemList.getLon());
-                                    intent.putExtra("latit", eventsItemList.getLat());
-                                    intent.putExtra("url",Url);
-                                    intent.putExtra("address",eventsItemList.getAddress());
-                                    intent.putExtra("money",eventsItemList.getMoney());
-                                    intent.putExtra("date",eventsItemList.getDate());
-                                    intent.putExtra("urlItem",eventsItemList.getUrl());
-                                    startActivityForResult(intent, 0);
-                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    onClick(position);
                                 }
 
                                 @Override
@@ -176,9 +169,11 @@ public class Sports extends Fragment {
                                 }
                             })
                     );
+                    swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
 
 
@@ -187,7 +182,7 @@ public class Sports extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Sightseeings",error.toString());
-
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override
@@ -217,6 +212,25 @@ public class Sports extends Fragment {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    private void onClick(int position) {
+        Intent intent = new Intent(getActivity(), EventsDescription.class);
+        final EventsItemList eventsItemList = eventsItemLists.get(position);
+        intent.putExtra("name", eventsItemList.getName());
+        intent.putExtra("id", eventsItemList.getId());
+        intent.putExtra("description", eventsItemList.getSummary());
+        intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+        intent.putExtra("category", eventsItemList.getCategory());
+        intent.putExtra("longit", eventsItemList.getLon());
+        intent.putExtra("latit", eventsItemList.getLat());
+        intent.putExtra("url", Url);
+        intent.putExtra("address", eventsItemList.getAddress());
+        intent.putExtra("money", eventsItemList.getMoney());
+        intent.putExtra("date", eventsItemList.getDate());
+        intent.putExtra("urlItem", eventsItemList.getUrl());
+        startActivityForResult(intent, 0);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
 }

@@ -81,6 +81,7 @@ import kz.welcometoastana.R;
 import kz.welcometoastana.utility.DashedUnderlineSpan;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.ViewPagerAdapter;
+import kz.welcometoastana.utility.WrapContentHeightViewPager;
 
 
 public class EventsDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -97,7 +98,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     listItemNearby list;
     private TabLayout tabLayout;
     private ViewPager viewPagerNext;
-    private int dotscount;
+    private int dotsCount;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
     private EventsItemList nextItem;
@@ -131,22 +132,22 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
         if (getIntent().getStringExtra("address").length() < 2) {
             address.setVisibility(View.GONE);
+            findViewById(R.id.address_image).setVisibility(View.GONE);
         } else {
             address.setText(getIntent().getStringExtra("address"));
         }
 
         date.setText(getIntent().getStringExtra("date"));
         name.setText(getIntent().getStringExtra("name"));
+        latStr = getIntent().getStringExtra("latit");
+        lngStr = getIntent().getStringExtra("longit");
 
         Url = getIntent().getStringExtra("url");
 
 
         if(MainActivity.gpsLocation != null){
-
             lat2 = MainActivity.gpsLocation.getLatitude();
             lng2 = MainActivity.gpsLocation.getLongitude();
-
-
         }
 
         TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
@@ -246,9 +247,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         //----------------------End of Animated Text --------------------
 
 
-        if (googleServicesAvailable()) {
-            initMap();
-        }
 
         id = getIntent().getIntExtra("id", 0);
 
@@ -267,15 +265,14 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         JSONObject o = array.getJSONObject(i);
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
-                            latStr = getIntent().getStringExtra("latit");
-                            lngStr = getIntent().getStringExtra("longit");
+
                             if (lngStr.equals("null")) {
                                 lngStr = "0";
                                 latStr = "0";
                             }
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
-                            goToLocationZoom(lat, lng, 15);
+                            goToLocationZoom(lat, lng, 13);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
                             if(arr.length()==0){
 
@@ -320,10 +317,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                     viewPager = (ViewPager) findViewById(R.id.viewPager);
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), imageUrls);
                     viewPager.setAdapter(viewPagerAdapter);
-                    dotscount = viewPagerAdapter.getCount();
-                    dots = new ImageView[dotscount];
+                    dotsCount = viewPagerAdapter.getCount();
+                    dots = new ImageView[dotsCount];
 
-                    for (int i = 0; i < dotscount; i++) {
+                    for (int i = 0; i < dotsCount; i++) {
 
                         dots[i] = new ImageView(getApplicationContext());
                         dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
@@ -345,7 +342,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                         @Override
                         public void onPageSelected(int position) {
-                            for (int i = 0; i < dotscount; i++) {
+                            for (int i = 0; i < dotsCount; i++) {
                                 dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
                             dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
@@ -451,7 +448,8 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -519,7 +517,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 list = new listItemNearby(arrayListEvents, hotelsListItems, gdePoestListItems, kudaShoditListItems);
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
-                viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
+                viewPagerNext = (WrapContentHeightViewPager) findViewById(R.id.viewpagerEvent);
                 viewPagerNext.setAdapter(new AdapterforNearby(EventsDescription.this, list, "orange"));
                 tabLayout.post(new Runnable() {
                     @Override
@@ -527,6 +525,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         tabLayout.setupWithViewPager(viewPagerNext);
                     }
                 });
+
 
 
             }
@@ -554,6 +553,17 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
         requestQueue.add(nearbyRequest);
+
+
+        if (googleServicesAvailable()) {
+            if (latStr.equals("null")) {
+                findViewById(R.id.map).setVisibility(View.GONE);
+                findViewById(R.id.wayButton).setVisibility(View.GONE);
+                initMap();
+            } else {
+                initMap();
+            }
+        }
     }
 
     private void initMap() {
@@ -594,7 +604,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
             mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
-                    EventsDescription.this.setMarker("Local", latLng.latitude, latLng.longitude);
                 }
             });
             mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
@@ -606,8 +615,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 }
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-                    marker.setTitle(getIntent().getStringExtra("name"));
-                    marker.showInfoWindow();
                 }
             });
             mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter(){
@@ -627,7 +634,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.moveCamera(update);
+        mGoogleMap.animateCamera(update);
     }
 
     private void setMarker(String locality, double lat, double lng) {
@@ -718,6 +725,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         viewPagerNext.setLayoutParams(params);
         (findViewById(view.getId())).setVisibility(View.GONE);
         (findViewById(R.id.view)).setVisibility(View.GONE);
+        (findViewById(R.id.txtShowMore)).setVisibility(View.GONE);
     }
 
     public void NextItem(View view) {
@@ -736,7 +744,15 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         intent.putExtra("urlItem", nextItem.getUrl());
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        finish();
     }
 
-
+    public void Buy(View view) {
+        String urlItem = getIntent().getStringExtra("urlItem");
+        urlItem = urlItem.replace("89.219.32.107", "welcometoastana.kz");
+        Uri uriUrl = Uri.parse(urlItem);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
 }

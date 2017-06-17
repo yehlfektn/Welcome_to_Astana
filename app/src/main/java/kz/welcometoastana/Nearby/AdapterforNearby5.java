@@ -25,7 +25,6 @@ import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.R;
 import kz.welcometoastana.Sightseeings.DescriptionActivity;
-import kz.welcometoastana.utility.RoundedCornersTransformation;
 
 /**
  * Created by nurdaulet on 5/31/17.
@@ -91,30 +90,29 @@ public class AdapterforNearby5 extends PagerAdapter {
         mainListItem fifth;
 
         if (position == 0) {
-            first = listItemNearby.getSights().get(0);
-            second = listItemNearby.getSights().get(1);
-            third = listItemNearby.getSights().get(2);
-            fourth = listItemNearby.getSights().get(3);
-            fifth = listItemNearby.getSights().get(4);
-        } else if (position == 1) {
-            first = listItemNearby.getHotels().get(0);
-            second = listItemNearby.getHotels().get(1);
-            third = listItemNearby.getHotels().get(2);
-            fourth = listItemNearby.getHotels().get(3);
-            fifth = listItemNearby.getHotels().get(4);
-        } else if (position == 2) {
-            first = listItemNearby.getFoods().get(0);
-            second = listItemNearby.getFoods().get(1);
-            third = listItemNearby.getFoods().get(2);
-            fourth = listItemNearby.getFoods().get(3);
-            fifth = listItemNearby.getFoods().get(4);
-        } else {
             first = listItemNearby.getEvents().get(0);
             second = listItemNearby.getEvents().get(1);
             third = listItemNearby.getEvents().get(2);
             fourth = listItemNearby.getEvents().get(3);
             fifth = listItemNearby.getEvents().get(4);
-
+        } else if (position == 1) {
+            first = listItemNearby.getSights().get(0);
+            second = listItemNearby.getSights().get(1);
+            third = listItemNearby.getSights().get(2);
+            fourth = listItemNearby.getSights().get(3);
+            fifth = listItemNearby.getSights().get(4);
+        } else if (position == 2) {
+            first = listItemNearby.getHotels().get(0);
+            second = listItemNearby.getHotels().get(1);
+            third = listItemNearby.getHotels().get(2);
+            fourth = listItemNearby.getHotels().get(3);
+            fifth = listItemNearby.getHotels().get(4);
+        } else {
+            first = listItemNearby.getFoods().get(0);
+            second = listItemNearby.getFoods().get(1);
+            third = listItemNearby.getFoods().get(2);
+            fourth = listItemNearby.getFoods().get(3);
+            fifth = listItemNearby.getFoods().get(4);
         }
 
         name.setText(first.getName());
@@ -155,40 +153,40 @@ public class AdapterforNearby5 extends PagerAdapter {
 
         Glide.with(context)
                 .load(first.getImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
+                .centerCrop()
                 .into(imageView);
 
         Glide.with(context)
                 .load(second.getImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
+                .centerCrop()
                 .into(imageView2);
 
         Glide.with(context)
                 .load(third.getImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
+                .centerCrop()
                 .into(imageView3);
 
         Glide.with(context)
                 .load(fourth.getImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
+                .centerCrop()
                 .into(imageView4);
 
         Glide.with(context)
                 .load(fifth.getImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(context, 25, 2))
+                .centerCrop()
                 .into(imageView5);
 
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickSight(0);
-                } else if (position == 1) {
-                    onClickHotel(0);
-                } else if (position == 2) {
-                    onClickFood(0);
-                } else {
                     onClickEvent(0);
+                } else if (position == 1) {
+                    onClickSight(0);
+                } else if (position == 2) {
+                    onClickHotel(0);
+                } else {
+                    onClickFood(0);
                 }
             }
         });
@@ -196,13 +194,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickSight(1);
+                    onClickEvent(0);
                 } else if (position == 1) {
-                    onClickHotel(1);
+                    onClickSight(0);
                 } else if (position == 2) {
-                    onClickFood(1);
+                    onClickHotel(0);
                 } else {
-                    onClickEvent(1);
+                    onClickFood(0);
                 }
             }
         });
@@ -211,13 +209,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickSight(2);
+                    onClickEvent(0);
                 } else if (position == 1) {
-                    onClickHotel(2);
+                    onClickSight(0);
                 } else if (position == 2) {
-                    onClickFood(2);
+                    onClickHotel(0);
                 } else {
-                    onClickEvent(2);
+                    onClickFood(0);
                 }
             }
         });
@@ -226,13 +224,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickSight(3);
+                    onClickEvent(0);
                 } else if (position == 1) {
-                    onClickHotel(3);
+                    onClickSight(0);
                 } else if (position == 2) {
-                    onClickFood(3);
+                    onClickHotel(0);
                 } else {
-                    onClickEvent(3);
+                    onClickFood(0);
                 }
             }
         });
@@ -241,13 +239,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickSight(4);
+                    onClickEvent(0);
                 } else if (position == 1) {
-                    onClickHotel(4);
+                    onClickSight(0);
                 } else if (position == 2) {
-                    onClickFood(4);
+                    onClickHotel(0);
                 } else {
-                    onClickEvent(4);
+                    onClickFood(0);
                 }
             }
         });
@@ -271,6 +269,7 @@ public class AdapterforNearby5 extends PagerAdapter {
         intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
         ((Activity) context).startActivityForResult(intent, 0);
         ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((Activity) context).finish();
     }
 
     private void onClickEvent(int position) {
@@ -291,6 +290,7 @@ public class AdapterforNearby5 extends PagerAdapter {
         intent.putExtra("urlItem", eventsItemList.getUrl());
         ((Activity) context).startActivityForResult(intent, 0);
         ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((Activity) context).finish();
     }
 
     private void onClickHotel(int position) {
@@ -311,6 +311,7 @@ public class AdapterforNearby5 extends PagerAdapter {
         intent.putExtra("stars", hotelsListItems.get(position).getStars());
         ((Activity) context).startActivityForResult(intent, 0);
         ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((Activity) context).finish();
 
     }
 
@@ -329,6 +330,7 @@ public class AdapterforNearby5 extends PagerAdapter {
         intent.putExtra("phone", gdePoestListItems.get(position).getPhone());
         ((Activity) context).startActivityForResult(intent, 0);
         ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((Activity) context).finish();
     }
 
     @Override
@@ -339,13 +341,13 @@ public class AdapterforNearby5 extends PagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return context.getString(R.string.kuda_shodit);
-            case 1:
-                return context.getString(R.string.gde_ostanovitsya);
-            case 2:
-                return context.getString(R.string.gde_poest);
-            case 3:
                 return context.getString(R.string.events);
+            case 1:
+                return context.getString(R.string.kuda_shodit);
+            case 2:
+                return context.getString(R.string.gde_ostanovitsya);
+            case 3:
+                return context.getString(R.string.gde_poest);
         }
 
         return null;

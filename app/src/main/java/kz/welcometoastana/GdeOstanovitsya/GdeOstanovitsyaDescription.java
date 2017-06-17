@@ -36,6 +36,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -100,7 +101,6 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
     LinearLayout linearLayout;
     double lat2, lng2;
     TextView website;
-    Marker marker;
     LocationRequest mLocationRequest;
     listItemNearby list;
     private int dotscount;
@@ -142,12 +142,36 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         }else{
             website.setText(getIntent().getStringExtra("website"));
         }
-
-        address.setText(getIntent().getStringExtra("address"));
+        if (getIntent().getStringExtra("address").length() < 2) {
+            address.setVisibility(View.GONE);
+            findViewById(R.id.address_image).setVisibility(View.GONE);
+        } else {
+            address.setText(getIntent().getStringExtra("address"));
+        }
         name.setText(getIntent().getStringExtra("name"));
         summary.setText(getIntent().getStringExtra("description"));
         phone.setText(getIntent().getStringExtra("phone"));
         Url = getIntent().getStringExtra("url");
+        latStr = getIntent().getStringExtra("latit");
+        lngStr = getIntent().getStringExtra("longit");
+
+        Button frameButton = (Button) findViewById(R.id.buttonFrame);
+        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        frameButton.bringToFront();
+        String loc = getCurrentLocale().toString();
+        if (loc.startsWith("kk")) {
+            frameButton.setTextSize(15);
+            int pixels = (int) (20 * scale + 0.5f);
+            frameButton.setCompoundDrawablePadding(-pixels);
+            pixels = (int) (20 * scale + 0.5f);
+            frameButton.setPadding(0, 0, 0, pixels);
+        } else if (loc.startsWith("en")) {
+            frameButton.setTextSize(15);
+            int pixels = (int) (20 * scale + 0.5f);
+            frameButton.setCompoundDrawablePadding(-pixels);
+            pixels = (int) (20 * scale + 0.5f);
+            frameButton.setPadding(0, 0, 0, pixels);
+        }
 
 
         LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
@@ -264,8 +288,13 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
 
 
         if (googleServicesAvailable()) {
-            //Toast.makeText(this, "Perfect!", Toast.LENGTH_LONG).show();
-            initMap();
+            if (latStr.equals("null")) {
+                findViewById(R.id.map).setVisibility(View.GONE);
+                findViewById(R.id.wayButton).setVisibility(View.GONE);
+                initMap();
+            } else {
+                initMap();
+            }
         }
 
         id = getIntent().getIntExtra("id", 0);
@@ -345,7 +374,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                                         o.optString("address"),
                                         o.getInt("stars"),
                                         o.optString("site"),
-                                        o.getInt("id")
+                                        o.getInt("id"),
+                                        o.getString("book_url")
                                 );
                             }
                         }
@@ -485,7 +515,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -685,7 +716,7 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.moveCamera(update);
+        mGoogleMap.animateCamera(update);
     }
 
     private void setMarker(String locality, double lat, double lng) {
@@ -801,6 +832,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         params.height = (int) (400 * scale + 0.5f);
         viewPagerNext.setLayoutParams(params);
         (findViewById(view.getId())).setVisibility(View.GONE);
+        (findViewById(R.id.view)).setVisibility(View.GONE);
+        (findViewById(R.id.txtShowMore)).setVisibility(View.GONE);
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -829,5 +862,14 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         intent.putExtra("stars", nextItem.getStars());
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        finish();
+    }
+
+    public void Book(View view) {
+        String urlItem = getIntent().getStringExtra("urlItem");
+        Uri uriUrl = Uri.parse(urlItem);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

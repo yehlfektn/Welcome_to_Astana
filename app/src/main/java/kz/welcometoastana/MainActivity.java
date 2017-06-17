@@ -269,7 +269,9 @@ public class MainActivity extends LocalizationActivity {
                     if (childPos == 0) {
                         fragment = new EventsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Events");
-                    } else if (childPos == 1) {
+                    } else {
+                        findViewById(R.id.calendar).setVisibility(View.GONE);
+                        if (childPos == 1) {
                             fragment = new SightSeeingsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
                     } else if (childPos == 2) {
@@ -279,7 +281,9 @@ public class MainActivity extends LocalizationActivity {
                             fragment = new EntertainmentFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Entertainment");
                     }
+                    }
                 }else if(groupPos == 1){
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
                     getSupportActionBar().setBackgroundDrawable(g);
 
@@ -300,6 +304,7 @@ public class MainActivity extends LocalizationActivity {
                         transaction.replace(R.id.mainFrame, fragment);
                     }
                 }else if(groupPos == 2){
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if(childPos == 0){
@@ -320,6 +325,7 @@ public class MainActivity extends LocalizationActivity {
                     }
 
                 }else if(groupPos == 3) {
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFFA800, 0xffFFD200});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if (childPos == 0) {
@@ -442,6 +448,7 @@ public class MainActivity extends LocalizationActivity {
         Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         startActivity(launchBrowser);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void onChangeToRuClicked(View view) {
@@ -468,10 +475,9 @@ public class MainActivity extends LocalizationActivity {
 
     public void ok(View view) {
         Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.detach(current);
-        ft.attach(current);
-        ft.commit();
+        if (current instanceof EventsFragment) {
+            ((EventsFragment) current).load();
+        }
         (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.GONE);
         (current.getView().findViewById(R.id.filter)).setVisibility(View.GONE);
     }
@@ -480,6 +486,9 @@ public class MainActivity extends LocalizationActivity {
         Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
         ((TextView) current.getView().findViewById(R.id.txtTo)).setText(getResources().getString(R.string.to));
         ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(getResources().getString(R.string.from));
+        MainActivity.dateTimeTo = null;
+        MainActivity.dateTimeFrom = null;
+        ok(view);
     }
 
     public void filterButton(View view) {

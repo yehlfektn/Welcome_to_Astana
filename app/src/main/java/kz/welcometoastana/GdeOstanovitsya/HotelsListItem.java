@@ -18,10 +18,10 @@ public class HotelsListItem extends mainListItem {
     private int stars;
     private String website;
     private int id;
+    private String book_url;
 
 
-
-    public HotelsListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address, int Stars, String website,int id){
+    public HotelsListItem(String name, String description, String imageUrl, String category, String lon, String lat, String phone, String address, int Stars, String website, int id, String book_url) {
         this.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
@@ -42,6 +42,7 @@ public class HotelsListItem extends mainListItem {
         this.stars = Stars;
         this.website = website;
         this.id = id;
+        this.book_url = book_url;
     }
 
     public String getName() {
@@ -70,6 +71,10 @@ public class HotelsListItem extends mainListItem {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getBook_url() {
+        return book_url;
     }
 
     public String getAddress() {

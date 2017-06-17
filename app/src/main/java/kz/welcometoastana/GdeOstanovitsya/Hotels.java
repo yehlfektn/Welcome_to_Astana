@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class Hotels extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<HotelsListItem> hotelsListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public Hotels() {
         // Required empty public constructor
     }
@@ -77,6 +79,13 @@ public class Hotels extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -102,7 +111,8 @@ public class Hotels extends Fragment {
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -126,7 +136,7 @@ public class Hotels extends Fragment {
                             })
                     );
 
-
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -137,7 +147,7 @@ public class Hotels extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                loadRecyclerView();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override
@@ -183,6 +193,7 @@ public class Hotels extends Fragment {
         intent.putExtra("phone", hotelsListItems.get(position).getPhone());
         intent.putExtra("website", hotelsListItems.get(position).getWebsite());
         intent.putExtra("stars", hotelsListItems.get(position).getStars());
+        intent.putExtra("urlItem", hotelsListItems.get(position).getBook_url());
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 

@@ -124,13 +124,19 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
 
         address.setText(getIntent().getStringExtra("address"));
+        latStr = getIntent().getStringExtra("latit");
+        lngStr = getIntent().getStringExtra("longit");
+
+        Log.d("DescriptionActivity", "address: " + getIntent().getStringExtra("address"));
         if(getIntent().getStringExtra("address").length()<2){
             address.setVisibility(View.GONE);
+            findViewById(R.id.address_image).setVisibility(View.GONE);
         }
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
         summary.setText(getIntent().getStringExtra("description"));
         Url = getIntent().getStringExtra("url");
+
         if(MainActivity.gpsLocation != null){
 
             lat2 = MainActivity.gpsLocation.getLatitude();
@@ -235,8 +241,13 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
 
         if (googleServicesAvailable()) {
-            //Toast.makeText(this, "Perfect!", Toast.LENGTH_LONG).show();
-            initMap();
+            if (latStr.equals("null")) {
+                findViewById(R.id.wayButton).setVisibility(View.GONE);
+                findViewById(R.id.map).setVisibility(View.GONE);
+                initMap();
+            } else {
+                initMap();
+            }
         }
 
         id = getIntent().getIntExtra("id", 0);
@@ -262,6 +273,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                             JSONArray arr = o.getJSONArray("images");
                             latStr = o.getString("lat");
                             lngStr = o.getString("lon");
+                            Log.d("latlong: ", "lat: " + latStr + "long:" + lngStr);
                             if (lngStr.equals("null")) {
                                 lngStr = "0";
                                 latStr = "0";
@@ -451,7 +463,8 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -643,7 +656,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.moveCamera(update);
+        mGoogleMap.animateCamera(update);
     }
 
     private void setMarker(String locality, double lat, double lng) {

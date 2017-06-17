@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class AllEvents extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public AllEvents() {
         // Required empty public constructor
@@ -60,12 +62,39 @@ public class AllEvents extends Fragment {
         recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        eventsItemLists = new ArrayList<>();
-        loadRecyclerView();
+        if (eventsItemLists == null) {
+            eventsItemLists = new ArrayList<>();
+        }
+        if (eventsItemLists.size() == 0) {
+            loadRecyclerView();
+        } else {
+            adapter = new EventsRecycleAdapter(eventsItemLists, getContext());
+            recyclerView.setAdapter(adapter);
+            recyclerView.addOnItemTouchListener(
+                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            onClick(position);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                        }
+                    })
+            );
+        }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
         return v;
     }
 
-    private void loadRecyclerView() {
+    public void loadRecyclerView() {
+        eventsItemLists.clear();
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
         if (progressDialog.getWindow() != null) {
@@ -82,10 +111,10 @@ public class AllEvents extends Fragment {
                 Calendar dateTo = Calendar.getInstance();
                 Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
             }
-
+        } else {
+            Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1";
         }
 
-        Log.d("AllEvents", Url);
         StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
 
             @Override
@@ -123,7 +152,7 @@ public class AllEvents extends Fragment {
                                 o.getString("date"),
                                 o.getString("address"),
                                 "от 5000тг",
-                                o.getString("url")
+                                o.getString("url_ticketon")
                         );
                         eventsItemLists.add(item);
 
@@ -148,9 +177,11 @@ public class AllEvents extends Fragment {
                     );
 
                     progressDialog.dismiss();
+                    swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
 
 
@@ -158,7 +189,7 @@ public class AllEvents extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                swipeRefreshLayout.setRefreshing(false);
                 progressDialog.dismiss();
                 Log.d("Sightseeings",error.toString());
 

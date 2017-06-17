@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,10 +44,10 @@ public class Hostels extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<HotelsListItem> hotelsListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public Hostels() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +80,13 @@ public class Hostels extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -104,7 +112,8 @@ public class Hostels extends Fragment {
                                 o.optString("address"),
                                 o.getInt("stars"),
                                 o.optString("site"),
-                                o.getInt("id")
+                                o.getInt("id"),
+                                o.getString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -128,7 +137,7 @@ public class Hostels extends Fragment {
                             })
                     );
 
-
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -139,7 +148,7 @@ public class Hostels extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                loadRecyclerView();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override
@@ -185,6 +194,7 @@ public class Hostels extends Fragment {
         intent.putExtra("phone", hotelsListItems.get(position).getPhone());
         intent.putExtra("website", hotelsListItems.get(position).getWebsite());
         intent.putExtra("stars", hotelsListItems.get(position).getStars());
+        intent.putExtra("urlItem", hotelsListItems.get(position).getBook_url());
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
