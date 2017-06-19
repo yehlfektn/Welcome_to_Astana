@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ public class Transport extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<PamyatkaListItem> pamyatkaListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public Transport() {
         // Required empty public constructor
@@ -93,6 +95,13 @@ public class Transport extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -147,6 +156,7 @@ public class Transport extends Fragment {
                                 }
                             })
                     );
+                    swipeRefreshLayout.setRefreshing(false);
 
 
                 } catch (JSONException e) {
@@ -160,6 +170,7 @@ public class Transport extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
+                swipeRefreshLayout.setRefreshing(false);
 
             }
         }) {

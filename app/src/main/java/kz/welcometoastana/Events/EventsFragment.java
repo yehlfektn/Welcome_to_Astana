@@ -1,6 +1,7 @@
 package kz.welcometoastana.Events;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,15 +10,19 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,14 +34,15 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -45,12 +51,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.FixedSpeedScroller;
 import kz.welcometoastana.utility.MyRequest;
@@ -63,13 +72,18 @@ public class EventsFragment extends Fragment {
     static final float COORDINATE_OFFSET = 0.0002f;
     public TabLayout tabLayout;
     public ViewPager viewPager;
+    SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd");
     MapView mMapView;
     LatLng astana = new LatLng(51.149202, 71.439285);
     HashMap<String, String> markerLocation = new HashMap<>();
     List<Marker> markerList = new ArrayList<>();
+    Map<Marker, EventsItemList> markerMap;
     private GoogleMap googleMap;
     private String Url;
     private List<EventsItemList> eventsItemLists;
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private Boolean firstTime = true;
+
 
     private static String makeFragmentName(int viewId, int position) {
         return "android:switcher:" + viewId + ":" + position;
@@ -79,11 +93,27 @@ public class EventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.events_layout, null);
+        final View v = inflater.inflate(R.layout.events_layout, container, false);
+
+        View bottomSheet = v.findViewById(R.id.nested);
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        if (MainActivity.mapVisible != null) {
+            if (MainActivity.mapVisible) {
+                v.findViewById(R.id.viewpagerEvent).setVisibility(View.GONE);
+                v.findViewById(R.id.mapView).setVisibility(View.VISIBLE);
+            } else {
+                v.findViewById(R.id.viewpagerEvent).setVisibility(View.VISIBLE);
+                v.findViewById(R.id.viewpagerEvent).bringToFront();
+                v.findViewById(R.id.mapView).setVisibility(View.GONE);
+            }
+        }
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabsEvent);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerEvent);
         getActivity().findViewById(R.id.calendar).setVisibility(View.VISIBLE);
+
         //set an adapter
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
 
@@ -103,10 +133,18 @@ public class EventsFragment extends Fragment {
                 tabLayout.setupWithViewPager(viewPager);
             }
         });
+        new Handler().postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tabLayout.getTabAt(tabLayout.getSelectedTabPosition()) != null) {
+                            tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).select();
+                        }
+                    }
+                }, 500);
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
@@ -115,11 +153,13 @@ public class EventsFragment extends Fragment {
             e.printStackTrace();
         }
         eventsItemLists = new ArrayList<>();
+        markerMap = new HashMap<>();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
@@ -129,6 +169,8 @@ public class EventsFragment extends Fragment {
                         }
                         eventsItemLists.clear();
                         markerLocation.clear();
+                        markerMap.clear();
+                        markerList.clear();
                         // For dropping a marker at a point on the Map
 
                         int a = tabLayout.getSelectedTabPosition();
@@ -146,12 +188,21 @@ public class EventsFragment extends Fragment {
                             Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
                         }
 
+                        if (MainActivity.dateTimeFrom != null) {
+                            Calendar dateFrom = MainActivity.dateTimeFrom;
+                            if (MainActivity.dateTimeTo != null) {
+                                Calendar dateTo = MainActivity.dateTimeTo;
+                                Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+                            } else {
+                                Calendar dateTo = Calendar.getInstance();
+                                Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
+                            }
+                        }
+
                         StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
 
                             @Override
                             public void onResponse(String response) {
-
-
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     JSONArray array = jsonObject.getJSONArray("places");
@@ -193,10 +244,13 @@ public class EventsFragment extends Fragment {
                                     for (int i = 0; i < eventsItemLists.size(); i++) {
                                         final EventsItemList eventsItemList = eventsItemLists.get(i);
                                         if (!eventsItemList.getLat().equals("null") && !eventsItemList.getImageUrl().startsWith("http://imgur.com")) {
-                                            final float lat = Float.parseFloat(eventsItemList.getLat());
-                                            final float lng = Float.parseFloat(eventsItemList.getLon());
+                                            float lat = Float.parseFloat(eventsItemList.getLat());
+                                            float lng = Float.parseFloat(eventsItemList.getLon());
+                                            final Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(eventsItemList.getName()));
+                                            markerList.add(marker);
+                                            markerMap.put(marker, eventsItemList);
 
-                                            Glide.with(EventsFragment.this).
+                                            Glide.with(getActivity()).
                                                     load(eventsItemList.getImageUrl())
                                                     .asBitmap()
                                                     .override(75, 75)
@@ -205,19 +259,32 @@ public class EventsFragment extends Fragment {
                                                         @Override
                                                         public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                                                             Bitmap bitmap1 = getCircularBitmap(bitmap);
-                                                            Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(eventsItemList.getName()));
                                                             marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
-                                                            markerList.add(marker);
                                                         }
                                                     });
                                         }
+                                    }
+                                    if (markerList.size() != 0) {
+                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                        for (Marker marker : markerList) {
+                                            builder.include(marker.getPosition());
+                                        }
+                                        LatLngBounds bounds = builder.build();
+                                        DisplayMetrics metrics = new DisplayMetrics();
+                                        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                                        int padding;
+                                        if (metrics.heightPixels >= 1280) {
+                                            padding = 200;
+                                        } else {
+                                            padding = 100;
+                                        }
+                                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
+                                        googleMap.animateCamera(cu);
                                     }
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
-
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -243,8 +310,55 @@ public class EventsFragment extends Fragment {
                         requestQueue.add(stringRequest);
 
 
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(astana).zoom(11).build();
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker marker) {
+
+                                final EventsItemList eventsItemList = markerMap.get(marker);
+
+                                if (eventsItemList != null) {
+                                    Log.d("EventsFragment", eventsItemList.getName());
+                                    ((TextView) v.findViewById(R.id.name)).setText(eventsItemList.getName());
+                                    ((TextView) v.findViewById(R.id.date)).setText(eventsItemList.getDate());
+                                    ((TextView) v.findViewById(R.id.category)).setText(eventsItemList.getCategory());
+                                    if (eventsItemList.getAddress().length() < 2) {
+                                        v.findViewById(R.id.address).setVisibility(View.GONE);
+                                    } else {
+                                        ((TextView) v.findViewById(R.id.address)).setText(eventsItemList.getAddress());
+                                    }
+                                    v.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                                        }
+                                    });
+                                    v.findViewById(R.id.fromMap).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(getActivity(), EventsDescription.class);
+                                            intent.putExtra("name", eventsItemList.getName());
+                                            intent.putExtra("id", eventsItemList.getId());
+                                            intent.putExtra("description", eventsItemList.getSummary());
+                                            intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+                                            intent.putExtra("category", eventsItemList.getCategory());
+                                            intent.putExtra("longit", eventsItemList.getLon());
+                                            intent.putExtra("latit", eventsItemList.getLat());
+                                            intent.putExtra("url", Url);
+                                            intent.putExtra("address", eventsItemList.getAddress());
+                                            intent.putExtra("money", eventsItemList.getMoney());
+                                            intent.putExtra("date", eventsItemList.getDate());
+                                            intent.putExtra("urlItem", eventsItemList.getUrl());
+                                            startActivityForResult(intent, 0);
+                                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                        }
+                                    });
+
+                                }
+                                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                                return false;
+                            }
+                        });
                     }
                 });
 
@@ -426,6 +540,10 @@ public class EventsFragment extends Fragment {
                 }
             }
         }
+    }
 
+    public void close() {
+        Log.d("EventsFragment", "Close in EventsFragment");
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 }

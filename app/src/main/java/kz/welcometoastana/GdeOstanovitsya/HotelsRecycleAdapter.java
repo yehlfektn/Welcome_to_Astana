@@ -19,9 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -67,14 +65,6 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Toast.makeText(context, "You clicked "+ hotelsListItem.getName()+"lon: "+ hotelsListItem.getLon()+" lat: "+ hotelsListItem.getLat(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
         LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
 
         setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R.color.foreground));
@@ -166,7 +156,6 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
         public TextView distance;
         private TextView name;
         private ImageView imageView;
-        private RelativeLayout relativeLayout;
         private TextView category;
         private TextView phone;
         private TextView location;
@@ -177,7 +166,6 @@ public class HotelsRecycleAdapter extends RecyclerView.Adapter<HotelsRecycleAdap
 
             name = (TextView)itemView.findViewById(R.id.name);
             imageView = (ImageView)itemView.findViewById(R.id.imageView);
-            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
             category = (TextView)itemView.findViewById(R.id.category);
             phone = (TextView)itemView.findViewById(R.id.phoneGde);
             location = (TextView)itemView.findViewById(R.id.locationGde);

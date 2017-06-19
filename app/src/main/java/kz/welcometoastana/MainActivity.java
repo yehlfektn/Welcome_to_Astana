@@ -59,6 +59,9 @@ public class MainActivity extends LocalizationActivity {
     public static Location  gpsLocation;
     public static Calendar dateTimeFrom;
     public static Calendar dateTimeTo;
+    public static int Gposition = 0;
+    public static int Pposition = 0;
+    public static Boolean mapVisible = false;
     SimpleDateFormat formatDateTime = new SimpleDateFormat("dd MMM yyyy");
     DatePickerDialog.OnDateSetListener from = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -83,7 +86,6 @@ public class MainActivity extends LocalizationActivity {
     private Boolean exit = false;
     private ExpandableListView elv;
     private Boolean visible = false;
-    private Boolean mapVisible = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,6 +195,8 @@ public class MainActivity extends LocalizationActivity {
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 4){
+                    findViewById(R.id.mapImage).setVisibility(View.GONE);
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xff366AFE, 0xff1A44BD});
                     getSupportActionBar().setBackgroundDrawable(g);
 
@@ -206,6 +210,8 @@ public class MainActivity extends LocalizationActivity {
                     drawer.closeDrawer(GravityCompat.START);
                     elv.collapseGroup(4);
                 } else if (groupPosition == 5) {
+                    findViewById(R.id.mapImage).setVisibility(View.GONE);
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF00AA, 0xffFF00AA});
                     getSupportActionBar().setBackgroundDrawable(g);
 
@@ -269,20 +275,25 @@ public class MainActivity extends LocalizationActivity {
                     if (childPos == 0) {
                         fragment = new EventsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Events");
+                        findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     } else {
                         findViewById(R.id.calendar).setVisibility(View.GONE);
                         if (childPos == 1) {
                             fragment = new SightSeeingsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"SightSeeings");
+                            findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     } else if (childPos == 2) {
+                            findViewById(R.id.mapImage).setVisibility(View.GONE);
                             fragment = new ExcursionsFragment();
                         transaction.replace(R.id.mainFrame, fragment,"Excursion");
                     } else if (childPos == 3) {
                             fragment = new EntertainmentFragment();
+                            findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                         transaction.replace(R.id.mainFrame, fragment,"Entertainment");
                     }
                     }
                 }else if(groupPos == 1){
+                    findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
                     getSupportActionBar().setBackgroundDrawable(g);
@@ -304,27 +315,26 @@ public class MainActivity extends LocalizationActivity {
                         transaction.replace(R.id.mainFrame, fragment);
                     }
                 }else if(groupPos == 2){
+                    findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if(childPos == 0){
-                        bundle.putInt("position",1);
+                        MainActivity.Gposition = 1;
                         fragment = new GdeOstanovitsya();
-                        fragment.setArguments(bundle);
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 1){
-                        bundle.putInt("position",2);
+                        MainActivity.Gposition = 2;
                         fragment = new GdeOstanovitsya();
-                        fragment.setArguments(bundle);
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 2){
-                        bundle.putInt("position",3);
+                        MainActivity.Gposition = 3;
                         fragment = new GdeOstanovitsya();
-                        fragment.setArguments(bundle);
                         transaction.replace(R.id.mainFrame, fragment);
                     }
 
                 }else if(groupPos == 3) {
+                    findViewById(R.id.mapImage).setVisibility(View.GONE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFFA800, 0xffFFD200});
                     getSupportActionBar().setBackgroundDrawable(g);
@@ -478,6 +488,11 @@ public class MainActivity extends LocalizationActivity {
         if (current instanceof EventsFragment) {
             ((EventsFragment) current).load();
         }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .detach(current)
+                .attach(current)
+                .commit();
         (current.getView().findViewById(R.id.linearEvents)).setVisibility(View.GONE);
         (current.getView().findViewById(R.id.filter)).setVisibility(View.GONE);
     }
@@ -507,7 +522,6 @@ public class MainActivity extends LocalizationActivity {
         }
     }
 
-
     private void updateViews(String loc) {
         elv.collapseGroup(0);
         elv.collapseGroup(1);
@@ -517,19 +531,25 @@ public class MainActivity extends LocalizationActivity {
     }
 
     public void turnMap(View view) {
-        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        final Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
+        mapVisible = !mapVisible;
         if (current instanceof EventsFragment) {
-            if (mapVisible) {
-                (current.getView().findViewById(R.id.mapView)).setVisibility(View.GONE);
-                (current.getView().findViewById(R.id.viewpagerEvent)).setVisibility(View.VISIBLE);
-                mapVisible = false;
-            } else {
-                (current.getView().findViewById(R.id.mapView)).setVisibility(View.VISIBLE);
-                (current.getView().findViewById(R.id.viewpagerEvent)).setVisibility(View.GONE);
-                mapVisible = true;
-            }
+            ((EventsFragment) current).close();
+        } else if (current instanceof EntertainmentFragment) {
+            ((EntertainmentFragment) current).close();
+        } else if (current instanceof SightSeeingsFragment) {
+            ((SightSeeingsFragment) current).close();
         }
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .detach(current)
+                        .attach(current)
+                        .commit();
+            }
+        }, 500);
     }
 
     @TargetApi(Build.VERSION_CODES.N)

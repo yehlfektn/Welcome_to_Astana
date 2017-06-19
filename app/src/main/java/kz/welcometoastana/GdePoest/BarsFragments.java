@@ -95,7 +95,7 @@ public class BarsFragments extends Fragment {
     }
 
     private void loadRecyclerView() {
-
+        gdePoestListItems.clear();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

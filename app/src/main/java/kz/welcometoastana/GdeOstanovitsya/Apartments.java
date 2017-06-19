@@ -90,6 +90,7 @@ public class Apartments extends Fragment {
         return v;
     }
     private void loadRecyclerView() {
+        hotelsListItems.clear();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -100,10 +101,16 @@ public class Apartments extends Fragment {
 
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if (o.getJSONArray("images").length() > 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
                         HotelsListItem item = new HotelsListItem(
                                 o.getString("name"),
                                 o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
+                                image,
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
                                 o.optString("lat"),
@@ -112,7 +119,7 @@ public class Apartments extends Fragment {
                                 o.getInt("stars"),
                                 o.optString("site"),
                                 o.getInt("id"),
-                                o.getString("book_url")
+                                o.optString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -138,7 +145,7 @@ public class Apartments extends Fragment {
 
                     swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
-
+                    swipeRefreshLayout.setRefreshing(false);
                     e.printStackTrace();
                 }
 

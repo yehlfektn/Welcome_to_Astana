@@ -67,7 +67,5 @@
             android:text="Читать дальше"
             android:textColor="@color/gray"
             android:textSize="12sp" />
-
-
     </LinearLayout>
 </ScrollView>

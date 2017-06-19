@@ -4,11 +4,10 @@ package kz.welcometoastana.Sightseeings;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,20 +35,20 @@ import java.util.Map;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.R;
 import kz.welcometoastana.RecycleAdapter;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllSightseeings extends Fragment implements LocationListener {
+public class AllSightseeings extends Fragment {
 
     private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1";
-    double lat2, lng2;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public AllSightseeings() {
         // Required empty public constructor
@@ -60,10 +59,10 @@ public class AllSightseeings extends Fragment implements LocationListener {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_all_sightseeings, container, false);
+        View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycle);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -106,6 +105,13 @@ public class AllSightseeings extends Fragment implements LocationListener {
             );
 
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
         return v;
 
     }
@@ -119,7 +125,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
         }
         progressDialog.show();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -176,6 +182,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
                             })
                     );
                     progressDialog.dismiss();
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -186,7 +193,7 @@ public class AllSightseeings extends Fragment implements LocationListener {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-                loadRecyclerView();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override
@@ -206,32 +213,6 @@ public class AllSightseeings extends Fragment implements LocationListener {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
-    }
-
-    @Override
-    public void onLocationChanged(Location loc)
-    {
-        lat2=loc.getLatitude();
-        lng2=loc.getLongitude();
-        String Text = "My current location is: " +"Latitud = "+ loc.getLatitude() +"Longitud = " + loc.getLongitude();
-
-        //System.out.println("Lat & Lang form Loc"+Text);
-        //Toast.makeText( getApplicationContext(), Text,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)

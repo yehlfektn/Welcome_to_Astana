@@ -1,7 +1,6 @@
 package kz.welcometoastana.Excursion;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -24,15 +23,17 @@ public class ExcursionsFragment extends Fragment {
     public TabLayout tabLayout;
     public ViewPager viewPager;
 
+
     public ExcursionsFragment() {
         // Required empty public constructor
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.excursions_layout, null);
+        // Inflate the layout for this fragment
+        final ViewGroup v = (ViewGroup) inflater.inflate(R.layout.excursions_layout, container, false);
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabsExcursion);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerExcursion);
@@ -58,9 +59,10 @@ public class ExcursionsFragment extends Fragment {
             }
         });
 
-
         return v;
-    }@Override
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         try {
@@ -75,6 +77,7 @@ public class ExcursionsFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -88,6 +91,20 @@ public class ExcursionsFragment extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ public class ClubsFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public ClubsFragment() {
         // Required empty public constructor
@@ -53,10 +55,10 @@ public class ClubsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_beach, container, false);
+        View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -81,10 +83,18 @@ public class ClubsFragment extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
         return v;
     }
 
     private void loadRecyclerView() {
+        kudaShoditListItems.clear();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -127,6 +137,7 @@ public class ClubsFragment extends Fragment {
                     );
 
 
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -137,6 +148,7 @@ public class ClubsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                swipeRefreshLayout.setRefreshing(false);
             }
         }) {
             @Override

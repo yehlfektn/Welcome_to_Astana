@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,41 +46,36 @@ public class TorgovyiFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public TorgovyiFragment() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_beach, container, false);
+        View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycleBeach);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
 
         if(kudaShoditListItems ==null) {
             kudaShoditListItems = new ArrayList<>();
         }
         if(kudaShoditListItems.size()==0){
-
             loadRecyclerView();
-
         }else{
             adapter = new RecycleAdapter(kudaShoditListItems,getContext());
             recyclerView.setAdapter(adapter);
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
                         @Override
                         public void onItemClick(View view, int position) {
                             onClick(position);
                         }
-
                         @Override
                         public void onLongItemClick(View view, int position) {
                             // do whatever
@@ -87,22 +83,27 @@ public class TorgovyiFragment extends Fragment {
                     })
             );
         }
-
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
         return v;
     }
 
     private void loadRecyclerView() {
+        kudaShoditListItems.clear();
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
         if (progressDialog.getWindow() != null) {
             progressDialog.getWindow().setDimAmount(0);
         }
         progressDialog.show();
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.dismiss();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -142,6 +143,8 @@ public class TorgovyiFragment extends Fragment {
                     );
 
 
+                    swipeRefreshLayout.setRefreshing(false);
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
 
                     e.printStackTrace();
@@ -152,8 +155,8 @@ public class TorgovyiFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                swipeRefreshLayout.setRefreshing(false);
                 progressDialog.dismiss();
-                loadRecyclerView();
             }
         }) {
             @Override

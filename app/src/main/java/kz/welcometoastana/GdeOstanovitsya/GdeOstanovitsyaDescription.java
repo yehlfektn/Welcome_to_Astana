@@ -363,10 +363,17 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                             }
                             if ((i + 1) != array.length()) {
                                 o = array.getJSONObject(i + 1);
+
+                                String image;
+                                if (o.getJSONArray("images").length() > 0) {
+                                    image = o.getJSONArray("images").get(0).toString();
+                                } else {
+                                    image = "http://imgur.com/a/jkAwJ";
+                                }
                                 nextItem = new HotelsListItem(
                                         o.getString("name"),
                                         o.getString("description"),
-                                        o.getJSONArray("images").get(0).toString(),
+                                        image,
                                         o.getJSONObject("category").getString("name"),
                                         o.optString("lon"),
                                         o.optString("lat"),
@@ -504,20 +511,27 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                     array = object.getJSONArray("hotels");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if (o.getJSONArray("images").length() > 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
                         HotelsListItem item = new HotelsListItem(
                                 o.getString("name"),
                                 o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
+                                image,
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
                                 o.optString("lat"),
                                 o.optString("phone"),
                                 o.optString("address"),
-                                o.getInt("stars"),
+                                o.optInt("stars"),
                                 o.optString("site"),
                                 o.getInt("id"),
-                                o.getString("book_url")
+                                o.optString("book_url")
                         );
+
 
                         hotelsListItems.add(item);
 

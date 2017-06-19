@@ -93,6 +93,7 @@ public class AllHotels extends Fragment {
         return v;
     }
     private void loadRecyclerView() {
+        hotelsListItems.clear();
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
         if (progressDialog.getWindow() != null) {
@@ -110,10 +111,16 @@ public class AllHotels extends Fragment {
 
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
+                        String image;
+                        if (o.getJSONArray("images").length() > 0) {
+                            image = o.getJSONArray("images").get(0).toString();
+                        } else {
+                            image = "http://imgur.com/a/jkAwJ";
+                        }
                         HotelsListItem item = new HotelsListItem(
                                 o.getString("name"),
                                 o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
+                                image,
                                 o.getJSONObject("category").getString("name"),
                                 o.optString("lon"),
                                 o.optString("lat"),
@@ -122,7 +129,7 @@ public class AllHotels extends Fragment {
                                 o.getInt("stars"),
                                 o.optString("site"),
                                 o.getInt("id"),
-                                o.getString("book_url")
+                                o.optString("book_url")
                         );
 
                         hotelsListItems.add(item);
@@ -147,7 +154,7 @@ public class AllHotels extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
-
+                    swipeRefreshLayout.setRefreshing(false);
                     e.printStackTrace();
                 }
 

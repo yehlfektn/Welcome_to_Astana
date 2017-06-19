@@ -98,6 +98,7 @@ public class AllPlacesFragment extends Fragment {
     }
 
     private void loadRecyclerView() {
+        gdePoestListItems.clear();
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading data...");
         if (progressDialog.getWindow() != null) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +35,7 @@ import java.util.Map;
 import kz.welcometoastana.KudaShoditListItem;
 import kz.welcometoastana.R;
 import kz.welcometoastana.RecycleAdapter;
+import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
 /**
@@ -45,6 +47,7 @@ public class Architecture_Fragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     public Architecture_Fragment() {
@@ -56,9 +59,9 @@ public class Architecture_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
+        View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleArchitecture);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -88,6 +91,13 @@ public class Architecture_Fragment extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
@@ -95,7 +105,7 @@ public class Architecture_Fragment extends Fragment {
     private void loadRecyclerView() {
 
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
+        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -138,7 +148,7 @@ public class Architecture_Fragment extends Fragment {
                     );
 
 
-
+                    swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -149,7 +159,7 @@ public class Architecture_Fragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                swipeRefreshLayout.setRefreshing(false);
                 Log.d("Sightseeings",error.toString());
 
             }

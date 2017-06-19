@@ -2,10 +2,12 @@ package kz.welcometoastana.Excursion;
 
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -47,6 +49,7 @@ public class GorodFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     public GorodFragment() {
@@ -57,9 +60,9 @@ public class GorodFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_architecture, container, false);
+        View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleArchitecture);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -89,12 +92,25 @@ public class GorodFragment extends Fragment {
                     })
             );
         }
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRecyclerView();
+            }
+        });
 
         return v;
     }
 
     private void loadRecyclerView() {
-
+        kudaShoditListItems.clear();
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
+        progressDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
@@ -137,8 +153,8 @@ public class GorodFragment extends Fragment {
                             })
                     );
 
-
-
+                    swipeRefreshLayout.setRefreshing(false);
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +164,8 @@ public class GorodFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                swipeRefreshLayout.setRefreshing(false);
+                progressDialog.dismiss();
                 Log.d("Sightseeings",error.toString());
 
             }

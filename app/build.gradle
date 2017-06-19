@@ -37,11 +37,10 @@ dependencies {
     compile 'io.nlopez.smartlocation:library:3.3.1'
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.google.android.gms:play-services-vision:10.2.0'
-    compile 'com.android.support:mediarouter-v7:25.3.1'
-    compile 'com.google.firebase:firebase-core:10.2.0'
     compile 'at.blogc:expandabletextview:1.0.3'
     compile 'com.akexorcist:localizationactivity:1.1.2'
     compile 'com.google.maps.android:android-maps-utils:0.4'
     compile 'com.makeramen:roundedimageview:2.3.0'
+    compile 'com.flipboard:bottomsheet-core:1.5.3'
     testCompile 'junit:junit:4.12'
 }
