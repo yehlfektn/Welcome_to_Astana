@@ -89,10 +89,6 @@ public class GdeOstanovitsya extends Fragment {
         // Required empty public constructor
     }
 
-    private static String makeFragmentName(int viewId, int position) {
-        return "android:switcher:" + viewId + ":" + position;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -125,6 +121,7 @@ public class GdeOstanovitsya extends Fragment {
                 tabLayout.setupWithViewPager(viewPager);
             }
         });
+
 
         final int position = MainActivity.Gposition;
         viewPager.setCurrentItem(position);
@@ -168,12 +165,17 @@ public class GdeOstanovitsya extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+                if (MainActivity.mapVisible) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
                         googleMap = mMap;
                         for (Marker marker : markerList) {
-                            marker.remove();
+                            try {
+                                marker.remove();
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         kudaShoditListItems.clear();
@@ -240,7 +242,7 @@ public class GdeOstanovitsya extends Fragment {
                                             marker.setVisible(false);
                                             markerList.add(marker);
                                             markerMap.put(marker, hotelsListItem);
-                                            Glide.with(GdeOstanovitsya.this).
+                                            Glide.with(getActivity()).
                                                     load(hotelsListItem.getImageUrl())
                                                     .asBitmap()
                                                     .override(75, 75)
@@ -253,8 +255,7 @@ public class GdeOstanovitsya extends Fragment {
                                                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
                                                                 marker.setVisible(true);
                                                             } catch (IllegalArgumentException e) {
-                                                                Log.d("GdeOSt", "lat:" + lat + ",lng:" + lng);
-                                                                Log.d("GdeOST", "" + e.toString());
+                                                                e.printStackTrace();
                                                             }
                                                         }
                                                     });
@@ -371,6 +372,7 @@ public class GdeOstanovitsya extends Fragment {
                     }
                 });
 
+                }
             }
 
 

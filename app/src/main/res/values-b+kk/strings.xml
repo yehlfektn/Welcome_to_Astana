@@ -18,7 +18,6 @@
     <string name="call_taxi">Такси шақыру</string>
     <string name="cinemas">Кинотеатрлар</string>
     <string name="city_ways">Қалалық бағдарлар</string>
-    <string name="developed_in">Дайындаған</string>
     <string name="eng">ENG</string>
     <string name="entertainment">Ойын-сауық</string>
     <string name="excursions">Экскурсиялар</string>
@@ -53,7 +52,6 @@
     <string name="tours">Қазақстан бойынша турлар</string>
     <string name="transport">Көлік</string>
     <string name="vystavky">Көрмелер</string>
-    <string name="what_are_you_looking_for">Не іздеп жүрсіз?</string>
     <string name="extrennaya">Шұғыл қызмет</string>
     <string name="read_more">Ары қарай оқу</string>
     <string name="from">бастап</string>

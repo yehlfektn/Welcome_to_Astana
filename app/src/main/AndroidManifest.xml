@@ -41,6 +41,7 @@
             android:name="kz.welcometoastana.MainActivity"
             android:configChanges="locale"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,11 +53,17 @@
             android:name="kz.welcometoastana.Sightseeings.DescriptionActivity"
             android:configChanges="locale"
             android:label="@string/title_activity_description"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
         <activity
-            android:name="kz.welcometoastana.Pamyatka.PamyatkaDescription"
+            android:name="kz$welcometoastana$Pamyatka.PamyatkaDescription"
             android:configChanges="locale"
             android:label="@string/title_activity_pamyatka_description"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
 
         <meta-data
@@ -70,16 +77,23 @@
             android:name="kz.welcometoastana.GdePoest.GdePoestDescription"
             android:configChanges="locale"
             android:label="@string/title_activity_gde_poest_description"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="kz.welcometoastana.GdeOstanovitsya.GdeOstanovitsyaDescription"
             android:configChanges="locale"
             android:label="@string/title_activity_gde_ostanovitsya_description"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
         <activity
             android:name="kz.welcometoastana.Events.EventsDescription"
             android:configChanges="locale"
             android:label="@string/title_activity_events_description"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
     </application>
 

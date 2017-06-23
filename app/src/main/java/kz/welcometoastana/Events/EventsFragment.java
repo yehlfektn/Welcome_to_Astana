@@ -69,7 +69,7 @@ import kz.welcometoastana.utility.MyRequest;
  */
 
 public class EventsFragment extends Fragment {
-    static final float COORDINATE_OFFSET = 0.0002f;
+    static final float COORDINATE_OFFSET = 0.0009f;
     public TabLayout tabLayout;
     public ViewPager viewPager;
     SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd");
@@ -82,7 +82,6 @@ public class EventsFragment extends Fragment {
     private String Url;
     private List<EventsItemList> eventsItemLists;
     private BottomSheetBehavior mBottomSheetBehavior;
-    private Boolean firstTime = true;
 
 
     private static String makeFragmentName(int viewId, int position) {
@@ -160,12 +159,17 @@ public class EventsFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if (MainActivity.mapVisible) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
                         googleMap = mMap;
                         for (Marker marker : markerList) {
-                            marker.remove();
+                            try {
+                                marker.remove();
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
                         }
                         eventsItemLists.clear();
                         markerLocation.clear();
@@ -247,6 +251,7 @@ public class EventsFragment extends Fragment {
                                             float lat = Float.parseFloat(eventsItemList.getLat());
                                             float lng = Float.parseFloat(eventsItemList.getLon());
                                             final Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(eventsItemList.getName()));
+                                            marker.setVisible(false);
                                             markerList.add(marker);
                                             markerMap.put(marker, eventsItemList);
 
@@ -259,7 +264,12 @@ public class EventsFragment extends Fragment {
                                                         @Override
                                                         public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                                                             Bitmap bitmap1 = getCircularBitmap(bitmap);
-                                                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
+                                                            try {
+                                                                marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
+                                                                marker.setVisible(true);
+                                                            } catch (IllegalArgumentException e) {
+                                                                Log.d("GdeOST", "" + e.toString());
+                                                            }
                                                         }
                                                     });
                                         }
@@ -362,6 +372,7 @@ public class EventsFragment extends Fragment {
                     }
                 });
 
+                }
             }
 
             @Override

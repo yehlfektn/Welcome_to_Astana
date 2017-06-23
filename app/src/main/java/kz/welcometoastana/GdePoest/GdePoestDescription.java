@@ -127,6 +127,8 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         final TextView distance  = (TextView) findViewById(R.id.distance);
         TextView phone =  (TextView)findViewById(R.id.phone);
         TextView address = (TextView)findViewById(R.id.address);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        relativeLayout.setVisibility(View.GONE);
 
         name.setText(getIntent().getStringExtra("name"));
         category.setText(getIntent().getStringExtra("category"));
@@ -389,6 +391,8 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
 
                     if (nextItem != null) {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.VISIBLE);
                         ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
                         TextView nameNext = (TextView) findViewById(R.id.nameNext);
                         TextView categoryNext = (TextView) findViewById(R.id.categoryNext);

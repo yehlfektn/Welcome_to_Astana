@@ -3,6 +3,7 @@ package kz.welcometoastana.Sightseeings;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -108,6 +109,9 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
 
         if(getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -121,6 +125,8 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         TextView summary = (TextView) findViewById(R.id.summary);
         final TextView distance  = (TextView) findViewById(R.id.distance);
         TextView address = (TextView)findViewById(R.id.address);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        relativeLayout.setVisibility(View.GONE);
 
 
         address.setText(getIntent().getStringExtra("address"));
@@ -239,6 +245,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
         //---------------TextAnimation End---------------------------
 
+        Log.d("DescriptionActivity", "Latstr" + latStr);
 
         if (googleServicesAvailable()) {
             if (latStr.equals("null")) {
@@ -278,7 +285,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                                 lngStr = "0";
                                 latStr = "0";
                             }
-
+                            Log.d("DescriptionActivity", "latstr2" + latStr);
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
 
@@ -334,46 +341,50 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), imageUrls);
                     viewPager.setAdapter(viewPagerAdapter);
                     dotscount = viewPagerAdapter.getCount();
-                    dots = new ImageView[dotscount];
+                    if (dotscount != 0) {
+                        dots = new ImageView[dotscount];
 
-                    for (int i = 0; i < dotscount; i++) {
+                        for (int i = 0; i < dotscount; i++) {
 
-                        dots[i] = new ImageView(getApplicationContext());
-                        dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(8, 0, 8, 0);
-                        linearLayout.addView(dots[i], params);
-
-                    }
-                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
-
-                    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                            dots[i] = new ImageView(getApplicationContext());
+                            dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params.setMargins(8, 0, 8, 0);
+                            linearLayout.addView(dots[i], params);
 
                         }
+                        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
-                        @Override
-                        public void onPageSelected(int position) {
+                        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                            for (int i = 0; i < dotscount; i++) {
-                                dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
-                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
-                        }
+                            @Override
+                            public void onPageSelected(int position) {
 
-                        @Override
-                        public void onPageScrollStateChanged(int state) {
+                                for (int i = 0; i < dotscount; i++) {
+                                    dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
+                                }
+                                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
-                        }
-                    });
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+
+                            }
+                        });
+                    }
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
                     }
 
 
                     if (nextItem != null) {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.VISIBLE);
                         ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
                         TextView nameNext = (TextView) findViewById(R.id.nameNext);
                         TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
@@ -387,7 +398,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                     } else {
                         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
                         relativeLayout.setVisibility(View.GONE);
-
                     }
 
                 } catch (JSONException e) {
@@ -532,6 +542,7 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
 
                     }
                 } catch (JSONException e) {
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
 
@@ -547,12 +558,13 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
                     }
                 });
 
-
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("EventsDescription", error.toString());
+                progressDialog.dismiss();
             }
         }) {
             @Override
@@ -767,5 +779,6 @@ public class DescriptionActivity extends AppCompatActivity implements OnMapReady
         intent.putExtra("address", nextItem.getAddress());
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        finish();
     }
 }

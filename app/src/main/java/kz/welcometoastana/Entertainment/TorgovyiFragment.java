@@ -42,7 +42,7 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  * A simple {@link Fragment} subclass.
  */
 public class TorgovyiFragment extends Fragment {
-    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=6";
+    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=200&page=1&category=6";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;

@@ -135,6 +135,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
         TextView address = (TextView)findViewById(R.id.address);
         website = (TextView)findViewById(R.id.website);
         RatingBar ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        relativeLayout.setVisibility(View.GONE);
 
 
         if(getIntent().getStringExtra("website").length()<2){
@@ -393,40 +395,43 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getApplicationContext(), imageUrls);
                     viewPager.setAdapter(viewPagerAdapter);
                     dotscount = viewPagerAdapter.getCount();
-                    dots = new ImageView[dotscount];
+                    if (dotscount != 0) {
+                        dots = new ImageView[dotscount];
 
-                    for (int i = 0; i < dotscount; i++) {
 
-                        dots[i] = new ImageView(getApplicationContext());
-                        dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(8, 0, 8, 0);
-                        linearLayout.addView(dots[i], params);
+                        for (int i = 0; i < dotscount; i++) {
 
-                    }
-                    dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
-
-                    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                            dots[i] = new ImageView(getApplicationContext());
+                            dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params.setMargins(8, 0, 8, 0);
+                            linearLayout.addView(dots[i], params);
 
                         }
+                        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
 
-                        @Override
-                        public void onPageSelected(int position) {
+                        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                            for (int i = 0; i < dotscount; i++) {
-                                dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
                             }
-                            dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
 
-                        }
+                            @Override
+                            public void onPageSelected(int position) {
 
-                        @Override
-                        public void onPageScrollStateChanged(int state) {
+                                for (int i = 0; i < dotscount; i++) {
+                                    dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.nonactive_dot));
+                                }
+                                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot_purple));
 
-                        }
-                    });
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+
+                            }
+                        });
+                    }
                     if (imageUrls.size() < 2) {
                         linearLayout.setVisibility(View.GONE);
                     }
@@ -438,6 +443,8 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
 
 
                 if (nextItem != null) {
+                    RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                    relativeLayout.setVisibility(View.VISIBLE);
                     ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
                     TextView nameNext = (TextView) findViewById(R.id.nameNext);
                     TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
@@ -451,7 +458,6 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                 } else {
                     RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
                     relativeLayout.setVisibility(View.GONE);
-
                 }
             }
         }, new Response.ErrorListener() {

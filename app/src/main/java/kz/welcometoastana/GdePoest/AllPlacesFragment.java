@@ -35,6 +35,7 @@ import java.util.Map;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */

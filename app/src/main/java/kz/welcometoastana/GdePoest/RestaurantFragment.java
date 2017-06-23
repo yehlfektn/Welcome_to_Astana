@@ -182,10 +182,10 @@ public class RestaurantFragment extends Fragment {
     @TargetApi(Build.VERSION_CODES.N)
     private Locale getCurrentLocale() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return getResources().getConfiguration().getLocales().get(0);
+            return getActivity().getResources().getConfiguration().getLocales().get(0);
         } else {
             //noinspection deprecation
-            return getResources().getConfiguration().locale;
+            return getActivity().getResources().getConfiguration().locale;
         }
     }
 

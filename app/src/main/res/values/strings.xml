@@ -3,11 +3,9 @@
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
-    <string name="what_are_you_looking_for">Что вы ищете?</string>
     <string name="kaz">КАЗ</string>
     <string name="rus">РУС</string>
     <string name="eng">ENG</string>
-    <string name="developed_in">Разработано в</string>
     <string name="press_Back">Нажмите назад еще раз чтобы выйти</string>
     <string name="title_activity_description" translatable="false">ДОСТОПРИМЕЧАТЕЛЬНОСТИ</string>
     <string name="expo">10 июня 2017 года откроет свои двери Международная специализированная Выставка «Астана ЭСКПО-2017». В подготовке павильонов примут участие 100 стран и более 10 международных организаций.</string>
@@ -16,7 +14,6 @@
     <string name="title_activity_gde_poest_description" translatable="false">GdePoestDescription</string>
     <string name="title_activity_gde_ostanovitsya_description" translatable="false">GdeOstanovitsyaDescription</string>
     <string name="title_activity_events_description" translatable="false">СОБЫТИЯ</string>
-    <string name="title_activity_taxi" translatable="false">TaxiActivity</string>
     <string name="share">Поделиться</string>
     <string name="call_taxi">Вызвать такси</string>
     <string name="make_way">Проложить маршрут</string>
@@ -72,6 +69,7 @@
     <string name="show_more">Посмотреть все</string>
     <string name="book">Получить бронь</string>
     <string name="close">Закрыть</string>
+    <string name="notification">Рядом с вами</string>
 
 
 </resources>

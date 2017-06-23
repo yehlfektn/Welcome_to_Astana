@@ -36,6 +36,7 @@ import kz.welcometoastana.R;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -44,8 +45,8 @@ public class AllHotels extends Fragment {
     private final String Url = "http://89.219.32.107/api/v1/hotels?limit=2000&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<HotelsListItem> hotelsListItems;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private List<HotelsListItem> hotelsListItems;
 
     public AllHotels() {
         // Required empty public constructor

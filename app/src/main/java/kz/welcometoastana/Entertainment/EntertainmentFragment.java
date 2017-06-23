@@ -79,7 +79,6 @@ public class EntertainmentFragment extends Fragment {
     public TabLayout tabLayout;
     public ViewPager viewPager;
     MapView mMapView;
-    LatLng astana = new LatLng(51.149202, 71.439285);
     HashMap<String, String> markerLocation = new HashMap<>();
     List<Marker> markerList = new ArrayList<>();
     Map<Marker, KudaShoditListItem> markerMap;
@@ -167,180 +166,190 @@ public class EntertainmentFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if (MainActivity.mapVisible) {
 
-                mMapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap mMap) {
-                        googleMap = mMap;
-                        for (Marker marker : markerList) {
-                            marker.remove();
-                        }
-
-                        kudaShoditListItems.clear();
-                        markerLocation.clear();
-                        markerMap.clear();
-                        markerList.clear();
-                        // For dropping a marker at a point on the Map
-
-                        int a = tabLayout.getSelectedTabPosition();
-                        if (a == 0) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=6";
-                        } else if (a == 1) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=30";
-                        } else if (a == 2) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=40";
-                        } else if (a == 3) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=41";
-                        } else if (a == 4) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=46";
-                        } else if (a == 5) {
-                            Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=63";
-                        }
-
-                        StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
-
-                            @Override
-                            public void onResponse(String response) {
+                    mMapView.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap mMap) {
+                            googleMap = mMap;
+                            for (Marker marker : markerList) {
                                 try {
-                                    JSONObject jsonObject = new JSONObject(response);
-                                    JSONArray array = jsonObject.getJSONArray("places");
-                                    Log.d("AllEvents", "size of array: " + array.length());
-                                    for (int i = 0; i < array.length(); i++) {
-                                        JSONObject o = array.getJSONObject(i);
-                                        KudaShoditListItem item = new KudaShoditListItem(
-                                                o.getString("name"),
-                                                o.getString("description"),
-                                                o.getJSONArray("images").get(0).toString(),
-                                                o.getJSONObject("category").getString("name"),
-                                                o.getString("lon"),
-                                                o.getString("lat"),
-                                                o.getInt("id"),
-                                                o.getString("address")
-                                        );
-                                        kudaShoditListItems.add(item);
-                                    }
-
-                                    Log.d("EventsFragment", "size: " + kudaShoditListItems.size());
-                                    int size = kudaShoditListItems.size();
-                                    for (int i = 0; i < size; i++) {
-                                        final KudaShoditListItem kudaShoditListItem = kudaShoditListItems.get(i);
-                                        if (!kudaShoditListItem.getLat().equals("null") && !kudaShoditListItem.getImageUrl().startsWith("http://imgur.com")) {
-                                            float lat = Float.parseFloat(kudaShoditListItem.getLat());
-                                            float lng = Float.parseFloat(kudaShoditListItem.getLon());
-                                            final Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(kudaShoditListItem.getName()));
-                                            marker.setVisible(false);
-                                            markerList.add(marker);
-                                            markerMap.put(marker, kudaShoditListItem);
-                                            Glide.with(EntertainmentFragment.this).
-                                                    load(kudaShoditListItem.getImageUrl())
-                                                    .asBitmap()
-                                                    .override(75, 75)
-                                                    .centerCrop()
-                                                    .into(new SimpleTarget<Bitmap>() {
-                                                        @Override
-                                                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                                                            Bitmap bitmap1 = getCircularBitmap(bitmap);
-                                                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
-                                                            marker.setVisible(true);
-                                                        }
-                                                    });
-                                        }
-                                    }
-                                    if (markerList.size() != 0) {
-                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                        for (Marker marker : markerList) {
-                                            builder.include(marker.getPosition());
-                                        }
-                                        LatLngBounds bounds = builder.build();
-                                        DisplayMetrics metrics = new DisplayMetrics();
-                                        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                                        int padding;
-                                        if (metrics.heightPixels >= 1280) {
-                                            padding = 200;
-                                        } else {
-                                            padding = 100;
-                                        }
-                                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
-                                        Log.d("EntertainmentFragment", "cameraAnimated");
-                                        googleMap.animateCamera(cu);
-                                    }
-
-                                } catch (JSONException e) {
+                                    marker.remove();
+                                } catch (IllegalArgumentException e) {
                                     e.printStackTrace();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("Sightseeings", error.toString());
+
+                            kudaShoditListItems.clear();
+                            markerLocation.clear();
+                            markerMap.clear();
+                            markerList.clear();
+                            // For dropping a marker at a point on the Map
+
+                            int a = tabLayout.getSelectedTabPosition();
+                            if (a == 0) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=6";
+                            } else if (a == 1) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=30";
+                            } else if (a == 2) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=40";
+                            } else if (a == 3) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=41";
+                            } else if (a == 4) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=46";
+                            } else if (a == 5) {
+                                Url = "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1&category=63";
                             }
-                        }) {
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<String, String>();
-                                String loc = getCurrentLocale().toString();
-                                if (loc.startsWith("en")) {
-                                    params.put("Accept-Language", "en");
-                                } else if (loc.startsWith("kk")) {
-                                    params.put("Accept-Language", "kz");
-                                } else {
-                                    params.put("Accept-Language", "ru");
-                                }
-                                return params;
-                            }
-                        };
-                        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-                        requestQueue.add(stringRequest);
 
+                            StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
 
-                        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                            @Override
-                            public boolean onMarkerClick(Marker marker) {
-                                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                final KudaShoditListItem kuda = markerMap.get(marker);
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(response);
+                                        JSONArray array = jsonObject.getJSONArray("places");
+                                        Log.d("AllEvents", "size of array: " + array.length());
+                                        for (int i = 0; i < array.length(); i++) {
+                                            JSONObject o = array.getJSONObject(i);
+                                            KudaShoditListItem item = new KudaShoditListItem(
+                                                    o.getString("name"),
+                                                    o.getString("description"),
+                                                    o.getJSONArray("images").get(0).toString(),
+                                                    o.getJSONObject("category").getString("name"),
+                                                    o.getString("lon"),
+                                                    o.getString("lat"),
+                                                    o.getInt("id"),
+                                                    o.getString("address")
+                                            );
+                                            kudaShoditListItems.add(item);
+                                        }
 
-                                if (kuda != null) {
-                                    Log.d("EventsFragment", kuda.getName());
-                                    ((TextView) v.findViewById(R.id.name)).setText(kuda.getName());
-                                    ((TextView) v.findViewById(R.id.category)).setText(kuda.getCategory());
-                                    if (kuda.getAddress().length() < 2) {
-                                        v.findViewById(R.id.address).setVisibility(View.GONE);
-                                    } else {
-                                        ((TextView) v.findViewById(R.id.address)).setText(kuda.getAddress());
+                                        Log.d("EventsFragment", "size: " + kudaShoditListItems.size());
+                                        int size = kudaShoditListItems.size();
+                                        for (int i = 0; i < size; i++) {
+                                            final KudaShoditListItem kudaShoditListItem = kudaShoditListItems.get(i);
+                                            if (!kudaShoditListItem.getLat().equals("null") && !kudaShoditListItem.getImageUrl().startsWith("http://imgur.com")) {
+                                                float lat = Float.parseFloat(kudaShoditListItem.getLat());
+                                                float lng = Float.parseFloat(kudaShoditListItem.getLon());
+                                                final Marker marker = googleMap.addMarker(new MarkerOptions().position(coordinateForMarker(lat, lng)).title(kudaShoditListItem.getName()));
+                                                marker.setVisible(false);
+                                                markerList.add(marker);
+                                                markerMap.put(marker, kudaShoditListItem);
+                                                Glide.with(getActivity().getApplicationContext()).
+                                                        load(kudaShoditListItem.getImageUrl())
+                                                        .asBitmap()
+                                                        .override(75, 75)
+                                                        .centerCrop()
+                                                        .into(new SimpleTarget<Bitmap>() {
+                                                            @Override
+                                                            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                                                                Bitmap bitmap1 = getCircularBitmap(bitmap);
+                                                                try {
+                                                                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
+                                                                    marker.setVisible(true);
+                                                                } catch (IllegalArgumentException e) {
+                                                                    Log.d("GdeOST", "" + e.toString());
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                        if (markerList.size() != 0) {
+                                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                            for (Marker marker : markerList) {
+                                                builder.include(marker.getPosition());
+                                            }
+                                            LatLngBounds bounds = builder.build();
+                                            DisplayMetrics metrics = new DisplayMetrics();
+                                            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                                            int padding;
+                                            if (metrics.heightPixels >= 1280) {
+                                                padding = 200;
+                                            } else {
+                                                padding = 100;
+                                            }
+                                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
+                                            Log.d("EntertainmentFragment", "cameraAnimated");
+                                            googleMap.animateCamera(cu);
+                                        }
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                    v.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                                        }
-                                    });
-                                    v.findViewById(R.id.fromMap).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                                            intent.putExtra("name", kuda.getName());
-                                            intent.putExtra("id", kuda.getId());
-                                            intent.putExtra("description", kuda.getSummary());
-                                            intent.putExtra("imageUrl", kuda.getImageUrl());
-                                            intent.putExtra("category", kuda.getCategory());
-                                            intent.putExtra("longit", kuda.getLon());
-                                            intent.putExtra("latit", kuda.getLat());
-                                            intent.putExtra("url", Url);
-                                            intent.putExtra("address", kuda.getAddress());
-                                            startActivityForResult(intent, 0);
-                                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                        }
-                                    });
-
                                 }
-                                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("Sightseeings", error.toString());
+                                }
+                            }) {
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    String loc = getCurrentLocale().toString();
+                                    if (loc.startsWith("en")) {
+                                        params.put("Accept-Language", "en");
+                                    } else if (loc.startsWith("kk")) {
+                                        params.put("Accept-Language", "kz");
+                                    } else {
+                                        params.put("Accept-Language", "ru");
+                                    }
+                                    return params;
+                                }
+                            };
+                            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+                            requestQueue.add(stringRequest);
 
-                                return false;
-                            }
-                        });
-                    }
-                });
 
+                            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                @Override
+                                public boolean onMarkerClick(Marker marker) {
+                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                                    final KudaShoditListItem kuda = markerMap.get(marker);
+
+                                    if (kuda != null) {
+                                        Log.d("EventsFragment", kuda.getName());
+                                        ((TextView) v.findViewById(R.id.name)).setText(kuda.getName());
+                                        ((TextView) v.findViewById(R.id.category)).setText(kuda.getCategory());
+                                        if (kuda.getAddress().length() < 2) {
+                                            v.findViewById(R.id.address).setVisibility(View.GONE);
+                                        } else {
+                                            ((TextView) v.findViewById(R.id.address)).setText(kuda.getAddress());
+                                        }
+                                        v.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                                            }
+                                        });
+                                        v.findViewById(R.id.fromMap).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                                                intent.putExtra("name", kuda.getName());
+                                                intent.putExtra("id", kuda.getId());
+                                                intent.putExtra("description", kuda.getSummary());
+                                                intent.putExtra("imageUrl", kuda.getImageUrl());
+                                                intent.putExtra("category", kuda.getCategory());
+                                                intent.putExtra("longit", kuda.getLon());
+                                                intent.putExtra("latit", kuda.getLat());
+                                                intent.putExtra("url", Url);
+                                                intent.putExtra("address", kuda.getAddress());
+                                                startActivityForResult(intent, 0);
+                                                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                            }
+                                        });
+
+                                    }
+                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+
+                }
             }
 
 

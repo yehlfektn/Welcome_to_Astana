@@ -42,7 +42,7 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class ClubsFragment extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=20&page=1&category=41";
+    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=200&page=1&category=41";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;

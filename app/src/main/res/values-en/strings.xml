@@ -21,7 +21,6 @@
     <string name="call_taxi">Book a taxi</string>
     <string name="cinemas">Cinema</string>
     <string name="city_ways">City tours</string>
-    <string name="developed_in">Developed by</string>
     <string name="eng">ENG</string>
     <string name="entertainment">Entertainment</string>
     <string name="events">Events</string>
@@ -50,7 +49,6 @@ The International Specialized Exhibition EXPO-2017 in Astana will start its work
     <string name="tours">Tours around Kazakhstan</string>
     <string name="transport">Transport</string>
     <string name="vystavky">Exhibition</string>
-    <string name="what_are_you_looking_for">What are you looking for?</string>
     <string name="extrennaya">Emergency services</string>
     <string name="gde_ostanovitsya">WHERE TO STAY</string>
     <string name="read_more">Read more</string>
@@ -67,4 +65,5 @@ The International Specialized Exhibition EXPO-2017 in Astana will start its work
     <string name="show_more">See all</string>
     <string name="book">Book</string>
     <string name="close">Close</string>
+    <string name="notification">Near to you</string>
 </resources>

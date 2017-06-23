@@ -133,7 +133,7 @@ public class PamyatkaDescription extends AppCompatActivity {
         //---------------TextAnimation End---------------------------
 
 
-        Glide.with(this)
+        Glide.with(getApplicationContext())
                 .load(getIntent().getStringExtra("imageUrl"))
                 .placeholder(R.drawable.placeholder)
                 .into(image);

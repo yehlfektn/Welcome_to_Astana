@@ -50,10 +50,8 @@ public class EventsRecycleAdapter extends RecyclerView.Adapter<EventsRecycleAdap
 
         Glide.with(context)
                 .load(kudaShoditListItem.getImageUrl())
-                .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
-        holder.imageView.setScaleType(ImageView.ScaleType.FIT_START);
         holder.category.setText(kudaShoditListItem.getCategory());
 
         if(kudaShoditListItem.getAddress().length()<2){

@@ -3,6 +3,7 @@ package kz.welcometoastana.Events;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -110,12 +111,21 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_events_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setDimAmount(0);
+        }
+        progressDialog.show();
         getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF5800, 0xffFF8B00});
         getSupportActionBar().setBackgroundDrawable(g);
 
+
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        relativeLayout.setVisibility(View.GONE);
         final TextView name = (TextView) findViewById(R.id.name);
         TextView address = (TextView) findViewById(R.id.address);
         TextView date = (TextView)findViewById(R.id.date);
@@ -360,6 +370,8 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
 
                     if (nextItem != null) {
+                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+                        relativeLayout.setVisibility(View.VISIBLE);
                         ImageView imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
                         TextView nameNext = (TextView) findViewById(R.id.nameNext);
                         TextView categoryNext = (TextView) findViewById(R.id.categoryNext);
@@ -517,6 +529,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                     }
                 } catch (JSONException e) {
+                    progressDialog.dismiss();
                     e.printStackTrace();
                 }
 
@@ -533,11 +546,12 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 });
 
 
-
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 Log.d("EventsDescription", error.toString());
             }
         }) {
@@ -735,22 +749,25 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     }
 
     public void NextItem(View view) {
-        Intent intent = new Intent(this, EventsDescription.class);
-        intent.putExtra("name", nextItem.getName());
-        intent.putExtra("id", nextItem.getId());
-        intent.putExtra("description", nextItem.getSummary());
-        intent.putExtra("imageUrl", nextItem.getImageUrl());
-        intent.putExtra("category", nextItem.getCategory());
-        intent.putExtra("longit", nextItem.getLon());
-        intent.putExtra("latit", nextItem.getLat());
-        intent.putExtra("url", Url);
-        intent.putExtra("address", nextItem.getAddress());
-        intent.putExtra("money", nextItem.getMoney());
-        intent.putExtra("date", nextItem.getDate());
-        intent.putExtra("urlItem", nextItem.getUrl());
-        startActivityForResult(intent, 0);
-        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-        finish();
+
+        if (nextItem != null) {
+            Intent intent = new Intent(this, EventsDescription.class);
+            intent.putExtra("name", nextItem.getName());
+            intent.putExtra("id", nextItem.getId());
+            intent.putExtra("description", nextItem.getSummary());
+            intent.putExtra("imageUrl", nextItem.getImageUrl());
+            intent.putExtra("category", nextItem.getCategory());
+            intent.putExtra("longit", nextItem.getLon());
+            intent.putExtra("latit", nextItem.getLat());
+            intent.putExtra("url", Url);
+            intent.putExtra("address", nextItem.getAddress());
+            intent.putExtra("money", nextItem.getMoney());
+            intent.putExtra("date", nextItem.getDate());
+            intent.putExtra("urlItem", nextItem.getUrl());
+            startActivityForResult(intent, 0);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+            finish();
+        }
     }
 
     public void Buy(View view) {

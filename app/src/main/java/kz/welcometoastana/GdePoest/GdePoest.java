@@ -161,6 +161,7 @@ public class GdePoest extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+                if (MainActivity.mapVisible) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
@@ -233,7 +234,7 @@ public class GdePoest extends Fragment {
                                             marker.setVisible(false);
                                             markerList.add(marker);
                                             markerMap.put(marker, gdePoestListItem);
-                                            Glide.with(GdePoest.this).
+                                            Glide.with(getActivity()).
                                                     load(gdePoestListItem.getImageUrl())
                                                     .asBitmap()
                                                     .override(75, 75)
@@ -246,8 +247,7 @@ public class GdePoest extends Fragment {
                                                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
                                                                 marker.setVisible(true);
                                                             } catch (IllegalArgumentException e) {
-                                                                Log.d("GdeOSt", "lat:" + lat + ",lng:" + lng);
-                                                                Log.d("GdeOST", "" + e.toString());
+                                                                e.printStackTrace();
                                                             }
                                                         }
                                                     });
@@ -355,6 +355,7 @@ public class GdePoest extends Fragment {
                     }
                 });
 
+                }
             }
 
 
