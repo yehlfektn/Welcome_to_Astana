@@ -3,6 +3,7 @@ package kz.welcometoastana.Excursion;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,10 +78,24 @@ public class ExcursionsFragment extends Fragment {
         }
     }
 
+    private String makeFragmentName(int viewId, int position) {
+        return "android:switcher:" + viewId + ":" + position;
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                viewPagerFragment.onDestroy();
+            }
+        }
+
         try {
             Field childFragmentManager = Fragment.class
                     .getDeclaredField("mChildFragmentManager");

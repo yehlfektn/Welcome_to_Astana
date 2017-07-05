@@ -265,7 +265,8 @@
             <kz.welcometoastana.utility.WrapContentHeightViewPager
                 android:id="@+id/viewpagerEvent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtShowMore"
@@ -274,13 +275,17 @@
                 android:background="@android:color/black"
                 android:gravity="center"
                 android:onClick="showMore"
-                android:textColor="@color/txtColor" />
+                android:textColor="@color/txtColor"
+                android:visibility="gone" />
+
+
             <View
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="15dp"
                 android:background="@android:color/black"
-                android:onClick="showMore" />
+                android:onClick="showMore"
+                android:visibility="visible" />
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"

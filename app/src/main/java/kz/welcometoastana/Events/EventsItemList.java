@@ -7,10 +7,7 @@ import kz.welcometoastana.Nearby.mainListItem;
  */
 public class EventsItemList extends mainListItem {
 
-    private String name;
     private String summary;
-    private String imageUrl;
-    private String category;
     private String lon;
     private String lat;
     private int id;

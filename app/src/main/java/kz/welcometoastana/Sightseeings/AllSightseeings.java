@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,12 +46,12 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class AllSightseeings extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1";
+    private String Url = "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private RequestManager glide;
     public AllSightseeings() {
         // Required empty public constructor
     }
@@ -66,7 +68,9 @@ public class AllSightseeings extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
         if (kudaShoditListItems == null) {
             kudaShoditListItems = new ArrayList<>();
         }
@@ -75,34 +79,7 @@ public class AllSightseeings extends Fragment {
             loadRecyclerView();
 
         } else {
-            adapter = new RecycleAdapter(kudaShoditListItems, getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                            intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                            intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                            intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                            intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                            intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                            intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                            intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                            intent.putExtra("url",Url);
-                            intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
-                            startActivityForResult(intent, 0);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            // do whatever
-                        }
-                    })
-            );
+            setAdapter();
 
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
@@ -153,34 +130,8 @@ public class AllSightseeings extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
-                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    setAdapter();
 
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), DescriptionActivity.class);
-                                    intent.putExtra("name", kudaShoditListItems.get(position).getName());
-                                    intent.putExtra("id",kudaShoditListItems.get(position).getId());
-                                    intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
-                                    intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
-                                    intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
-                                    intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
-                                    intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
-                                    intent.putExtra("url",Url);
-                                    intent.putExtra("address",kudaShoditListItems.get(position).getAddress());
-                                    startActivityForResult(intent, 0);
-                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
                     progressDialog.dismiss();
                     swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
@@ -223,5 +174,56 @@ public class AllSightseeings extends Fragment {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    private void setAdapter() {
+        adapter = new RecycleAdapter(glide, kudaShoditListItems, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        //Toast.makeText(getContext(), "You clicked " + kudaShoditListItems.get(position).getName(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+                        intent.putExtra("name", kudaShoditListItems.get(position).getName());
+                        intent.putExtra("id", kudaShoditListItems.get(position).getId());
+                        intent.putExtra("description", kudaShoditListItems.get(position).getSummary());
+                        intent.putExtra("imageUrl", kudaShoditListItems.get(position).getImageUrl());
+                        intent.putExtra("category", kudaShoditListItems.get(position).getCategory());
+                        intent.putExtra("longit", kudaShoditListItems.get(position).getLon());
+                        intent.putExtra("latit", kudaShoditListItems.get(position).getLat());
+                        intent.putExtra("url", Url);
+                        intent.putExtra("address", kudaShoditListItems.get(position).getAddress());
+                        startActivityForResult(intent, 0);
+                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        kudaShoditListItems = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        adapter = null;
+        recyclerView = null;
+        super.onDestroy();
     }
 }

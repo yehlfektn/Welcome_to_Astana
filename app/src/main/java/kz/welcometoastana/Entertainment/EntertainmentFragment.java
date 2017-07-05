@@ -2,7 +2,9 @@ package kz.welcometoastana.Entertainment;
 
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -18,7 +20,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,6 @@ import kz.welcometoastana.Events.Sports;
 import kz.welcometoastana.Events.Theatre;
 import kz.welcometoastana.Events.Vystavki;
 import kz.welcometoastana.KudaShoditListItem;
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.Sightseeings.DescriptionActivity;
 import kz.welcometoastana.utility.FixedSpeedScroller;
@@ -86,12 +86,13 @@ public class EntertainmentFragment extends Fragment {
     private String Url;
     private List<KudaShoditListItem> kudaShoditListItems;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private boolean map = false;
 
     public EntertainmentFragment() {
         // Required empty public constructor
     }
 
-    private static String makeFragmentName(int viewId, int position) {
+    private String makeFragmentName(int viewId, int position) {
         return "android:switcher:" + viewId + ":" + position;
     }
 
@@ -130,8 +131,11 @@ public class EntertainmentFragment extends Fragment {
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        if (MainActivity.mapVisible != null) {
-            if (MainActivity.mapVisible) {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+        map = sharedPref.getBoolean("map", false);
+
+
+        if (map) {
                 v.findViewById(R.id.viewpagerEnter).setVisibility(View.GONE);
                 v.findViewById(R.id.mapView).setVisibility(View.VISIBLE);
             } else {
@@ -139,7 +143,7 @@ public class EntertainmentFragment extends Fragment {
                 v.findViewById(R.id.viewpagerEnter).bringToFront();
                 v.findViewById(R.id.mapView).setVisibility(View.GONE);
             }
-        }
+
         new Handler().postDelayed(
                 new Runnable() {
                     @Override
@@ -166,7 +170,7 @@ public class EntertainmentFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (MainActivity.mapVisible) {
+                if (map) {
 
                     mMapView.getMapAsync(new OnMapReadyCallback() {
                         @Override
@@ -208,7 +212,6 @@ public class EntertainmentFragment extends Fragment {
                                     try {
                                         JSONObject jsonObject = new JSONObject(response);
                                         JSONArray array = jsonObject.getJSONArray("places");
-                                        Log.d("AllEvents", "size of array: " + array.length());
                                         for (int i = 0; i < array.length(); i++) {
                                             JSONObject o = array.getJSONObject(i);
                                             KudaShoditListItem item = new KudaShoditListItem(
@@ -224,7 +227,6 @@ public class EntertainmentFragment extends Fragment {
                                             kudaShoditListItems.add(item);
                                         }
 
-                                        Log.d("EventsFragment", "size: " + kudaShoditListItems.size());
                                         int size = kudaShoditListItems.size();
                                         for (int i = 0; i < size; i++) {
                                             final KudaShoditListItem kudaShoditListItem = kudaShoditListItems.get(i);
@@ -248,7 +250,6 @@ public class EntertainmentFragment extends Fragment {
                                                                     marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
                                                                     marker.setVisible(true);
                                                                 } catch (IllegalArgumentException e) {
-                                                                    Log.d("GdeOST", "" + e.toString());
                                                                 }
                                                             }
                                                         });
@@ -269,7 +270,6 @@ public class EntertainmentFragment extends Fragment {
                                                 padding = 100;
                                             }
                                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
-                                            Log.d("EntertainmentFragment", "cameraAnimated");
                                             googleMap.animateCamera(cu);
                                         }
 
@@ -280,7 +280,6 @@ public class EntertainmentFragment extends Fragment {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.d("Sightseeings", error.toString());
                                 }
                             }) {
                                 @Override
@@ -308,7 +307,6 @@ public class EntertainmentFragment extends Fragment {
                                     final KudaShoditListItem kuda = markerMap.get(marker);
 
                                     if (kuda != null) {
-                                        Log.d("EventsFragment", kuda.getName());
                                         ((TextView) v.findViewById(R.id.name)).setText(kuda.getName());
                                         ((TextView) v.findViewById(R.id.category)).setText(kuda.getCategory());
                                         if (kuda.getAddress().length() < 2) {
@@ -388,6 +386,18 @@ public class EntertainmentFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                viewPagerFragment.onDestroy();
+            }
+        }
+
         try {
             Field childFragmentManager = Fragment.class
                     .getDeclaredField("mChildFragmentManager");
@@ -398,7 +408,12 @@ public class EntertainmentFragment extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        mMapView.onDestroy();
+        try {
+            mMapView.onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -534,7 +549,6 @@ public class EntertainmentFragment extends Fragment {
     }
 
     public void close() {
-        Log.d("EventsFragment", "Close in EventsFragment");
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 

@@ -5,9 +5,11 @@ package kz.welcometoastana.Nearby;
  */
 
 public class mainListItem {
-    private String name;
-    private String imageUrl;
-    private String category;
+    public String name;
+    public String imageUrl;
+    public String category;
+
+
 
     public String getName() {
         return name;

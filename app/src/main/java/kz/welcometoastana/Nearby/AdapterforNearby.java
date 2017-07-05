@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import java.util.List;
 
@@ -35,12 +35,14 @@ public class AdapterforNearby extends PagerAdapter {
     private LayoutInflater layoutInflater;
     private listItemNearby listItemNearby;
     private String color;
+    private RequestManager glide;
 
-    public AdapterforNearby(Context context, listItemNearby listItemNearby, String color) {
+    public AdapterforNearby(RequestManager Glide, Context context, listItemNearby listItemNearby, String color) {
         this.context = context;
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = LayoutInflater.from(context);
         this.listItemNearby = listItemNearby;
         this.color = color;
+        this.glide = Glide;
     }
 
     @Override
@@ -105,12 +107,12 @@ public class AdapterforNearby extends PagerAdapter {
             category2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bulletpurple, 0, 0, 0);
         }
 
-        Glide.with(context)
+        glide
                 .load(first.getImageUrl())
                 .centerCrop()
                 .into(imageView);
 
-        Glide.with(context)
+        glide
                 .load(second.getImageUrl())
                 .centerCrop()
                 .into(imageView2);

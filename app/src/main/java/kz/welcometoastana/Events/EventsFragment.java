@@ -1,7 +1,9 @@
 package kz.welcometoastana.Events;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -54,12 +56,12 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.FixedSpeedScroller;
 import kz.welcometoastana.utility.MyRequest;
@@ -74,7 +76,6 @@ public class EventsFragment extends Fragment {
     public ViewPager viewPager;
     SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd");
     MapView mMapView;
-    LatLng astana = new LatLng(51.149202, 71.439285);
     HashMap<String, String> markerLocation = new HashMap<>();
     List<Marker> markerList = new ArrayList<>();
     Map<Marker, EventsItemList> markerMap;
@@ -82,6 +83,7 @@ public class EventsFragment extends Fragment {
     private String Url;
     private List<EventsItemList> eventsItemLists;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private Boolean map = false;
 
 
     private static String makeFragmentName(int viewId, int position) {
@@ -98,8 +100,10 @@ public class EventsFragment extends Fragment {
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        if (MainActivity.mapVisible != null) {
-            if (MainActivity.mapVisible) {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+        map = sharedPref.getBoolean("map", false);
+
+        if (map) {
                 v.findViewById(R.id.viewpagerEvent).setVisibility(View.GONE);
                 v.findViewById(R.id.mapView).setVisibility(View.VISIBLE);
             } else {
@@ -107,7 +111,6 @@ public class EventsFragment extends Fragment {
                 v.findViewById(R.id.viewpagerEvent).bringToFront();
                 v.findViewById(R.id.mapView).setVisibility(View.GONE);
             }
-        }
 
         tabLayout = (TabLayout) v.findViewById(R.id.tabsEvent);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerEvent);
@@ -159,7 +162,7 @@ public class EventsFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (MainActivity.mapVisible) {
+                if (map) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
@@ -192,16 +195,19 @@ public class EventsFragment extends Fragment {
                             Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=68";
                         }
 
-                        if (MainActivity.dateTimeFrom != null) {
-                            Calendar dateFrom = MainActivity.dateTimeFrom;
-                            if (MainActivity.dateTimeTo != null) {
-                                Calendar dateTo = MainActivity.dateTimeTo;
-                                Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-                            } else {
-                                Calendar dateTo = Calendar.getInstance();
-                                Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-                            }
+
+                        SharedPreferences sharedPref = getContext().getSharedPreferences("time", Context.MODE_PRIVATE);
+                        long timefrom = sharedPref.getLong("dateTimeFrom", 0);
+                        long timeTo = sharedPref.getLong("dateTimeTo", 0);
+
+                        if (timefrom != 0 && timeTo != 0) {
+                            Calendar dateFrom = new GregorianCalendar();
+                            Calendar dateTo = new GregorianCalendar();
+                            dateFrom.setTimeInMillis(timefrom);
+                            dateTo.setTimeInMillis(timeTo);
+                            Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
                         }
+
 
                         StringRequest stringRequest = new MyRequest(Request.Method.GET, Url, new Response.Listener<String>() {
 
@@ -210,7 +216,7 @@ public class EventsFragment extends Fragment {
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     JSONArray array = jsonObject.getJSONArray("places");
-                                    Log.d("AllEvents", "size of array: " + array.length());
+
                                     for (int i = 0; i < array.length(); i++) {
                                         JSONObject o = array.getJSONObject(i);
                                         String lon;
@@ -244,7 +250,6 @@ public class EventsFragment extends Fragment {
                                         eventsItemLists.add(item);
                                     }
 
-                                    Log.d("EventsFragment", "size: " + eventsItemLists.size());
                                     for (int i = 0; i < eventsItemLists.size(); i++) {
                                         final EventsItemList eventsItemList = eventsItemLists.get(i);
                                         if (!eventsItemList.getLat().equals("null") && !eventsItemList.getImageUrl().startsWith("http://imgur.com")) {
@@ -268,7 +273,6 @@ public class EventsFragment extends Fragment {
                                                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
                                                                 marker.setVisible(true);
                                                             } catch (IllegalArgumentException e) {
-                                                                Log.d("GdeOST", "" + e.toString());
                                                             }
                                                         }
                                                     });
@@ -299,7 +303,6 @@ public class EventsFragment extends Fragment {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("Sightseeings", error.toString());
                             }
                         }) {
                             @Override
@@ -327,7 +330,6 @@ public class EventsFragment extends Fragment {
                                 final EventsItemList eventsItemList = markerMap.get(marker);
 
                                 if (eventsItemList != null) {
-                                    Log.d("EventsFragment", eventsItemList.getName());
                                     ((TextView) v.findViewById(R.id.name)).setText(eventsItemList.getName());
                                     ((TextView) v.findViewById(R.id.date)).setText(eventsItemList.getDate());
                                     ((TextView) v.findViewById(R.id.category)).setText(eventsItemList.getCategory());
@@ -407,7 +409,29 @@ public class EventsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        if (mMapView != null) {
+            try {
+                mMapView.onDestroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d("EventsFragment", "OnDestroy was activated");
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        Log.d("EventsFragment", "Fragment count" + fragmentPagerAdapter.getCount());
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                Log.d("EventsFragment", "" + viewPagerFragment.getTag() + "is ondestroy");
+                if (viewPagerFragment instanceof AllEvents) {
+                    Log.d("EventsFragment", "All events is on destroy");
+                }
+                viewPagerFragment.onDestroy();
+            }
+        }
+
         try {
             Field childFragmentManager = Fragment.class
                     .getDeclaredField("mChildFragmentManager");
@@ -418,25 +442,45 @@ public class EventsFragment extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        mMapView.onDestroy();
+
+
+        super.onDestroy();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        if (mMapView != null) {
+            try {
+                mMapView.onResume();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        if (mMapView != null) {
+            try {
+                mMapView.onPause();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mMapView.onLowMemory();
+        if (mMapView != null) {
+            try {
+                mMapView.onLowMemory();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {
@@ -554,7 +598,6 @@ public class EventsFragment extends Fragment {
     }
 
     public void close() {
-        Log.d("EventsFragment", "Close in EventsFragment");
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 }

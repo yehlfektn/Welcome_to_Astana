@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
@@ -43,15 +44,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.target.NotificationTarget;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,43 +96,54 @@ import kz.welcometoastana.utility.MyRequest;
 
 public class MainActivity extends LocalizationActivity {
 
-
-    public static Location  gpsLocation;
-    public static Calendar dateTimeFrom;
-    public static Calendar dateTimeTo;
-    public static int Gposition = 0;
-    public static int Pposition = 0;
-    public static Boolean mapVisible = false;
     SimpleDateFormat formatDateTime = new SimpleDateFormat("dd MMM yyyy");
-    DatePickerDialog.OnDateSetListener from = new DatePickerDialog.OnDateSetListener() {
+    List<WeakReference<Fragment>> fragList = new ArrayList<WeakReference<Fragment>>();
+    private Calendar dateTimeFrom;
+    private Calendar dateTimeTo;
+    private Boolean mapVisible = false;
+    private Handler handler;
+    private RequestManager glide;
+
+    private DatePickerDialog.OnDateSetListener from = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             dateTimeFrom.set(Calendar.YEAR, year);
             dateTimeFrom.set(Calendar.MONTH, monthOfYear);
             dateTimeFrom.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            SharedPreferences sharedPref = getSharedPreferences("time", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putLong("dateTimeFrom", dateTimeFrom.getTimeInMillis());
+            editor.commit();
+
             Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
             ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(formatDateTime.format(dateTimeFrom.getTime()));
         }
     };
-    DatePickerDialog.OnDateSetListener to = new DatePickerDialog.OnDateSetListener() {
+    private DatePickerDialog.OnDateSetListener to = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             dateTimeTo.set(Calendar.YEAR, year);
             dateTimeTo.set(Calendar.MONTH, monthOfYear);
             dateTimeTo.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            SharedPreferences sharedPref = getSharedPreferences("time", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putLong("dateTimeTo", dateTimeTo.getTimeInMillis());
+            editor.commit();
             Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
             ((TextView) current.getView().findViewById(R.id.txtTo)).setText(formatDateTime.format(dateTimeTo.getTime()));
         }
     };
-    private List<GdePoestListItem> gdePoestListItems = new ArrayList<>();
-    private List<HotelsListItem> hotelsListItems = new ArrayList<>();
-    private List<EventsItemList> eventsItemLists = new ArrayList<>();
-    private List<KudaShoditListItem> kudaShoditListItems = new ArrayList<>();
+    private List<GdePoestListItem> gdePoestListItems;
+    private List<HotelsListItem> hotelsListItems;
+    private List<EventsItemList> eventsItemLists;
+    private List<KudaShoditListItem> kudaShoditListItems;
     private Boolean exit = false;
     private ExpandableListView elv;
     private Boolean visible = false;
     private NotificationTarget notificationTarget;
-    private HashSet<Integer> ids = new HashSet<>();
+    private HashSet<Integer> ids;
+    private boolean firstTime = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -137,13 +155,77 @@ public class MainActivity extends LocalizationActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
+
+        Log.d("MainActivity", "Oncreate");
+
+        SharedPreferences sharedPref = getSharedPreferences("position", Context.MODE_PRIVATE);
+        mapVisible = sharedPref.getBoolean("map", false);
+
+        if (gdePoestListItems == null) {
+            SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = prefs.getString("gde", null);
+            Type type = new TypeToken<ArrayList<GdePoestListItem>>() {
+            }.getType();
+            gdePoestListItems = gson.fromJson(json, type);
+            if (gdePoestListItems != null) {
+                Log.d("MainActivity", "gde loaded: " + gdePoestListItems.size());
+            } else {
+                gdePoestListItems = new ArrayList<>();
+            }
+        }
+        if (hotelsListItems == null) {
+            SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = prefs.getString("hotel", null);
+            Type type = new TypeToken<ArrayList<HotelsListItem>>() {
+            }.getType();
+            hotelsListItems = gson.fromJson(json, type);
+            if (hotelsListItems != null) {
+                Log.d("MainActivity", "hotel loaded: " + hotelsListItems.size());
+            } else {
+                hotelsListItems = new ArrayList<>();
+            }
+        }
+        if (eventsItemLists == null) {
+
+            SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = prefs.getString("event", null);
+            Type type = new TypeToken<ArrayList<EventsItemList>>() {
+            }.getType();
+            eventsItemLists = gson.fromJson(json, type);
+            if (eventsItemLists != null) {
+                Log.d("MainActivity", "event loaded: " + eventsItemLists.size());
+            } else {
+                eventsItemLists = new ArrayList<>();
+            }
+        }
+        if (kudaShoditListItems == null) {
+            SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = prefs.getString("kuda", null);
+            Type type = new TypeToken<ArrayList<KudaShoditListItem>>() {
+            }.getType();
+            kudaShoditListItems = gson.fromJson(json, type);
+            if (kudaShoditListItems != null) {
+                Log.d("MainActivity", "kuda loaded: " + kudaShoditListItems.size());
+            } else {
+                kudaShoditListItems = new ArrayList<>();
+            }
+        }
+
+
+
         //Getting data
         loadRecyclerViewGdeOst();
         loadRecyclerViewGdePoest();
         loadRecyclerViewEvents();
         loadRecyclerViewSight();
         loadRecyclerViewShopping();
-
 
         View headerView;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -166,321 +248,344 @@ public class MainActivity extends LocalizationActivity {
         LocationParams.Builder builder = new LocationParams.Builder()
                 .setAccuracy(LocationAccuracy.HIGH)
                 .setDistance(0)
-                .setInterval(300000);
+                .setInterval(1800000);
 
         //Finding location using SmartLocation
-        SmartLocation.with(this).location().config(builder.build()).continuous()
+        SmartLocation.with(getApplicationContext()).location().config(builder.build()).continuous()
                 .start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
-                        gpsLocation = location;
+                        SharedPreferences sharedPref = getSharedPreferences("app", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("lat", location.getLatitude() + "");
+                        editor.putString("lon", location.getLongitude() + "");
+                        editor.commit();
+
+                        Gson gson = new Gson();
+                        String json = sharedPref.getString("ids", null);
+                        Type type = new TypeToken<HashSet<Integer>>() {
+                        }.getType();
+                        ids = gson.fromJson(json, type);
+                        if (ids != null) {
+                            Log.d("MainActivity", "ids loaded: " + ids.size());
+                        } else {
+                            ids = new HashSet<>();
+                        }
+
                         GdePoestListItem gde = null;
-                        Log.d("MainActivity", "Gsp Location was set: "+location.toString());
                         Location endPoint = new Location("locationB");
 
-                        if (gdePoestListItems.size() != 0) {
-                            double min = 1000;
-                            for (GdePoestListItem gdePoestListItem : gdePoestListItems) {
-                                if (!gdePoestListItem.getLat().equals("null")) {
-                                    endPoint.setLatitude(Double.parseDouble(gdePoestListItem.getLat()));
-                                    endPoint.setLongitude(Double.parseDouble(gdePoestListItem.getLon()));
-                                    double distanceDouble = location.distanceTo(endPoint);
 
-                                    if (distanceDouble < min) {
-                                        if (!ids.contains(gdePoestListItem.getId())) {
-                                            gde = gdePoestListItem;
-                                            min = distanceDouble;
-                                            ids.add(gdePoestListItem.getId());
-                                            Log.d("Distance", "name" + gdePoestListItem.getName() + ", distance:" + distanceDouble);
+                        Date date = new Date(System.currentTimeMillis());
+
+
+                        Date myDate = new Date(sharedPref.getLong("time", 0));
+                        long difference = date.getTime() - myDate.getTime();
+                        Log.d("MainActivity", "difference: " + difference);
+
+
+                        if (difference > 1800000) {
+                            editor.putLong("time", date.getTime()).apply();
+
+
+                            if (gdePoestListItems.size() != 0) {
+                                double min = 1000;
+                                for (GdePoestListItem gdePoestListItem : gdePoestListItems) {
+                                    if (!gdePoestListItem.getLat().equals("null")) {
+                                        endPoint.setLatitude(Double.parseDouble(gdePoestListItem.getLat()));
+                                        endPoint.setLongitude(Double.parseDouble(gdePoestListItem.getLon()));
+                                        double distanceDouble = location.distanceTo(endPoint);
+
+                                        if (distanceDouble < min) {
+                                            if (!ids.contains(gdePoestListItem.getId())) {
+                                                gde = gdePoestListItem;
+                                                min = distanceDouble;
+                                            }
                                         }
                                     }
                                 }
+
+                                if (gde != null) {
+                                    ids.add(gde.getId());
+                                    final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
+
+                                    rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
+                                    rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
+                                    rv.setTextViewText(R.id.remoteview_notification_short_message, gde.getName());
+
+                                    //Notification starts
+                                    NotificationCompat.Builder mBuilder =
+                                            new NotificationCompat.Builder(getApplicationContext())
+                                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                                    .setContentTitle("Welcome to Astana")
+                                                    .setContentText(getResources().getString(R.string.notification) + "\n" + gde.getName())
+                                                    .setContent(rv)
+                                                    .setCustomBigContentView(rv);
+                                    // Creates an explicit intent for an Activity in your app
+                                    Intent intent = new Intent(getApplicationContext(), GdePoestDescription.class);
+                                    intent.putExtra("name", gde.getName());
+                                    intent.putExtra("id", gde.getId());
+                                    intent.putExtra("description", gde.getSummary());
+                                    intent.putExtra("imageUrl", gde.getImageUrl());
+                                    intent.putExtra("category", gde.getCategory());
+                                    intent.putExtra("longit", gde.getLon());
+                                    intent.putExtra("latit", gde.getLat());
+                                    intent.putExtra("address", gde.getAddress());
+                                    intent.putExtra("url", "http://89.219.32.107/api/v1/foods?limit=2000&page=1");
+                                    intent.putExtra("phone", gde.getPhone());
+
+                                    Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0,
+                                            new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
+
+                                    mBuilder.setContentIntent(pendingIntent);
+                                    NotificationManager mNotificationManager =
+                                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    Notification notification = mBuilder.build();
+                                    notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                    mNotificationManager.notify(1, notification);
+
+                                    notificationTarget = new NotificationTarget(
+                                            getApplicationContext(),
+                                            rv,
+                                            R.id.remoteview_notification_icon,
+                                            notification,
+                                            1);
+
+                                    glide
+                                            .load(gde.getImageUrl())
+                                            .asBitmap()
+                                            .into(notificationTarget);
+                                }
+
                             }
 
-                            if (gde != null) {
-                                Log.d("Distance", "inside if gde null");
-                                final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
+                            HotelsListItem hotel = null;
+                            if (hotelsListItems.size() != 0) {
+                                double min = 1000;
+                                for (HotelsListItem hotelsListItem : hotelsListItems) {
+                                    if (!hotelsListItem.getLat().equals("null")) {
+                                        endPoint.setLatitude(Double.parseDouble(hotelsListItem.getLat()));
+                                        endPoint.setLongitude(Double.parseDouble(hotelsListItem.getLon()));
+                                        double distanceDouble = location.distanceTo(endPoint);
 
-                                rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
-                                rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
-                                rv.setTextViewText(R.id.remoteview_notification_short_message, gde.getName());
-
-                                //Notification starts
-                                NotificationCompat.Builder mBuilder =
-                                        new NotificationCompat.Builder(getApplicationContext())
-                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                .setContentTitle("Welcome to Astana")
-                                                .setContentText(getResources().getString(R.string.notification) + "\n" + gde.getName())
-                                                .setContent(rv)
-                                                .setCustomBigContentView(rv);
-                                // Creates an explicit intent for an Activity in your app
-                                Intent intent = new Intent(getApplicationContext(), GdePoestDescription.class);
-                                intent.putExtra("name", gde.getName());
-                                intent.putExtra("id", gde.getId());
-                                intent.putExtra("description", gde.getSummary());
-                                intent.putExtra("imageUrl", gde.getImageUrl());
-                                intent.putExtra("category", gde.getCategory());
-                                intent.putExtra("longit", gde.getLon());
-                                intent.putExtra("latit", gde.getLat());
-                                intent.putExtra("address", gde.getAddress());
-                                intent.putExtra("url", "http://89.219.32.107/api/v1/foods?limit=2000&page=1");
-                                intent.putExtra("phone", gde.getPhone());
-
-                                Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-                                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
-                                        new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
-
-                                mBuilder.setContentIntent(pendingIntent);
-                                NotificationManager mNotificationManager =
-                                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                Notification notification = mBuilder.build();
-                                notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                mNotificationManager.notify(1, notification);
-
-                                notificationTarget = new NotificationTarget(
-                                        getApplicationContext(),
-                                        rv,
-                                        R.id.remoteview_notification_icon,
-                                        notification,
-                                        1);
-
-                                Glide
-                                        .with(getApplicationContext()) // safer!
-                                        .load(gde.getImageUrl())
-                                        .asBitmap()
-                                        .into(notificationTarget);
-                            }
-
-                        }
-
-                        HotelsListItem hotel = null;
-                        if (hotelsListItems.size() != 0) {
-                            double min = 1000;
-                            for (HotelsListItem hotelsListItem : hotelsListItems) {
-                                if (!hotelsListItem.getLat().equals("null")) {
-                                    endPoint.setLatitude(Double.parseDouble(hotelsListItem.getLat()));
-                                    endPoint.setLongitude(Double.parseDouble(hotelsListItem.getLon()));
-                                    double distanceDouble = location.distanceTo(endPoint);
-
-                                    if (distanceDouble < min) {
-                                        if (!ids.contains(hotelsListItem.getId())) {
-                                            hotel = hotelsListItem;
-                                            min = distanceDouble;
-                                            ids.add(hotelsListItem.getId());
+                                        if (distanceDouble < min) {
+                                            if (!ids.contains(hotelsListItem.getId())) {
+                                                hotel = hotelsListItem;
+                                                min = distanceDouble;
+                                            }
                                         }
                                     }
                                 }
+                                if (hotel != null) {
+                                    ids.add(hotel.getId());
+                                    final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
+
+                                    rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
+                                    rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
+                                    rv.setTextViewText(R.id.remoteview_notification_short_message, hotel.getName());
+                                    //Notification starts
+                                    NotificationCompat.Builder mBuilder =
+                                            new NotificationCompat.Builder(getApplicationContext())
+                                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                                    .setContentTitle("Welcome to Astana")
+                                                    .setContentText(getResources().getString(R.string.notification) + "\n" + hotel.getName())
+                                                    .setContent(rv)
+                                                    .setCustomBigContentView(rv);
+
+                                    // Creates an explicit intent for an Activity in your app
+                                    Intent intent = new Intent(getApplicationContext(), GdeOstanovitsyaDescription.class);
+                                    intent.putExtra("name", hotel.getName());
+                                    intent.putExtra("id", hotel.getId());
+                                    intent.putExtra("description", hotel.getSummary());
+                                    intent.putExtra("imageUrl", hotel.getImageUrl());
+                                    intent.putExtra("category", hotel.getCategory());
+                                    intent.putExtra("longit", hotel.getLon());
+                                    intent.putExtra("latit", hotel.getLat());
+                                    intent.putExtra("address", hotel.getAddress());
+                                    intent.putExtra("url", "http://89.219.32.107/api/v1/hotels?limit=2000&page=1");
+                                    intent.putExtra("phone", hotel.getPhone());
+                                    intent.putExtra("website", hotel.getWebsite());
+                                    intent.putExtra("stars", hotel.getStars());
+                                    intent.putExtra("urlItem", hotel.getBook_url());
+
+                                    Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
+                                            new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
+
+                                    mBuilder.setContentIntent(pendingIntent);
+                                    mBuilder.setAutoCancel(true).setCustomBigContentView(rv);
+                                    NotificationManager mNotificationManager =
+                                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    Notification notification = mBuilder.build();
+                                    notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                    mNotificationManager.notify(2, notification);
+
+                                    NotificationTarget notificationTarget = new NotificationTarget(
+                                            getApplicationContext(),
+                                            rv,
+                                            R.id.remoteview_notification_icon,
+                                            notification,
+                                            2);
+
+                                    glide
+                                            .load(hotel.getImageUrl())
+                                            .asBitmap()
+                                            .into(notificationTarget);
+
+                                }
                             }
-                            if (hotel != null) {
-                                final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
-
-                                rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
-                                rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
-                                rv.setTextViewText(R.id.remoteview_notification_short_message, hotel.getName());
-                                //Notification starts
-                                NotificationCompat.Builder mBuilder =
-                                        new NotificationCompat.Builder(getApplicationContext())
-                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                .setContentTitle("Welcome to Astana")
-                                                .setContentText(getResources().getString(R.string.notification) + "\n" + hotel.getName())
-                                                .setContent(rv)
-                                                .setCustomBigContentView(rv);
-
-                                // Creates an explicit intent for an Activity in your app
-                                Intent intent = new Intent(getApplicationContext(), GdeOstanovitsyaDescription.class);
-                                intent.putExtra("name", hotel.getName());
-                                intent.putExtra("id", hotel.getId());
-                                intent.putExtra("description", hotel.getSummary());
-                                intent.putExtra("imageUrl", hotel.getImageUrl());
-                                intent.putExtra("category", hotel.getCategory());
-                                intent.putExtra("longit", hotel.getLon());
-                                intent.putExtra("latit", hotel.getLat());
-                                intent.putExtra("address", hotel.getAddress());
-                                intent.putExtra("url", "http://89.219.32.107/api/v1/hotels?limit=2000&page=1");
-                                intent.putExtra("phone", hotel.getPhone());
-                                intent.putExtra("website", hotel.getWebsite());
-                                intent.putExtra("stars", hotel.getStars());
-                                intent.putExtra("urlItem", hotel.getBook_url());
-
-                                Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-                                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
-                                        new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
-
-                                mBuilder.setContentIntent(pendingIntent);
-                                mBuilder.setAutoCancel(true).setCustomBigContentView(rv);
-                                NotificationManager mNotificationManager =
-                                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                Notification notification = mBuilder.build();
-                                notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                mNotificationManager.notify(2, notification);
-
-                                NotificationTarget notificationTarget = new NotificationTarget(
-                                        getApplicationContext(),
-                                        rv,
-                                        R.id.remoteview_notification_icon,
-                                        notification,
-                                        2);
-
-                                Glide
-                                        .with(getApplicationContext()) // safer!
-                                        .load(hotel.getImageUrl())
-                                        .asBitmap()
-                                        .into(notificationTarget);
-
-                            }
-                        }
-                        EventsItemList eventsItemList = null;
-                        if (eventsItemLists.size() != 0) {
-                            double min = 1000;
-                            for (EventsItemList eventsItemList1 : eventsItemLists) {
-                                if (!eventsItemList1.getLat().equals("null")) {
-                                    endPoint.setLatitude(Double.parseDouble(eventsItemList1.getLat()));
-                                    endPoint.setLongitude(Double.parseDouble(eventsItemList1.getLon()));
-                                    double distanceDouble = location.distanceTo(endPoint);
-                                    if (distanceDouble < min) {
-                                        if (!ids.contains(eventsItemList1.getId())) {
-                                            eventsItemList = eventsItemList1;
-                                            min = distanceDouble;
-                                            ids.add(eventsItemList1.getId());
+                            EventsItemList eventsItemList = null;
+                            if (eventsItemLists.size() != 0) {
+                                double min = 1000;
+                                for (EventsItemList eventsItemList1 : eventsItemLists) {
+                                    if (!eventsItemList1.getLat().equals("null")) {
+                                        endPoint.setLatitude(Double.parseDouble(eventsItemList1.getLat()));
+                                        endPoint.setLongitude(Double.parseDouble(eventsItemList1.getLon()));
+                                        double distanceDouble = location.distanceTo(endPoint);
+                                        if (distanceDouble < min) {
+                                            if (!ids.contains(eventsItemList1.getId())) {
+                                                eventsItemList = eventsItemList1;
+                                                min = distanceDouble;
+                                            }
                                         }
                                     }
                                 }
+                                if (eventsItemList != null) {
+                                    ids.add(eventsItemList.getId());
+                                    final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
+
+                                    rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
+                                    rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
+                                    rv.setTextViewText(R.id.remoteview_notification_short_message, eventsItemList.getName());
+
+                                    //Notification starts
+                                    NotificationCompat.Builder mBuilder =
+                                            new NotificationCompat.Builder(getApplicationContext())
+                                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                                    .setContentTitle("Welcome to Astana")
+                                                    .setContentText(getResources().getString(R.string.notification) + "\n" + eventsItemList.getName())
+                                                    .setContent(rv)
+                                                    .setCustomBigContentView(rv);
+                                    // Creates an explicit intent for an Activity in your app
+                                    Intent intent = new Intent(getApplicationContext(), EventsDescription.class);
+                                    intent.putExtra("name", eventsItemList.getName());
+                                    intent.putExtra("id", eventsItemList.getId());
+                                    intent.putExtra("description", eventsItemList.getSummary());
+                                    intent.putExtra("imageUrl", eventsItemList.getImageUrl());
+                                    intent.putExtra("category", eventsItemList.getCategory());
+                                    intent.putExtra("longit", eventsItemList.getLon());
+                                    intent.putExtra("latit", eventsItemList.getLat());
+                                    intent.putExtra("url", "http://89.219.32.107/api/v1/places/events?limit=2000&page=1");
+                                    intent.putExtra("address", eventsItemList.getAddress());
+                                    intent.putExtra("money", eventsItemList.getMoney());
+                                    intent.putExtra("date", eventsItemList.getDate());
+                                    intent.putExtra("urlItem", eventsItemList.getUrl());
+
+                                    Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
+                                            new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
+                                    mBuilder.setContentIntent(pendingIntent);
+
+                                    NotificationManager mNotificationManager =
+                                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    Notification notification = mBuilder.build();
+                                    notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                    mNotificationManager.notify(3, notification);
+
+                                    NotificationTarget notificationTarget = new NotificationTarget(
+                                            getApplicationContext(),
+                                            rv,
+                                            R.id.remoteview_notification_icon,
+                                            notification,
+                                            3);
+
+                                    glide
+                                            .load(eventsItemList.getImageUrl())
+                                            .asBitmap()
+                                            .into(notificationTarget);
+                                }
                             }
-                            if (eventsItemList != null) {
-                                final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
 
-                                rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
-                                rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
-                                rv.setTextViewText(R.id.remoteview_notification_short_message, eventsItemList.getName());
-
-                                //Notification starts
-                                NotificationCompat.Builder mBuilder =
-                                        new NotificationCompat.Builder(getApplicationContext())
-                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                .setContentTitle("Welcome to Astana")
-                                                .setContentText(getResources().getString(R.string.notification) + "\n" + eventsItemList.getName())
-                                                .setContent(rv)
-                                                .setCustomBigContentView(rv);
-                                // Creates an explicit intent for an Activity in your app
-                                Intent intent = new Intent(getApplicationContext(), EventsDescription.class);
-                                intent.putExtra("name", eventsItemList.getName());
-                                intent.putExtra("id", eventsItemList.getId());
-                                intent.putExtra("description", eventsItemList.getSummary());
-                                intent.putExtra("imageUrl", eventsItemList.getImageUrl());
-                                intent.putExtra("category", eventsItemList.getCategory());
-                                intent.putExtra("longit", eventsItemList.getLon());
-                                intent.putExtra("latit", eventsItemList.getLat());
-                                intent.putExtra("url", "http://89.219.32.107/api/v1/places/events?limit=2000&page=1");
-                                intent.putExtra("address", eventsItemList.getAddress());
-                                intent.putExtra("money", eventsItemList.getMoney());
-                                intent.putExtra("date", eventsItemList.getDate());
-                                intent.putExtra("urlItem", eventsItemList.getUrl());
-
-                                Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-                                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
-                                        new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
-                                mBuilder.setContentIntent(pendingIntent);
-
-                                NotificationManager mNotificationManager =
-                                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                Notification notification = mBuilder.build();
-                                notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                mNotificationManager.notify(3, notification);
-
-                                NotificationTarget notificationTarget = new NotificationTarget(
-                                        getApplicationContext(),
-                                        rv,
-                                        R.id.remoteview_notification_icon,
-                                        notification,
-                                        3);
-
-                                Glide
-                                        .with(getApplicationContext()) // safer!
-                                        .load(eventsItemList.getImageUrl())
-                                        .asBitmap()
-                                        .into(notificationTarget);
-                            }
-                        }
-
-                        KudaShoditListItem kudaShoditListItem = null;
-                        if (kudaShoditListItems.size() != 0) {
-                            double min = 1000;
-                            for (KudaShoditListItem kudaShoditListItem1 : kudaShoditListItems) {
-                                if (!kudaShoditListItem1.getLat().equals("null")) {
-                                    endPoint.setLatitude(Double.parseDouble(kudaShoditListItem1.getLat()));
-                                    endPoint.setLongitude(Double.parseDouble(kudaShoditListItem1.getLon()));
-                                    double distanceDouble = location.distanceTo(endPoint);
-                                    if (distanceDouble < min) {
-                                        if (!ids.contains(kudaShoditListItem1.getId())) {
-                                            kudaShoditListItem = kudaShoditListItem1;
-                                            min = distanceDouble;
-                                            ids.add(kudaShoditListItem1.getId());
+                            KudaShoditListItem kudaShoditListItem = null;
+                            if (kudaShoditListItems.size() != 0) {
+                                double min = 1000;
+                                for (KudaShoditListItem kudaShoditListItem1 : kudaShoditListItems) {
+                                    if (!kudaShoditListItem1.getLat().equals("null")) {
+                                        endPoint.setLatitude(Double.parseDouble(kudaShoditListItem1.getLat()));
+                                        endPoint.setLongitude(Double.parseDouble(kudaShoditListItem1.getLon()));
+                                        double distanceDouble = location.distanceTo(endPoint);
+                                        if (distanceDouble < min) {
+                                            if (!ids.contains(kudaShoditListItem1.getId())) {
+                                                kudaShoditListItem = kudaShoditListItem1;
+                                                min = distanceDouble;
+                                            }
                                         }
                                     }
                                 }
+                                if (kudaShoditListItem != null) {
+                                    ids.add(kudaShoditListItem.getId());
+                                    final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
+
+                                    rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
+                                    rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
+                                    rv.setTextViewText(R.id.remoteview_notification_short_message, kudaShoditListItem.getName());
+
+                                    //Notification starts
+                                    NotificationCompat.Builder mBuilder =
+                                            new NotificationCompat.Builder(getApplicationContext())
+                                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                                    .setContentTitle("Welcome to Astana")
+                                                    .setContentText(getResources().getString(R.string.notification) + "\n" + kudaShoditListItem.getName())
+                                                    .setContent(rv)
+                                                    .setCustomBigContentView(rv);
+                                    // Creates an explicit intent for an Activity in your app
+                                    Intent intent = new Intent(getApplicationContext(), DescriptionActivity.class);
+                                    intent.putExtra("name", kudaShoditListItem.getName());
+                                    intent.putExtra("id", kudaShoditListItem.getId());
+                                    intent.putExtra("description", kudaShoditListItem.getSummary());
+                                    intent.putExtra("imageUrl", kudaShoditListItem.getImageUrl());
+                                    intent.putExtra("category", kudaShoditListItem.getCategory());
+                                    intent.putExtra("longit", kudaShoditListItem.getLon());
+                                    intent.putExtra("latit", kudaShoditListItem.getLat());
+                                    if (kudaShoditListItem.getUrl() != null) {
+                                        intent.putExtra("url", kudaShoditListItem.getUrl());
+                                    } else {
+                                        intent.putExtra("url", "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1");
+                                    }
+
+                                    intent.putExtra("address", kudaShoditListItem.getAddress());
+
+                                    Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
+                                            new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
+                                    mBuilder.setContentIntent(pendingIntent);
+                                    NotificationManager mNotificationManager =
+                                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    Notification notification = mBuilder.build();
+                                    notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                    mNotificationManager.notify(4, notification);
+
+                                    NotificationTarget notificationTarget = new NotificationTarget(
+                                            getApplicationContext(),
+                                            rv,
+                                            R.id.remoteview_notification_icon,
+                                            notification,
+                                            4);
+
+                                    glide
+                                            .load(kudaShoditListItem.getImageUrl())
+                                            .asBitmap()
+                                            .into(notificationTarget);
+                                }
                             }
-                            if (kudaShoditListItem != null) {
-                                final RemoteViews rv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.remoteview_notification);
-
-                                rv.setImageViewResource(R.id.remoteview_notification_icon, R.drawable.icon_marker);
-                                rv.setTextViewText(R.id.remoteview_notification_headline, getResources().getString(R.string.notification));
-                                rv.setTextViewText(R.id.remoteview_notification_short_message, kudaShoditListItem.getName());
-
-                                //Notification starts
-                                NotificationCompat.Builder mBuilder =
-                                        new NotificationCompat.Builder(getApplicationContext())
-                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                .setContentTitle("Welcome to Astana")
-                                                .setContentText(getResources().getString(R.string.notification) + "\n" + kudaShoditListItem.getName())
-                                                .setContent(rv)
-                                                .setCustomBigContentView(rv);
-                                // Creates an explicit intent for an Activity in your app
-                                Intent intent = new Intent(getApplicationContext(), DescriptionActivity.class);
-                                intent.putExtra("name", kudaShoditListItem.getName());
-                                intent.putExtra("id", kudaShoditListItem.getId());
-                                intent.putExtra("description", kudaShoditListItem.getSummary());
-                                intent.putExtra("imageUrl", kudaShoditListItem.getImageUrl());
-                                intent.putExtra("category", kudaShoditListItem.getCategory());
-                                intent.putExtra("longit", kudaShoditListItem.getLon());
-                                intent.putExtra("latit", kudaShoditListItem.getLat());
-                                intent.putExtra("url", "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1");
-                                intent.putExtra("address", kudaShoditListItem.getAddress());
-
-                                Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-                                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 1,
-                                        new Intent[]{backIntent, intent}, PendingIntent.FLAG_ONE_SHOT);
-                                mBuilder.setContentIntent(pendingIntent);
-                                NotificationManager mNotificationManager =
-                                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                Notification notification = mBuilder.build();
-                                notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                mNotificationManager.notify(4, notification);
-
-                                NotificationTarget notificationTarget = new NotificationTarget(
-                                        getApplicationContext(),
-                                        rv,
-                                        R.id.remoteview_notification_icon,
-                                        notification,
-                                        4);
-
-                                Glide
-                                        .with(getApplicationContext()) // safer!
-                                        .load(kudaShoditListItem.getImageUrl())
-                                        .asBitmap()
-                                        .into(notificationTarget);
-                            }
+                            editor.putString("ids", gson.toJson(ids));
+                            editor.apply();
                         }
                     }
                 });
@@ -491,7 +596,7 @@ public class MainActivity extends LocalizationActivity {
 
         //language determination
         String loc = getCurrentLocale().toString();
-        Log.d("MainActivity", "loc: " + loc);
+
         if (loc.startsWith("en")) {
             TextView en = (TextView) headerView.findViewById(R.id.txtEng);
             en.setTextColor(Color.BLACK);
@@ -600,26 +705,14 @@ public class MainActivity extends LocalizationActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
                                         int childPos, long id) {
-                FragmentManager fm = getSupportFragmentManager();
 
-                for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-                    if (fm.getBackStackEntryAt(0) != null) {
-                        if (getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()) != null) {
-                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDetach();
-                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(0).getName()).onDestroy();
-                    }
-                    }
-                    if (fm.getBackStackEntryAt(i) != null) {
-                        if (getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()) != null) {
-                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDetach();
-                            getSupportFragmentManager().findFragmentByTag(fm.getBackStackEntryAt(i).getName()).onDestroy();
-                        }
-                    }
-                }
+
+                FragmentManager fm = getSupportFragmentManager();
+                deleteFragments();
                 for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
                     fm.popBackStack();
                 }
-
+                deleteFragments();
 
                 Fragment fragment;
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -651,37 +744,52 @@ public class MainActivity extends LocalizationActivity {
                 }else if(groupPos == 1){
                     findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
+
+                    SharedPreferences sharedPref = getSharedPreferences("position", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
                     getSupportActionBar().setBackgroundDrawable(g);
 
                     if(childPos == 0){
-                        MainActivity.Pposition = 1;
+                        editor.putInt("Pposition", 1);
+                        editor.commit();
                         fragment = new GdePoest();
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 1){
-                        MainActivity.Pposition = 2;
+                        editor.putInt("Pposition", 2);
+                        editor.commit();
                         fragment = new GdePoest();
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 2){
-                        MainActivity.Pposition = 3;
+                        editor.putInt("Pposition", 3);
+                        editor.commit();
                         fragment = new GdePoest();
                         transaction.replace(R.id.mainFrame, fragment);
                     }
                 }else if(groupPos == 2){
                     findViewById(R.id.mapImage).setVisibility(View.VISIBLE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
+
+                    SharedPreferences sharedPref = getSharedPreferences("position", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff851AF2, 0xffA64DFF});
                     getSupportActionBar().setBackgroundDrawable(g);
                     if(childPos == 0){
-                        MainActivity.Gposition = 1;
+                        editor.putInt("Gposition", 1);
+                        editor.commit();
+
                         fragment = new GdeOstanovitsya();
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 1){
-                        MainActivity.Gposition = 2;
+                        editor.putInt("Gposition", 2);
+                        editor.commit();
                         fragment = new GdeOstanovitsya();
                         transaction.replace(R.id.mainFrame, fragment);
                     }else if(childPos == 2){
-                        MainActivity.Gposition = 3;
+                        editor.putInt("Gposition", 3);
+                        editor.commit();
                         fragment = new GdeOstanovitsya();
                         transaction.replace(R.id.mainFrame, fragment);
                     }
@@ -767,7 +875,9 @@ public class MainActivity extends LocalizationActivity {
                 Toast.makeText(this, R.string.press_Back,
                         Toast.LENGTH_SHORT).show();
                 exit = true;
-                new Handler().postDelayed(new Runnable() {
+                handler = new Handler();
+
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         exit = false;
@@ -841,6 +951,8 @@ public class MainActivity extends LocalizationActivity {
         if (current instanceof EventsFragment) {
             ((EventsFragment) current).load();
         }
+
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .detach(current)
@@ -854,8 +966,14 @@ public class MainActivity extends LocalizationActivity {
         Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
         ((TextView) current.getView().findViewById(R.id.txtTo)).setText(getResources().getString(R.string.to));
         ((TextView) current.getView().findViewById(R.id.txtFrom)).setText(getResources().getString(R.string.from));
-        MainActivity.dateTimeTo = null;
-        MainActivity.dateTimeFrom = null;
+        dateTimeTo = null;
+        dateTimeFrom = null;
+
+        SharedPreferences sharedPref = getSharedPreferences("time", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.commit();
+
         ok(view);
     }
 
@@ -886,6 +1004,13 @@ public class MainActivity extends LocalizationActivity {
     public void turnMap(View view) {
         final Fragment current = getSupportFragmentManager().findFragmentById(R.id.mainFrame);
         mapVisible = !mapVisible;
+        SharedPreferences sharedPref = getSharedPreferences("position", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("map", mapVisible);
+        editor.commit();
+        Log.d("MainActivity", "MapVisible: " + mapVisible);
+
+
         if (current instanceof EventsFragment) {
             ((EventsFragment) current).close();
         } else if (current instanceof EntertainmentFragment) {
@@ -916,326 +1041,394 @@ public class MainActivity extends LocalizationActivity {
     }
 
     private void loadRecyclerViewGdePoest() {
-        gdePoestListItems.clear();
+        Log.d("MainActivity", "Gde poest Starting loading data");
+        if (gdePoestListItems.size() == 0) {
+            Log.d("MainActivity", "Gde poest Really loading data");
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/foods?limit=2000&page=1", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/foods?limit=2000&page=1", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("places");
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("places");
 
 
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject o = array.getJSONObject(i);
-                        String image;
-                        if (o.getJSONArray("images").length() > 0) {
-                            image = o.getJSONArray("images").get(0).toString();
-                        } else {
-                            image = "http://imgur.com/a/jkAwJ";
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject o = array.getJSONObject(i);
+                            String image;
+                            if (o.getJSONArray("images").length() > 0) {
+                                image = o.getJSONArray("images").get(0).toString();
+                            } else {
+                                image = "http://imgur.com/a/jkAwJ";
+                            }
+                            GdePoestListItem item = new GdePoestListItem(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    image,
+                                    o.getJSONObject("category").getString("name"),
+                                    o.optString("lon"),
+                                    o.optString("lat"),
+                                    o.optString("phone"),
+                                    o.optString("address"),
+                                    o.getInt("id")
+                            );
+
+                            gdePoestListItems.add(item);
+
                         }
-                        GdePoestListItem item = new GdePoestListItem(
-                                o.getString("name"),
-                                o.getString("description"),
-                                image,
-                                o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
-                                o.optString("phone"),
-                                o.optString("address"),
-                                o.getInt("id")
-                        );
 
-                        gdePoestListItems.add(item);
+                        SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(gdePoestListItems);
+                        editor.putString("gde", json);
+                        editor.apply();
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String loc = getCurrentLocale().toString();
-                if (loc.startsWith("en")) {
-                    params.put("Accept-Language", "en");
-                } else if (loc.startsWith("kk")) {
-                    params.put("Accept-Language", "kz");
-                } else {
-                    params.put("Accept-Language", "ru");
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
                 }
-                return params;
-            }
-        };
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String loc = getCurrentLocale().toString();
+                    if (loc.startsWith("en")) {
+                        params.put("Accept-Language", "en");
+                    } else if (loc.startsWith("kk")) {
+                        params.put("Accept-Language", "kz");
+                    } else {
+                        params.put("Accept-Language", "ru");
+                    }
+                    return params;
+                }
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        }
     }
 
     private void loadRecyclerViewGdeOst() {
-        hotelsListItems.clear();
+        Log.d("MainAcivity", "Starting loading data");
+        if (hotelsListItems.size() == 0) {
+            Log.d("MainAcivity", "Really loading data");
+            StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/hotels?limit=2000&page=1", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("places");
 
-        StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/hotels?limit=2000&page=1", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("places");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject o = array.getJSONObject(i);
+                            String image;
+                            if (o.getJSONArray("images").length() > 0) {
+                                image = o.getJSONArray("images").get(0).toString();
+                            } else {
+                                image = "http://imgur.com/a/jkAwJ";
+                            }
+                            HotelsListItem item = new HotelsListItem(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    image,
+                                    o.getJSONObject("category").getString("name"),
+                                    o.optString("lon"),
+                                    o.optString("lat"),
+                                    o.optString("phone"),
+                                    o.optString("address"),
+                                    o.getInt("stars"),
+                                    o.optString("site"),
+                                    o.getInt("id"),
+                                    o.optString("book_url")
+                            );
 
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject o = array.getJSONObject(i);
-                        String image;
-                        if (o.getJSONArray("images").length() > 0) {
-                            image = o.getJSONArray("images").get(0).toString();
-                        } else {
-                            image = "http://imgur.com/a/jkAwJ";
+                            hotelsListItems.add(item);
+
                         }
-                        HotelsListItem item = new HotelsListItem(
-                                o.getString("name"),
-                                o.getString("description"),
-                                image,
-                                o.getJSONObject("category").getString("name"),
-                                o.optString("lon"),
-                                o.optString("lat"),
-                                o.optString("phone"),
-                                o.optString("address"),
-                                o.getInt("stars"),
-                                o.optString("site"),
-                                o.getInt("id"),
-                                o.optString("book_url")
-                        );
+                        SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(hotelsListItems);
+                        editor.putString("hotel", json);
+                        editor.apply();
 
-                        hotelsListItems.add(item);
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
                 }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String loc = getCurrentLocale().toString();
-                if (loc.startsWith("en")) {
-                    params.put("Accept-Language", "en");
-                } else if (loc.startsWith("kk")) {
-                    params.put("Accept-Language", "kz");
-                } else {
-                    params.put("Accept-Language", "ru");
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
                 }
-                return params;
-            }
-        };
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String loc = getCurrentLocale().toString();
+                    if (loc.startsWith("en")) {
+                        params.put("Accept-Language", "en");
+                    } else if (loc.startsWith("kk")) {
+                        params.put("Accept-Language", "kz");
+                    } else {
+                        params.put("Accept-Language", "ru");
+                    }
+                    return params;
+                }
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        }
     }
 
     public void loadRecyclerViewEvents() {
-        eventsItemLists.clear();
+        if (eventsItemLists.size() == 0) {
 
-        StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/events?limit=2000&page=1", new Response.Listener<String>() {
+            StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/events?limit=2000&page=1", new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
+                @Override
+                public void onResponse(String response) {
 
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("places");
-                    Log.d("AllEvents", "size of array: " + array.length());
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject o = array.getJSONObject(i);
-                        String lon;
-                        String lat;
-                        if (o.getJSONArray("points").length() > 0) {
-                            lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
-                            lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
-                        } else {
-                            lon = "null";
-                            lat = "null";
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("places");
+
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject o = array.getJSONObject(i);
+                            String lon;
+                            String lat;
+                            if (o.getJSONArray("points").length() > 0) {
+                                lon = o.getJSONArray("points").getJSONObject(0).optString("lon");
+                                lat = o.getJSONArray("points").getJSONObject(0).optString("lat");
+                            } else {
+                                lon = "null";
+                                lat = "null";
+                            }
+                            String image;
+                            if (o.getJSONArray("images").length() != 0) {
+                                image = o.getJSONArray("images").get(0).toString();
+                            } else {
+                                image = "http://imgur.com/a/jkAwJ";
+                            }
+                            EventsItemList item = new EventsItemList(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    image,
+                                    o.getJSONObject("category").getString("name"),
+                                    lon,
+                                    lat,
+                                    o.getInt("id"),
+                                    o.getString("date"),
+                                    o.getString("address"),
+                                    "от 5000тг",
+                                    o.getString("url_ticketon")
+                            );
+                            eventsItemLists.add(item);
+
                         }
-                        String image;
-                        if (o.getJSONArray("images").length() != 0) {
-                            image = o.getJSONArray("images").get(0).toString();
-                        } else {
-                            image = "http://imgur.com/a/jkAwJ";
-                        }
-                        EventsItemList item = new EventsItemList(
-                                o.getString("name"),
-                                o.getString("description"),
-                                image,
-                                o.getJSONObject("category").getString("name"),
-                                lon,
-                                lat,
-                                o.getInt("id"),
-                                o.getString("date"),
-                                o.getString("address"),
-                                "от 5000тг",
-                                o.getString("url_ticketon")
-                        );
-                        eventsItemLists.add(item);
+                        SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(eventsItemLists);
+                        editor.putString("event", json);
+                        editor.apply();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
 
                     }
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
                 }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Sightseeings", error.toString());
-
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String loc = getCurrentLocale().toString();
-                if (loc.startsWith("en")) {
-                    params.put("Accept-Language", "en");
-                } else if (loc.startsWith("kk")) {
-                    params.put("Accept-Language", "kz");
-                } else {
-                    params.put("Accept-Language", "ru");
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String loc = getCurrentLocale().toString();
+                    if (loc.startsWith("en")) {
+                        params.put("Accept-Language", "en");
+                    } else if (loc.startsWith("kk")) {
+                        params.put("Accept-Language", "kz");
+                    } else {
+                        params.put("Accept-Language", "ru");
+                    }
+                    return params;
                 }
-                return params;
-            }
-        };
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(stringRequest);
+        }
     }
 
     private void loadRecyclerViewSight() {
-        kudaShoditListItems.clear();
-        StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+        if (kudaShoditListItems.size() == 0) {
+            StringRequest stringRequest = new MyRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/sightseeings?limit=2000&page=1", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("places");
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("places");
 
 
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject o = array.getJSONObject(i);
-                        KudaShoditListItem item = new KudaShoditListItem(
-                                o.getString("name"),
-                                o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
-                                o.getJSONObject("category").getString("name"),
-                                o.getString("lon"),
-                                o.getString("lat"),
-                                o.getInt("id"),
-                                o.getString("address")
-                        );
-                        kudaShoditListItems.add(item);
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject o = array.getJSONObject(i);
+                            KudaShoditListItem item = new KudaShoditListItem(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    o.getJSONArray("images").get(0).toString(),
+                                    o.getJSONObject("category").getString("name"),
+                                    o.getString("lon"),
+                                    o.getString("lat"),
+                                    o.getInt("id"),
+                                    o.getString("address")
+                            );
+                            kudaShoditListItems.add(item);
+                        }
+                        SharedPreferences prefs = getSharedPreferences("arraylist", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(kudaShoditListItems);
+                        editor.putString("kuda", json);
+                        editor.apply();
+
+                    } catch (JSONException e) {
+
+                        e.printStackTrace();
                     }
 
-                } catch (JSONException e) {
-
-                    e.printStackTrace();
                 }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String loc = getCurrentLocale().toString();
-                if (loc.startsWith("en")) {
-                    params.put("Accept-Language", "en");
-                } else if (loc.startsWith("kk")) {
-                    params.put("Accept-Language", "kz");
-                } else {
-                    params.put("Accept-Language", "ru");
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
                 }
-                return params;
-            }
-        };
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String loc = getCurrentLocale().toString();
+                    if (loc.startsWith("en")) {
+                        params.put("Accept-Language", "en");
+                    } else if (loc.startsWith("kk")) {
+                        params.put("Accept-Language", "kz");
+                    } else {
+                        params.put("Accept-Language", "ru");
+                    }
+                    return params;
+                }
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(stringRequest);
+        }
     }
 
     private void loadRecyclerViewShopping() {
-        kudaShoditListItems.clear();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("places");
+        SharedPreferences prefs = getSharedPreferences("firstTime", Context.MODE_PRIVATE);
+        firstTime = prefs.getBoolean("firstTime", true);
+        if (firstTime) {
+            Log.d("MainActivity", "loading Really Shopping");
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("places");
 
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject o = array.getJSONObject(i);
-                        KudaShoditListItem item = new KudaShoditListItem(
-                                o.getString("name"),
-                                o.getString("description"),
-                                o.getJSONArray("images").get(0).toString(),
-                                o.getJSONObject("category").getString("name"),
-                                o.getString("lon"),
-                                o.getString("lat"),
-                                o.getInt("id"),
-                                o.getString("address")
-                        );
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject o = array.getJSONObject(i);
+                            KudaShoditListItem item = new KudaShoditListItem(
+                                    o.getString("name"),
+                                    o.getString("description"),
+                                    o.getJSONArray("images").get(0).toString(),
+                                    o.getJSONObject("category").getString("name"),
+                                    o.getString("lon"),
+                                    o.getString("lat"),
+                                    o.getInt("id"),
+                                    o.getString("address")
+                            );
 
-                        kudaShoditListItems.add(item);
+                            item.setUrl("http://89.219.32.107/api/v1/places/shopping?limit=1000&page=1");
+                            kudaShoditListItems.add(item);
+                        }
 
+                        SharedPreferences prefs = getSharedPreferences("firstTime", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("firstTime", false);
+                        editor.apply();
+
+                    } catch (JSONException e) {
+
+                        e.printStackTrace();
                     }
 
-                } catch (JSONException e) {
 
-                    e.printStackTrace();
                 }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String loc = getCurrentLocale().toString();
-                if (loc.startsWith("en")) {
-                    params.put("Accept-Language", "en");
-                } else if (loc.startsWith("kk")) {
-                    params.put("Accept-Language", "kz");
-                } else {
-                    params.put("Accept-Language", "ru");
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
                 }
-                return params;
-            }
-        };
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    String loc = getCurrentLocale().toString();
+                    if (loc.startsWith("en")) {
+                        params.put("Accept-Language", "en");
+                    } else if (loc.startsWith("kk")) {
+                        params.put("Accept-Language", "kz");
+                    } else {
+                        params.put("Accept-Language", "ru");
+                    }
+                    return params;
+                }
+            };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(stringRequest);
+
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity", "OnDestroy was called");
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+        SmartLocation.with(getApplicationContext()).location().stop();
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        fragList.add(new WeakReference(fragment));
+    }
+
+    public void deleteFragments() {
+        for (WeakReference<Fragment> ref : fragList) {
+            Fragment f = ref.get();
+            if (f != null) {
+                if (f.isVisible()) {
+                    //f.onDetach();
+                    f.onDestroy();
+                    Log.d("MainActivity", "Some fragments were deleted");
+                }
+            }
+        }
     }
 }

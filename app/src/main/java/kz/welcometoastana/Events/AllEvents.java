@@ -3,7 +3,9 @@ package kz.welcometoastana.Events;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,12 +34,12 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.MyRequest;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
@@ -51,6 +55,7 @@ public class AllEvents extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RequestManager glide;
 
     public AllEvents() {
         // Required empty public constructor
@@ -59,29 +64,20 @@ public class AllEvents extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         if (eventsItemLists == null) {
             eventsItemLists = new ArrayList<>();
         }
         if (eventsItemLists.size() == 0) {
             loadRecyclerView();
         } else {
-            adapter = new EventsRecycleAdapter(eventsItemLists, getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -90,6 +86,7 @@ public class AllEvents extends Fragment {
                 loadRecyclerView();
             }
         });
+
         return v;
     }
 
@@ -102,15 +99,16 @@ public class AllEvents extends Fragment {
         }
         progressDialog.show();
 
-        if (MainActivity.dateTimeFrom != null) {
-            Calendar dateFrom = MainActivity.dateTimeFrom;
-            if (MainActivity.dateTimeTo != null) {
-                Calendar dateTo = MainActivity.dateTimeTo;
-                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-            } else {
-                Calendar dateTo = Calendar.getInstance();
-                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-            }
+        SharedPreferences sharedPref = getContext().getSharedPreferences("time", Context.MODE_PRIVATE);
+        long timefrom = sharedPref.getLong("dateTimeFrom", 0);
+        long timeTo = sharedPref.getLong("dateTimeTo", 0);
+
+        if (timefrom != 0 && timeTo != 0) {
+            Calendar dateFrom = new GregorianCalendar();
+            Calendar dateTo = new GregorianCalendar();
+            dateFrom.setTimeInMillis(timefrom);
+            dateTo.setTimeInMillis(timeTo);
+            Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
         } else {
             Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1";
         }
@@ -123,7 +121,6 @@ public class AllEvents extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
-                    Log.d("AllEvents", "size of array: " + array.length());
                     for (int i=0; i<array.length();i++){
                         JSONObject o = array.getJSONObject(i);
                         String lon;
@@ -159,22 +156,7 @@ public class AllEvents extends Fragment {
                     }
 
 
-                    adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
+                    setAdapter();
 
                     progressDialog.dismiss();
                     swipeRefreshLayout.setRefreshing(false);
@@ -191,7 +173,6 @@ public class AllEvents extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
                 progressDialog.dismiss();
-                Log.d("Sightseeings",error.toString());
 
             }
         }) {
@@ -241,6 +222,59 @@ public class AllEvents extends Fragment {
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        try {
+            recyclerView.setAdapter(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("AllEvents", "OnDetach");
+        super.onDetach();
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        eventsItemLists = null;
+        formatDateTime = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        adapter = null;
+        recyclerView = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
+    }
+
+
+    private void setAdapter() {
+        adapter = new EventsRecycleAdapter(glide, eventsItemLists, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                    }
+                })
+        );
+
     }
 
 

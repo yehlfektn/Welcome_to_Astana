@@ -26,7 +26,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     public ViewPagerAdapter(Context context, ArrayList<String> arrayList) {
         this.context = context;
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = LayoutInflater.from(context);
         this.arrayList = arrayList;
     }
 

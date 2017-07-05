@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,12 +44,12 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class OtdyhFragment extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/routes?limit=20&page=1&category=55";
+    private String Url = "http://89.219.32.107/api/v1/places/routes?limit=20&page=1&category=55";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private RequestManager glide;
 
     public OtdyhFragment() {
         // Required empty public constructor
@@ -63,7 +64,9 @@ public class OtdyhFragment extends Fragment {
         recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
         if(kudaShoditListItems ==null) {
             kudaShoditListItems = new ArrayList<>();
         }
@@ -73,22 +76,7 @@ public class OtdyhFragment extends Fragment {
 
         }else{
 
-            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            // do whatever
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -127,23 +115,7 @@ public class OtdyhFragment extends Fragment {
                         kudaShoditListItems.add(item);
 
                     }
-                    Log.d("Sightseeings","AdapterAttached");
-                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
+                    setAdapter();
 
                     swipeRefreshLayout.setRefreshing(false);
 
@@ -157,7 +129,7 @@ public class OtdyhFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 swipeRefreshLayout.setRefreshing(false);
-                Log.d("Sightseeings",error.toString());
+
 
             }
         }) {
@@ -206,4 +178,41 @@ public class OtdyhFragment extends Fragment {
 
     }
 
+    private void setAdapter() {
+        adapter = new RecycleAdapter(glide, kudaShoditListItems, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        kudaShoditListItems = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        adapter = null;
+        recyclerView = null;
+        super.onDestroy();
+    }
 }

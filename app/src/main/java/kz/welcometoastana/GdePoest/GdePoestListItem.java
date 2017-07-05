@@ -7,11 +7,7 @@ import kz.welcometoastana.Nearby.mainListItem;
  */
 
 public class GdePoestListItem extends mainListItem {
-
-    private String name;
     private String summary;
-    private String imageUrl;
-    private String category;
     private String lon;
     private String lat;
     private String phone;
@@ -21,10 +17,10 @@ public class GdePoestListItem extends mainListItem {
 
 
     public GdePoestListItem(String name, String description, String imageUrl, String category,String lon, String lat, String phone, String address,int id){
-        this.name = name;
+        super.name = name;
         this.summary = description;
         this.imageUrl = imageUrl;
-        this.category = category;
+        super.category = category;
         this.lon=lon;
         this.lat=lat;
         this.phone=phone;

@@ -20,6 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +44,12 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class ClubsFragment extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/places/shopping?limit=200&page=1&category=41";
+    private String Url = "http://89.219.32.107/api/v1/places/shopping?limit=200&page=1&category=41";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<KudaShoditListItem> kudaShoditListItems;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RequestManager glide;
 
     public ClubsFragment() {
         // Required empty public constructor
@@ -57,7 +60,9 @@ public class ClubsFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
 
-
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
         recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,20 +73,7 @@ public class ClubsFragment extends Fragment {
         if(kudaShoditListItems.size()==0){
             loadRecyclerView();
         }else{
-            adapter = new RecycleAdapter(kudaShoditListItems,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            // do whatever
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -119,22 +111,7 @@ public class ClubsFragment extends Fragment {
 
                     }
 
-                    adapter = new RecycleAdapter(kudaShoditListItems,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
+                    setAdapter();
 
 
                     swipeRefreshLayout.setRefreshing(false);
@@ -195,6 +172,44 @@ public class ClubsFragment extends Fragment {
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        kudaShoditListItems = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        adapter = null;
+        recyclerView = null;
+        super.onDestroy();
+    }
+
+    private void setAdapter() {
+        adapter = new RecycleAdapter(glide, kudaShoditListItems, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
     }
 
 }

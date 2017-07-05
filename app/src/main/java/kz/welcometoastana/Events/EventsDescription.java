@@ -3,7 +3,6 @@ package kz.welcometoastana.Events;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -45,6 +44,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -74,7 +74,6 @@ import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.KudaShoditListItem;
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.Nearby.AdapterforNearby;
 import kz.welcometoastana.Nearby.AdapterforNearby5;
 import kz.welcometoastana.Nearby.listItemNearby;
@@ -94,7 +93,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     int id;
     ViewPager viewPager;
     LinearLayout linearLayout;
-    double lat2, lng2;
     LocationRequest mLocationRequest;
     listItemNearby list;
     private TabLayout tabLayout;
@@ -104,6 +102,28 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     private ArrayList<String> imageUrls;
     private EventsItemList nextItem;
     private String Url;
+    private RequestManager glide;
+
+    @Override
+    public void onDestroy() {
+        Log.d("GdePoest", "OnDestroy");
+        mGoogleApiClient = null;
+        mGoogleMap = null;
+        mLocationRequest = null;
+        lngStr = null;
+        latStr = null;
+        viewPager = null;
+        linearLayout = null;
+        list = null;
+        dots = null;
+        imageUrls = null;
+        viewPagerNext = null;
+        tabLayout = null;
+        nextItem = null;
+        Url = null;
+        glide.onDestroy();
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,18 +131,15 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_events_description);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading data...");
-        if (progressDialog.getWindow() != null) {
-            progressDialog.getWindow().setDimAmount(0);
-        }
-        progressDialog.show();
         getSupportActionBar().setTitle(getIntent().getStringExtra("category"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF5800, 0xffFF8B00});
         getSupportActionBar().setBackgroundDrawable(g);
 
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
 
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         relativeLayout.setVisibility(View.GONE);
@@ -152,13 +169,14 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         latStr = getIntent().getStringExtra("latit");
         lngStr = getIntent().getStringExtra("longit");
 
-        Url = getIntent().getStringExtra("url");
-
-
-        if(MainActivity.gpsLocation != null){
-            lat2 = MainActivity.gpsLocation.getLatitude();
-            lng2 = MainActivity.gpsLocation.getLongitude();
+        if (lngStr.equals("null")) {
+            lngStr = "0";
+            latStr = "0";
         }
+        lat = Double.parseDouble(latStr);
+        lng = Double.parseDouble(lngStr);
+
+        Url = getIntent().getStringExtra("url");
 
         TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
 
@@ -378,7 +396,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                         nameNext.setText(nextItem.getName());
                         categoryNext.setText(nextItem.getCategory());
-                        Glide.with(getApplicationContext())
+                        glide
                                 .load(nextItem.getImageUrl())
                                 .centerCrop()
                                 .into(imageViewNext);
@@ -395,7 +413,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("EventsDescription", error.toString());
+
             }
         }) {
             @Override
@@ -529,7 +547,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                     }
                 } catch (JSONException e) {
-                    progressDialog.dismiss();
+
                     e.printStackTrace();
                 }
 
@@ -537,22 +555,23 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (WrapContentHeightViewPager) findViewById(R.id.viewpagerEvent);
-                viewPagerNext.setAdapter(new AdapterforNearby(EventsDescription.this, list, "orange"));
+                viewPagerNext.setAdapter(new AdapterforNearby(glide, EventsDescription.this, list, "orange"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
                         tabLayout.setupWithViewPager(viewPagerNext);
                     }
                 });
+                tabLayout.setVisibility(View.VISIBLE);
+                viewPagerNext.setVisibility(View.VISIBLE);
+                findViewById(R.id.txtShowMore).setVisibility(View.VISIBLE);
 
 
-                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                Log.d("EventsDescription", error.toString());
+
             }
         }) {
             @Override
@@ -694,15 +713,6 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onLocationChanged(Location location) {
-        if(location == null){
-            Toast.makeText(this, "Can't get current location", Toast.LENGTH_LONG).show();
-        } else {
-            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            lat2=location.getLatitude();
-            lng2=location.getLongitude();
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
-            mGoogleMap.animateCamera(update);
-        }
     }
     public void GoogleMapEvents(View view) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
@@ -737,7 +747,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, ""));
+        viewPagerNext.setAdapter(new AdapterforNearby5(glide, this, list, ""));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;

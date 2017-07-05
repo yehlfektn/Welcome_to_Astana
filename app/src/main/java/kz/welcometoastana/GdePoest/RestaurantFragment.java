@@ -20,6 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,11 +40,12 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  * A simple {@link Fragment} subclass.
  */
 public class RestaurantFragment extends Fragment {
-    private final String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
+    private String Url = "http://89.219.32.107/api/v1/foods?limit=20&page=1&category=1";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GdePoestListItem> gdePoestListItems;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RequestManager glide;
     public RestaurantFragment() {
         // Required empty public constructor
     }
@@ -56,7 +59,9 @@ public class RestaurantFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
         if(gdePoestListItems ==null) {
             gdePoestListItems = new ArrayList<>();
         }
@@ -65,22 +70,7 @@ public class RestaurantFragment extends Fragment {
             loadRecyclerView();
 
         }else{
-            adapter = new GdePoestRecycleAdapter(gdePoestListItems,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            // do whatever
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -128,23 +118,7 @@ public class RestaurantFragment extends Fragment {
 
                     }
 
-                    adapter = new GdePoestRecycleAdapter(gdePoestListItems,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
+                    setAdapter();
 
                     swipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
@@ -204,6 +178,47 @@ public class RestaurantFragment extends Fragment {
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
+    }
+
+    private void setAdapter() {
+        adapter = new GdePoestRecycleAdapter(glide, gdePoestListItems, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        adapter = null;
+        recyclerView = null;
+        swipeRefreshLayout = null;
+        Url = null;
+        gdePoestListItems = null;
+        glide.onDestroy();
+        glide = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
     }
 
 }

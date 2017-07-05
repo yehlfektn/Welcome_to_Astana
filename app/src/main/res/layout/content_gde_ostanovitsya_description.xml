@@ -338,6 +338,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/black"
+            android:visibility="gone"
             app:tabGravity="fill"
             app:tabIndicatorHeight="0dp"
             app:tabMaxWidth="0dp"
@@ -358,13 +359,15 @@
             android:gravity="center"
             android:onClick="showMore"
             android:text="Посмотреть все"
-            android:textColor="@color/txtColor" />
+            android:textColor="@color/txtColor"
+            android:visibility="gone" />
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="15dp"
             android:background="@android:color/black"
-            android:onClick="showMore" />
+            android:onClick="showMore"
+            android:visibility="visible" />
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

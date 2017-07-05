@@ -2,7 +2,9 @@ package kz.welcometoastana.GdePoest;
 
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -15,6 +17,7 @@ import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -56,7 +59,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.FixedSpeedScroller;
 import kz.welcometoastana.utility.MyRequest;
@@ -77,6 +79,7 @@ public class GdePoest extends Fragment {
     private List<GdePoestListItem> gdePoestListItems;
     private Map<Marker, GdePoestListItem> markerMap;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private Boolean map = false;
 
     public GdePoest() {
         // Required empty public constructor
@@ -96,6 +99,9 @@ public class GdePoest extends Fragment {
         tabLayout = (TabLayout) v.findViewById(R.id.tabsCafe);
         viewPager = (ViewPager) v.findViewById(R.id.viewpagerCafe);
         //set an adpater
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+        map = sharedPref.getBoolean("map", false);
+        Log.d("MainActivity", "GdePoest: " + map);
 
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), getActivity()));
         try {
@@ -119,7 +125,8 @@ public class GdePoest extends Fragment {
             }
         });
 
-        final int position = MainActivity.Pposition;
+
+        final int position = sharedPref.getInt("Pposition", 0);
         viewPager.setCurrentItem(position);
 
 
@@ -127,15 +134,14 @@ public class GdePoest extends Fragment {
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        if (MainActivity.mapVisible != null) {
-            if (MainActivity.mapVisible) {
+        if (map) {
                 viewPager.setVisibility(View.GONE);
                 v.findViewById(R.id.mapView).setVisibility(View.VISIBLE);
             } else {
                 viewPager.setVisibility(View.VISIBLE);
                 v.findViewById(R.id.mapView).setVisibility(View.GONE);
             }
-        }
+
         new Handler().postDelayed(
                 new Runnable() {
                     @Override
@@ -161,7 +167,8 @@ public class GdePoest extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                if (MainActivity.mapVisible) {
+
+                if (map) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
@@ -181,7 +188,11 @@ public class GdePoest extends Fragment {
                         // For dropping a marker at a point on the Map
 
                         int a = tabLayout.getSelectedTabPosition();
-                        MainActivity.Pposition = a;
+
+                        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("Pposition", a);
+                        editor.commit();
                         if (a == 0) {
                             Url = "http://89.219.32.107/api/v1/foods?limit=2000&page=1";
                         } else if (a == 1) {
@@ -222,8 +233,6 @@ public class GdePoest extends Fragment {
 
                                         gdePoestListItems.add(item);
                                     }
-
-                                    Log.d("GdeOst", "size: " + gdePoestListItems.size());
                                     int size = gdePoestListItems.size();
                                     for (int i = 0; i < size; i++) {
                                         final GdePoestListItem gdePoestListItem = gdePoestListItems.get(i);
@@ -268,7 +277,6 @@ public class GdePoest extends Fragment {
                                             padding = 100;
                                         }
                                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
-                                        Log.d("GdeOst", "cameraAnimated");
                                         googleMap.animateCamera(cu);
                                     }
 
@@ -279,7 +287,6 @@ public class GdePoest extends Fragment {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("GdeOst", error.toString());
                             }
                         }) {
                             @Override
@@ -307,7 +314,6 @@ public class GdePoest extends Fragment {
                                 final GdePoestListItem gde = markerMap.get(marker);
 
                                 if (gde != null) {
-                                    Log.d("GdeOst", gde.getName());
                                     ((TextView) v.findViewById(R.id.name)).setText(gde.getName());
                                     ((TextView) v.findViewById(R.id.category)).setText(gde.getCategory());
                                     if (gde.getAddress().length() < 2) {
@@ -394,6 +400,19 @@ public class GdePoest extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        Log.d("EventsFragment", "Fragment count" + fragmentPagerAdapter.getCount());
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                viewPagerFragment.onDestroy();
+            }
+        }
+
+
         try {
             Field childFragmentManager = Fragment.class
                     .getDeclaredField("mChildFragmentManager");
@@ -404,25 +423,41 @@ public class GdePoest extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        mMapView.onDestroy();
+        try {
+            mMapView.onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        try {
+            mMapView.onResume();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        try {
+            mMapView.onPause();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mMapView.onLowMemory();
+        try {
+            mMapView.onLowMemory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {
@@ -515,7 +550,6 @@ public class GdePoest extends Fragment {
     }
 
     public void close() {
-        Log.d("EventsFragment", "Close in EventsFragment");
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 

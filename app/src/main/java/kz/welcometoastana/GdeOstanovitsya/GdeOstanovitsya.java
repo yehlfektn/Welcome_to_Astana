@@ -2,7 +2,9 @@ package kz.welcometoastana.GdeOstanovitsya;
 
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -18,11 +20,11 @@ import android.support.annotation.ColorInt;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.FixedSpeedScroller;
 import kz.welcometoastana.utility.MyRequest;
@@ -84,6 +85,7 @@ public class GdeOstanovitsya extends Fragment {
     private String Url;
     private List<HotelsListItem> kudaShoditListItems;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private boolean map = false;
 
     public GdeOstanovitsya() {
         // Required empty public constructor
@@ -123,7 +125,8 @@ public class GdeOstanovitsya extends Fragment {
         });
 
 
-        final int position = MainActivity.Gposition;
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+        final int position = sharedPref.getInt("Gposition", 0);
         viewPager.setCurrentItem(position);
 
 
@@ -131,15 +134,15 @@ public class GdeOstanovitsya extends Fragment {
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        if (MainActivity.mapVisible != null) {
-            if (MainActivity.mapVisible) {
+        map = sharedPref.getBoolean("map", false);
+        if (map) {
                 viewPager.setVisibility(View.GONE);
                 v.findViewById(R.id.mapView).setVisibility(View.VISIBLE);
             } else {
                 viewPager.setVisibility(View.VISIBLE);
                 v.findViewById(R.id.mapView).setVisibility(View.GONE);
             }
-        }
+
         new Handler().postDelayed(
                 new Runnable() {
                     @Override
@@ -165,7 +168,7 @@ public class GdeOstanovitsya extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                if (MainActivity.mapVisible) {
+                if (map) {
                 mMapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap mMap) {
@@ -185,7 +188,11 @@ public class GdeOstanovitsya extends Fragment {
                         // For dropping a marker at a point on the Map
 
                         int a = tabLayout.getSelectedTabPosition();
-                        MainActivity.Gposition = a;
+                        SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("Gposition", a);
+                        editor.commit();
+
                         if (a == 0) {
                             Url = "http://89.219.32.107/api/v1/hotels?limit=2000&page=1";
                         } else if (a == 1) {
@@ -203,7 +210,6 @@ public class GdeOstanovitsya extends Fragment {
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     JSONArray array = jsonObject.getJSONArray("places");
-                                    Log.d("AllEvents", "size of array: " + array.length());
                                     for (int i = 0; i < array.length(); i++) {
                                         JSONObject o = array.getJSONObject(i);
 
@@ -231,7 +237,7 @@ public class GdeOstanovitsya extends Fragment {
                                         kudaShoditListItems.add(item);
                                     }
 
-                                    Log.d("GdeOst", "size: " + kudaShoditListItems.size());
+
                                     int size = kudaShoditListItems.size();
                                     for (int i = 0; i < size; i++) {
                                         final HotelsListItem hotelsListItem = kudaShoditListItems.get(i);
@@ -276,7 +282,6 @@ public class GdeOstanovitsya extends Fragment {
                                             padding = 100;
                                         }
                                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, metrics.widthPixels, metrics.heightPixels, padding);
-                                        Log.d("GdeOst", "cameraAnimated");
                                         googleMap.animateCamera(cu);
                                     }
 
@@ -287,7 +292,6 @@ public class GdeOstanovitsya extends Fragment {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("GdeOst", error.toString());
                             }
                         }) {
                             @Override
@@ -315,7 +319,6 @@ public class GdeOstanovitsya extends Fragment {
                                 final HotelsListItem hotelsListItem = markerMap.get(marker);
 
                                 if (hotelsListItem != null) {
-                                    Log.d("GdeOst", hotelsListItem.getName());
                                     ((TextView) v.findViewById(R.id.name)).setText(hotelsListItem.getName());
                                     ((TextView) v.findViewById(R.id.category)).setText(hotelsListItem.getCategory());
                                     if (hotelsListItem.getAddress().length() < 2) {
@@ -407,10 +410,25 @@ public class GdeOstanovitsya extends Fragment {
         }
     }
 
+    private String makeFragmentName(int viewId, int position) {
+        return "android:switcher:" + viewId + ":" + position;
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+            String name = makeFragmentName(viewPager.getId(), i);
+            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+            if (viewPagerFragment != null) {
+                // Interact with any views/data that must be alive
+                viewPagerFragment.onDestroy();
+            }
+        }
+
+
         try {
             Field childFragmentManager = Fragment.class
                     .getDeclaredField("mChildFragmentManager");
@@ -421,7 +439,7 @@ public class GdeOstanovitsya extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        mMapView.onDestroy();
+        //mMapView.onDestroy();
     }
 
     @Override
@@ -532,7 +550,6 @@ public class GdeOstanovitsya extends Fragment {
     }
 
     public void close() {
-        Log.d("EventsFragment", "Close in EventsFragment");
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 

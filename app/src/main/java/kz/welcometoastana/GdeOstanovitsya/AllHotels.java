@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,11 +44,11 @@ import kz.welcometoastana.utility.RecyclerItemClickListener;
  */
 public class AllHotels extends Fragment {
 
-    private final String Url = "http://89.219.32.107/api/v1/hotels?limit=2000&page=1";
+    private String Url = "http://89.219.32.107/api/v1/hotels?limit=2000&page=1";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private List<HotelsListItem> hotelsListItems;
+    private RequestManager glide;
 
     public AllHotels() {
         // Required empty public constructor
@@ -61,27 +63,17 @@ public class AllHotels extends Fragment {
         recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
+
         if(hotelsListItems ==null) {
             hotelsListItems = new ArrayList<>();
         }
         if(hotelsListItems.size()==0){
             loadRecyclerView();
         }else{
-            adapter = new HotelsRecycleAdapter(hotelsListItems,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -137,21 +129,7 @@ public class AllHotels extends Fragment {
 
                     }
 
-                    adapter = new HotelsRecycleAdapter(hotelsListItems,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                }
-                            })
-                    );
+                    setAdapter();
                     swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
@@ -216,6 +194,44 @@ public class AllHotels extends Fragment {
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
+
+    private void setAdapter() {
+        HotelsRecycleAdapter adapter = new HotelsRecycleAdapter(glide, hotelsListItems, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                    }
+                })
+        );
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        hotelsListItems = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        recyclerView = null;
+        super.onDestroy();
+    }
+
 
 
 }

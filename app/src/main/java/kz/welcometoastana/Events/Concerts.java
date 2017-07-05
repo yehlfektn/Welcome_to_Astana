@@ -2,14 +2,15 @@ package kz.welcometoastana.Events;
 
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +32,12 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
 import kz.welcometoastana.utility.RecyclerItemClickListener;
 
@@ -49,6 +52,7 @@ public class Concerts extends Fragment {
     private RecyclerView.Adapter adapter;
     private List<EventsItemList> eventsItemLists;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RequestManager glide;
 
     public Concerts() {
         // Required empty public constructor
@@ -57,9 +61,14 @@ public class Concerts extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hostels, container, false);
-        recyclerView = (RecyclerView)v.findViewById(R.id.recycleHostels);
+
+        recyclerView = (RecyclerView) v.findViewById(R.id.recycleHostels);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
 
 
         if(eventsItemLists == null) {
@@ -69,19 +78,7 @@ public class Concerts extends Fragment {
             loadRecyclerView();
         }else{
 
-            adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
-            recyclerView.setAdapter(adapter);
-            recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            onClick(position);
-                        }
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                        }
-                    })
-            );
+            setAdapter();
         }
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -97,19 +94,19 @@ public class Concerts extends Fragment {
 
     public void loadRecyclerView() {
         eventsItemLists.clear();
-        if (MainActivity.dateTimeFrom != null) {
-            Calendar dateFrom = MainActivity.dateTimeFrom;
-            if (MainActivity.dateTimeTo != null) {
-                Calendar dateTo = MainActivity.dateTimeTo;
-                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1&category=12" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-            } else {
-                Calendar dateTo = Calendar.getInstance();
-                Url = "http://89.219.32.107/api/v1/places/events?limit=2000&page=1&category=12" + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
-            }
+        SharedPreferences sharedPref = getContext().getSharedPreferences("time", Context.MODE_PRIVATE);
+        long timefrom = sharedPref.getLong("dateTimeFrom", 0);
+        long timeTo = sharedPref.getLong("dateTimeTo", 0);
+
+        if (timefrom != 0 && timeTo != 0) {
+            Calendar dateFrom = new GregorianCalendar();
+            Calendar dateTo = new GregorianCalendar();
+            dateFrom.setTimeInMillis(timefrom);
+            dateTo.setTimeInMillis(timeTo);
+            Url = Url + "&from=" + formatDateTime.format(dateFrom.getTime()) + "&to=" + formatDateTime.format(dateTo.getTime());
         } else {
             Url = "http://89.219.32.107/api/v1/places/events?limit=200&page=1&category=12";
         }
-        Log.d("ExpoEvent", "URL: " + Url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -153,22 +150,7 @@ public class Concerts extends Fragment {
                     }
 
 
-                    adapter = new EventsRecycleAdapter(eventsItemLists,getContext());
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.addOnItemTouchListener(
-                            new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    onClick(position);
-                                }
-
-                                @Override
-                                public void onLongItemClick(View view, int position) {
-                                    // do whatever
-                                }
-                            })
-                    );
+                    setAdapter();
                     swipeRefreshLayout.setRefreshing(false);
 
                 } catch (JSONException e) {
@@ -181,7 +163,6 @@ public class Concerts extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Sightseeings",error.toString());
                 swipeRefreshLayout.setRefreshing(false);
             }
         }) {
@@ -232,5 +213,44 @@ public class Concerts extends Fragment {
         startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
+
+    private void setAdapter() {
+        adapter = new EventsRecycleAdapter(glide, eventsItemLists, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        onClick(position);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                    }
+                })
+        );
+
+    }
+
+    @Override
+    public void onDestroy() {
+        recyclerView.setAdapter(null);
+        glide.onDestroy();
+        eventsItemLists = null;
+        formatDateTime = null;
+        Url = null;
+        swipeRefreshLayout = null;
+        adapter = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        glide.onDestroy();
+        super.onDestroyView();
+    }
+
+
 
 }

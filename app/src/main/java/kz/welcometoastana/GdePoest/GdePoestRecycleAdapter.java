@@ -2,43 +2,44 @@ package kz.welcometoastana.GdePoest;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import java.util.List;
 
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.R;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by nurdaulet on 5/5/17.
  */
 
-public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycleAdapter.ViewHolder> implements LocationListener {
+public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycleAdapter.ViewHolder> {
 
     private final Context context;
-    double lat2, lng2;
-    double distanceDouble;
+    private final LayoutInflater mInflater;
+    private final RequestManager glide;
     private List<GdePoestListItem> eventsItemLists;
 
-    public GdePoestRecycleAdapter(List<GdePoestListItem> eventsItemLists, Context context) {
+    public GdePoestRecycleAdapter(RequestManager Glide, List<GdePoestListItem> eventsItemLists, Context context) {
         this.eventsItemLists = eventsItemLists;
         this.context = context;
+        this.glide = Glide;
+        this.mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public GdePoestRecycleAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_gdepoest,parent,false);
+        View v = mInflater.inflate(R.layout.list_item_gdepoest, parent, false);
 
         return new GdePoestRecycleAdapter.ViewHolder(v);
     }
@@ -62,11 +63,14 @@ public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycle
         }
 
         Location startPoint = new Location("locationA");
-        if(MainActivity.gpsLocation != null){
-
-            lat2 = MainActivity.gpsLocation.getLatitude();
-            lng2 = MainActivity.gpsLocation.getLongitude();
-
+        SharedPreferences sharedPref = context.getSharedPreferences("app", MODE_PRIVATE);
+        String latitude = sharedPref.getString("lat", "null");
+        String lon = sharedPref.getString("lon", "null");
+        double lat2 = 0.0;
+        double lng2 = 0.0;
+        if (!latitude.equals("null")) {
+            lat2 = Double.parseDouble(latitude);
+            lng2 = Double.parseDouble(lon);
         }
         startPoint.setLatitude(lat2);
         startPoint.setLongitude(lng2);
@@ -79,7 +83,7 @@ public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycle
             endPoint.setLatitude(Double.parseDouble(kudaShoditListItem.getLat()));
             endPoint.setLongitude(Double.parseDouble(kudaShoditListItem.getLon()));
 
-            distanceDouble = startPoint.distanceTo(endPoint);
+            double distanceDouble = startPoint.distanceTo(endPoint);
             //Intent intent = new Intent(get, DescriptionActivity.class);
 
             if(distanceDouble > 5000000){
@@ -92,8 +96,7 @@ public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycle
                     holder.distance.setText(" " + (int) distanceDouble + "м ");
                 }
             }}
-        Glide.with(context)
-                .load(kudaShoditListItem.getImageUrl())
+        glide.load(kudaShoditListItem.getImageUrl())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageView);
 
@@ -104,31 +107,6 @@ public class GdePoestRecycleAdapter extends RecyclerView.Adapter<GdePoestRecycle
         return eventsItemLists.size();
     }
 
-    @Override
-    public void onLocationChanged(Location loc)
-    {
-        lat2=loc.getLatitude();
-        lng2=loc.getLongitude();
-        String Text = "My current location is: " +"Latitud = "+ loc.getLatitude() +"Longitud = " + loc.getLongitude();
-
-        Log.d("LAAAAT AND LONGIT", Text);
-        //Toast.makeText( getApplicationContext(), Text,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

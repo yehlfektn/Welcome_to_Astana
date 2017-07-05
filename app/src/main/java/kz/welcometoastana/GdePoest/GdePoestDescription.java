@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,6 +45,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -73,7 +75,6 @@ import at.blogc.android.views.ExpandableTextView;
 import kz.welcometoastana.Events.EventsItemList;
 import kz.welcometoastana.GdeOstanovitsya.HotelsListItem;
 import kz.welcometoastana.KudaShoditListItem;
-import kz.welcometoastana.MainActivity;
 import kz.welcometoastana.Nearby.AdapterforNearby;
 import kz.welcometoastana.Nearby.AdapterforNearby5;
 import kz.welcometoastana.Nearby.listItemNearby;
@@ -84,17 +85,16 @@ import kz.welcometoastana.utility.ViewPagerAdapter;
 
 public class GdePoestDescription extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    GoogleMap mGoogleMap;
-    GoogleApiClient mGoogleApiClient;
-    double lat, lng;
-    String lngStr, latStr;
-    int id;
-    ViewPager viewPager;
-    LinearLayout linearLayout;
-    double lat2, lng2;
-    Marker marker;
-    LocationRequest mLocationRequest;
-    listItemNearby list;
+    private GoogleMap mGoogleMap;
+    private GoogleApiClient mGoogleApiClient;
+    private double lat, lng;
+    private String lngStr, latStr;
+    private int id;
+    private ViewPager viewPager;
+    private LinearLayout linearLayout;
+    private double lat2, lng2;
+    private LocationRequest mLocationRequest;
+    private listItemNearby list;
     private int dotscount;
     private ImageView[] dots;
     private ArrayList<String> imageUrls;
@@ -102,6 +102,29 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     private TabLayout tabLayout;
     private GdePoestListItem nextItem;
     private String Url;
+    private RequestManager glide;
+
+    @Override
+    public void onDestroy() {
+        Log.d("GdePoest", "OnDestroy");
+        mGoogleApiClient = null;
+        mGoogleMap = null;
+        mLocationRequest = null;
+        lngStr = null;
+        latStr = null;
+        viewPager = null;
+        linearLayout = null;
+        list = null;
+        dots = null;
+        imageUrls = null;
+        viewPagerNext = null;
+        tabLayout = null;
+        nextItem = null;
+        Url = null;
+        glide.onDestroy();
+        super.onDestroy();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +136,9 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         progressDialog.setMessage("Loading data...");
         if (progressDialog.getWindow() != null) {
             progressDialog.getWindow().setDimAmount(0);
+        }
+        if (glide == null) {
+            glide = Glide.with(this);
         }
         progressDialog.show();
         GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{ 0xff17A400 , 0xff5ABC05 });
@@ -136,9 +162,19 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         Url = getIntent().getStringExtra("url");
         latStr = getIntent().getStringExtra("latit");
         lngStr = getIntent().getStringExtra("longit");
-        if(MainActivity.gpsLocation != null){
-            lat2 = MainActivity.gpsLocation.getLatitude();
-            lng2 = MainActivity.gpsLocation.getLongitude();
+        if (lngStr.equals("null")) {
+            lngStr = "0";
+            latStr = "0";
+        }
+        lat = Double.parseDouble(latStr);
+        lng = Double.parseDouble(lngStr);
+
+        SharedPreferences sharedPref = getSharedPreferences("app", MODE_PRIVATE);
+        String latitude = sharedPref.getString("lat", "null");
+        String lon = sharedPref.getString("lon", "null");
+        if (!latitude.equals("null")) {
+            lat2 = Double.parseDouble(latitude);
+            lng2 = Double.parseDouble(lon);
         }
         if (getIntent().getStringExtra("address").length() < 2) {
             address.setVisibility(View.GONE);
@@ -270,7 +306,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-                Log.d("DescriptionActivity", Url);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray array = jsonObject.getJSONArray("places");
@@ -290,7 +325,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                             lng = Double.parseDouble(lngStr);
 
                             Location startPoint=new Location("locationA");
-                            Log.d("DescriptionActivity", "lat: "+lat+"lon: "+lng);
+
                             startPoint.setLatitude(lat2);
                             startPoint.setLongitude(lng2);
                             Location endPoint=new Location("locationB");
@@ -299,7 +334,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
 
                             float distanceDouble=startPoint.distanceTo(endPoint);
-                            Log.d("DescriptionActivity", "distance: "+distanceDouble);
+
                             if(distanceDouble/1000 > 6000){
                                 distance.setVisibility(View.GONE);
                             }else {
@@ -311,7 +346,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                             }
                             goToLocationZoom(lat, lng, 15);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
-                            Log.d("DescriptionActivity", "size: "+arr.length());
+
                             if(arr.length()==0){
 
                                 imageUrls.add("http://imgur.com/bpx2TrL");
@@ -319,7 +354,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
                                 for (int j = 0; j < arr.length(); j++) {
                                     imageUrls.add(arr.get(j).toString());
-                                    Log.d("MainActivity", arr.get(j).toString());
+
                                 }
                             }
                             if ((i + 1) != array.length()) {
@@ -399,7 +434,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
                         nameNext.setText(nextItem.getName());
                         categoryNext.setText(nextItem.getCategory());
-                        Glide.with(getApplicationContext())
+                        glide
                                 .load(nextItem.getImageUrl())
                                 .centerCrop()
                                 .into(imageViewNext);
@@ -558,7 +593,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
                 tabLayout = (TabLayout) findViewById(R.id.tabsEvent);
                 viewPagerNext = (ViewPager) findViewById(R.id.viewpagerEvent);
-                viewPagerNext.setAdapter(new AdapterforNearby(GdePoestDescription.this, list, "green"));
+                viewPagerNext.setAdapter(new AdapterforNearby(glide, GdePoestDescription.this, list, "green"));
                 tabLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -566,12 +601,13 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                     }
                 });
 
-
+                tabLayout.setVisibility(View.VISIBLE);
+                viewPagerNext.setVisibility(View.VISIBLE);
+                findViewById(R.id.txtShowMore).setVisibility(View.VISIBLE);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("EventsDescription", error.toString());
             }
         }) {
             @Override
@@ -730,8 +766,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             lat2=location.getLatitude();
             lng2=location.getLongitude();
-            Log.d("myLat", String.valueOf(location.getLatitude()));
-            Log.d("myLng", String.valueOf(location.getLongitude()));
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
             mGoogleMap.animateCamera(update);
         }
@@ -765,7 +799,7 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
 
     public void showMore(View view) {
         int position = viewPagerNext.getCurrentItem();
-        viewPagerNext.setAdapter(new AdapterforNearby5(this, list, "green"));
+        viewPagerNext.setAdapter(new AdapterforNearby5(glide, this, list, "green"));
         viewPagerNext.setCurrentItem(position);
         ViewGroup.LayoutParams params = viewPagerNext.getLayoutParams();
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -802,5 +836,6 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
         finish();
     }
+
 
 }
