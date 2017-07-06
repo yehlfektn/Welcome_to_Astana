@@ -217,8 +217,13 @@ public class AllSightseeings extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
-        glide.onDestroy();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+        }
+        if (glide != null) {
+            glide.onDestroy();
+            glide = null;
+        }
         kudaShoditListItems = null;
         Url = null;
         swipeRefreshLayout = null;

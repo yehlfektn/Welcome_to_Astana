@@ -245,8 +245,11 @@ public class SightSeeingsFragment extends Fragment {
                                                             @Override
                                                             public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                                                                 Bitmap bitmap1 = getCircularBitmap(bitmap);
-                                                                marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
-                                                                marker.setVisible(true);
+                                                                try {
+                                                                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap1));
+                                                                    marker.setVisible(true);
+                                                                } catch (IllegalArgumentException e) {
+                                                                }
                                                             }
                                                         });
                                             }
@@ -380,7 +383,11 @@ public class SightSeeingsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        try {
+            mMapView.onDestroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
         for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
@@ -402,25 +409,43 @@ public class SightSeeingsFragment extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-//        mMapView.onDestroy();
+
+        super.onDestroy();
+
+
     }
 
     @Override
     public void onResume() {
+        try {
+            mMapView.onResume();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onResume();
-        mMapView.onResume();
+
     }
 
     @Override
     public void onPause() {
+        try {
+            mMapView.onPause();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onPause();
-        mMapView.onPause();
+
     }
 
     @Override
     public void onLowMemory() {
+        try {
+            mMapView.onLowMemory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onLowMemory();
-        mMapView.onLowMemory();
+
     }
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {

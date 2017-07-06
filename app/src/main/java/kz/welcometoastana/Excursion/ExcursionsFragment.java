@@ -84,7 +84,7 @@ public class ExcursionsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+
 
         FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
         for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
@@ -106,10 +106,13 @@ public class ExcursionsFragment extends Fragment {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+        super.onDestroy();
+
     }
 
     @Override
     public void onResume() {
+
         super.onResume();
     }
 

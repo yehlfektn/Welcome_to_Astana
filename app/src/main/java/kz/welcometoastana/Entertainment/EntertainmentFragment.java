@@ -385,7 +385,7 @@ public class EntertainmentFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+
 
 
         FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
@@ -413,25 +413,41 @@ public class EntertainmentFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        super.onDestroy();
 
     }
 
     @Override
     public void onResume() {
+
+        try {
+            mMapView.onResume();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onResume();
-        mMapView.onResume();
     }
 
     @Override
     public void onPause() {
+
+        try {
+            mMapView.onPause();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onPause();
-        mMapView.onPause();
     }
 
     @Override
     public void onLowMemory() {
+
+        try {
+            mMapView.onLowMemory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onLowMemory();
-        mMapView.onLowMemory();
     }
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {

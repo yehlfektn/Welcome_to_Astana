@@ -212,14 +212,19 @@ public class AllPlacesFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+        }
+        if (glide != null) {
+            glide.onDestroy();
+            glide = null;
+        }
         adapter = null;
         recyclerView = null;
         swipeRefreshLayout = null;
         Url = null;
         gdePoestListItems = null;
-        glide.onDestroy();
-        glide = null;
+
         super.onDestroy();
     }
 

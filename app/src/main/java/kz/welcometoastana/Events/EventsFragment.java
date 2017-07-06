@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.CameraUpdate;
@@ -84,6 +85,7 @@ public class EventsFragment extends Fragment {
     private List<EventsItemList> eventsItemLists;
     private BottomSheetBehavior mBottomSheetBehavior;
     private Boolean map = false;
+    private RequestManager glide;
 
 
     private static String makeFragmentName(int viewId, int position) {
@@ -99,6 +101,10 @@ public class EventsFragment extends Fragment {
         View bottomSheet = v.findViewById(R.id.nested);
         mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        if (glide == null) {
+            glide = Glide.with(this);
+        }
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("position", Context.MODE_PRIVATE);
         map = sharedPref.getBoolean("map", false);
@@ -260,7 +266,7 @@ public class EventsFragment extends Fragment {
                                             markerList.add(marker);
                                             markerMap.put(marker, eventsItemList);
 
-                                            Glide.with(getActivity()).
+                                            glide.
                                                     load(eventsItemList.getImageUrl())
                                                     .asBitmap()
                                                     .override(75, 75)
@@ -417,18 +423,20 @@ public class EventsFragment extends Fragment {
             }
         }
         Log.d("EventsFragment", "OnDestroy was activated");
-        FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
-        Log.d("EventsFragment", "Fragment count" + fragmentPagerAdapter.getCount());
-        for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
-            String name = makeFragmentName(viewPager.getId(), i);
-            Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
-            if (viewPagerFragment != null) {
-                // Interact with any views/data that must be alive
-                Log.d("EventsFragment", "" + viewPagerFragment.getTag() + "is ondestroy");
-                if (viewPagerFragment instanceof AllEvents) {
-                    Log.d("EventsFragment", "All events is on destroy");
+        if (viewPager != null) {
+            FragmentPagerAdapter fragmentPagerAdapter = (FragmentPagerAdapter) viewPager.getAdapter();
+            Log.d("EventsFragment", "Fragment count" + fragmentPagerAdapter.getCount());
+            for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
+                String name = makeFragmentName(viewPager.getId(), i);
+                Fragment viewPagerFragment = getChildFragmentManager().findFragmentByTag(name);
+                if (viewPagerFragment != null) {
+                    // Interact with any views/data that must be alive
+                    Log.d("EventsFragment", "" + viewPagerFragment.getTag() + "is ondestroy");
+                    if (viewPagerFragment instanceof AllEvents) {
+                        Log.d("EventsFragment", "All events is on destroy");
+                    }
+                    viewPagerFragment.onDestroy();
                 }
-                viewPagerFragment.onDestroy();
             }
         }
 
@@ -449,7 +457,7 @@ public class EventsFragment extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
+
         if (mMapView != null) {
             try {
                 mMapView.onResume();
@@ -457,11 +465,12 @@ public class EventsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+        super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
+
         if (mMapView != null) {
             try {
                 mMapView.onPause();
@@ -469,11 +478,12 @@ public class EventsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+        super.onPause();
     }
 
     @Override
     public void onLowMemory() {
-        super.onLowMemory();
+
         if (mMapView != null) {
             try {
                 mMapView.onLowMemory();
@@ -481,6 +491,7 @@ public class EventsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+        super.onLowMemory();
     }
 
     public Bitmap getCircularBitmap(Bitmap bitmap) {

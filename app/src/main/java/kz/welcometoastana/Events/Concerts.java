@@ -145,8 +145,9 @@ public class Concerts extends Fragment {
                                 "от 5000тг",
                                 o.getString("url_ticketon")
                         );
-                        eventsItemLists.add(item);
-
+                        if (eventsItemLists != null) {
+                            eventsItemLists.add(item);
+                        }
                     }
 
 
@@ -234,8 +235,13 @@ public class Concerts extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
-        glide.onDestroy();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+        }
+        if (glide != null) {
+            glide.onDestroy();
+            glide = null;
+        }
         eventsItemLists = null;
         formatDateTime = null;
         Url = null;

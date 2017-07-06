@@ -218,8 +218,12 @@ public class GorodFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
-        glide.onDestroy();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+        }
+        if (glide != null) {
+            glide.onDestroy();
+        }
         kudaShoditListItems = null;
         Url = null;
         swipeRefreshLayout = null;

@@ -233,13 +233,18 @@ public class ExpoEvent extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
-        glide.onDestroy();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+        }
+        if (glide != null) {
+            glide.onDestroy();
+        }
         eventsItemLists = null;
         formatDateTime = null;
         Url = null;
         swipeRefreshLayout = null;
         adapter = null;
+
         super.onDestroy();
     }
 

@@ -3,6 +3,7 @@ package kz.welcometoastana.Events;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -140,6 +141,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         if (glide == null) {
             glide = Glide.with(this);
         }
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
 
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         relativeLayout.setVisibility(View.GONE);
@@ -294,7 +299,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         if (o.getInt("id") == id) {
                             JSONArray arr = o.getJSONArray("images");
 
-                            if (lngStr.equals("null")) {
+                            if (lngStr == null || lngStr.equals("null")) {
                                 lngStr = "0";
                                 latStr = "0";
                             }
@@ -565,13 +570,13 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 tabLayout.setVisibility(View.VISIBLE);
                 viewPagerNext.setVisibility(View.VISIBLE);
                 findViewById(R.id.txtShowMore).setVisibility(View.VISIBLE);
-
+                progressDialog.dismiss();
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                progressDialog.dismiss();
             }
         }) {
             @Override
@@ -673,7 +678,9 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.animateCamera(update);
+        if (mGoogleMap != null) {
+            mGoogleMap.animateCamera(update);
+        }
     }
 
     private void setMarker(String locality, double lat, double lng) {

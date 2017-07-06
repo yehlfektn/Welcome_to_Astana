@@ -77,7 +77,6 @@ public class GdeOstanovitsya extends Fragment {
     public TabLayout tabLayout;
     public ViewPager viewPager;
     MapView mMapView;
-    LatLng astana = new LatLng(51.149202, 71.439285);
     HashMap<String, String> markerLocation = new HashMap<>();
     List<Marker> markerList = new ArrayList<>();
     Map<Marker, HotelsListItem> markerMap;
@@ -147,7 +146,12 @@ public class GdeOstanovitsya extends Fragment {
                 new Runnable() {
                     @Override
                     public void run() {
-                        tabLayout.getTabAt(position).select();
+                        try {
+                            tabLayout.getTabAt(position).select();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, 500);
 

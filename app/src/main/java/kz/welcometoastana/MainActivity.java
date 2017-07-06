@@ -145,6 +145,38 @@ public class MainActivity extends LocalizationActivity {
     private HashSet<Integer> ids;
     private boolean firstTime = true;
 
+
+    @Override
+    public void onDestroy() {
+        Log.d("MainActivity", "OnDestroy was called");
+
+        formatDateTime = null;
+        fragList = null;
+        dateTimeTo = null;
+        dateTimeFrom = null;
+        glide.onDestroy();
+        from = null;
+        to = null;
+        gdePoestListItems = null;
+        hotelsListItems = null;
+        eventsItemLists = null;
+        kudaShoditListItems = null;
+        elv = null;
+        notificationTarget = null;
+        ids = null;
+
+
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+        SmartLocation.with(getApplicationContext()).location().stop();
+
+
+        super.onDestroy();
+
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -1404,15 +1436,6 @@ public class MainActivity extends LocalizationActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("MainActivity", "OnDestroy was called");
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
-        SmartLocation.with(getApplicationContext()).location().stop();
-    }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -1424,8 +1447,8 @@ public class MainActivity extends LocalizationActivity {
             Fragment f = ref.get();
             if (f != null) {
                 if (f.isVisible()) {
-                    //f.onDetach();
                     f.onDestroy();
+                    f.onDetach();
                     Log.d("MainActivity", "Some fragments were deleted");
                 }
             }

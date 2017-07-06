@@ -146,7 +146,15 @@ public class GdePoest extends Fragment {
                 new Runnable() {
                     @Override
                     public void run() {
-                        tabLayout.getTabAt(position).select();
+                        if (tabLayout != null) {
+                            try {
+                                tabLayout.getTabAt(position).select();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
                     }
                 }, 500);
 

@@ -239,14 +239,25 @@ public class AllEvents extends Fragment {
 
     @Override
     public void onDestroy() {
-        recyclerView.setAdapter(null);
-        glide.onDestroy();
-        eventsItemLists = null;
-        formatDateTime = null;
-        Url = null;
-        swipeRefreshLayout = null;
-        adapter = null;
-        recyclerView = null;
+        try {
+
+
+            if (recyclerView != null) {
+                recyclerView.setAdapter(null);
+            }
+            if (glide != null) {
+                glide.onDestroy();
+                glide = null;
+            }
+            eventsItemLists = null;
+            formatDateTime = null;
+            Url = null;
+            swipeRefreshLayout = null;
+            adapter = null;
+            recyclerView = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
