@@ -182,6 +182,7 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
         lng = Double.parseDouble(lngStr);
 
         Url = getIntent().getStringExtra("url");
+        Log.d("MainActivity", Url);
 
         TextView txtShowMore = (TextView) findViewById(R.id.txtShowMore);
 
@@ -305,6 +306,9 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                             }
                             lat = Double.parseDouble(latStr);
                             lng = Double.parseDouble(lngStr);
+                            Log.d("MainActivity", "lat: " + lat + " lon: " + lng);
+
+
                             goToLocationZoom(lat, lng, 13);
                             setMarker(getIntent().getStringExtra("name"), lat, lng);
                             if(arr.length()==0){
@@ -387,8 +391,10 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                         }
                     });
 
-                    if (imageUrls.size() < 2) {
-                        linearLayout.setVisibility(View.GONE);
+                    if (imageUrls != null) {
+                        if (imageUrls.size() < 2) {
+                            linearLayout.setVisibility(View.GONE);
+                        }
                     }
 
 
@@ -600,6 +606,12 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
 
         if (googleServicesAvailable()) {
+            Log.d("MainActivity", "latstr is: " + latStr);
+            if (latStr.equals("0")) {
+                findViewById(R.id.map).setVisibility(View.GONE);
+                findViewById(R.id.wayButton).setVisibility(View.GONE);
+                initMap();
+            }
             if (latStr.equals("null")) {
                 findViewById(R.id.map).setVisibility(View.GONE);
                 findViewById(R.id.wayButton).setVisibility(View.GONE);
@@ -676,11 +688,17 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
 
 
     private void goToLocationZoom(double lat, double lng, float zoom) {
+        Log.d("MainActivity", "ingotoLocation");
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        if (mGoogleMap != null) {
+
+        try {
             mGoogleMap.animateCamera(update);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
     }
 
     private void setMarker(String locality, double lat, double lng) {
@@ -689,7 +707,11 @@ public class EventsDescription extends AppCompatActivity implements OnMapReadyCa
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker", 50, 50)))
                 .position(new LatLng(lat, lng));
-        mGoogleMap.addMarker(options).showInfoWindow();
+        try {
+            mGoogleMap.addMarker(options).showInfoWindow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {

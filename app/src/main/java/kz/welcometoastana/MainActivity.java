@@ -314,11 +314,22 @@ public class MainActivity extends LocalizationActivity {
                         Date myDate = new Date(sharedPref.getLong("time", 0));
                         long difference = date.getTime() - myDate.getTime();
                         Log.d("MainActivity", "difference: " + difference);
+                        Date cacheDate = new Date(sharedPref.getLong("cache", 0));
+                        long cacheDifference = date.getTime() - cacheDate.getTime();
+
+                        if (cacheDifference > 172800000) {
+                            //Log.d("MainActivity",""+cacheDifference);
+                            ids.clear();
+                            editor.putString("ids", gson.toJson(ids));
+                            editor.putLong("time", 0).commit();
+                            editor.putLong("cache", date.getTime()).commit();
+                            editor.commit();
+                        }
 
 
                         if (difference > 1800000) {
                             editor.putLong("time", date.getTime()).apply();
-
+                            Log.d("MainActivity", "difference proiden");
 
                             if (gdePoestListItems.size() != 0) {
                                 double min = 1000;
@@ -332,6 +343,7 @@ public class MainActivity extends LocalizationActivity {
                                             if (!ids.contains(gdePoestListItem.getId())) {
                                                 gde = gdePoestListItem;
                                                 min = distanceDouble;
+                                                Log.d("MainActivity", "there is some ids");
                                             }
                                         }
                                     }

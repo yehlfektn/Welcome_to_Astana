@@ -144,7 +144,9 @@ public class Vystavki extends Fragment {
                                 "от 5000тг",
                                 o.getString("url_ticketon")
                         );
-                        eventsItemLists.add(item);
+                        if (eventsItemLists != null) {
+                            eventsItemLists.add(item);
+                        }
 
                     }
 

@@ -196,13 +196,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickEvent(0);
+                    onClickEvent(1);
                 } else if (position == 1) {
-                    onClickSight(0);
+                    onClickSight(1);
                 } else if (position == 2) {
-                    onClickHotel(0);
+                    onClickHotel(1);
                 } else {
-                    onClickFood(0);
+                    onClickFood(1);
                 }
             }
         });
@@ -211,13 +211,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickEvent(0);
+                    onClickEvent(2);
                 } else if (position == 1) {
-                    onClickSight(0);
+                    onClickSight(2);
                 } else if (position == 2) {
-                    onClickHotel(0);
+                    onClickHotel(2);
                 } else {
-                    onClickFood(0);
+                    onClickFood(2);
                 }
             }
         });
@@ -226,13 +226,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickEvent(0);
+                    onClickEvent(3);
                 } else if (position == 1) {
-                    onClickSight(0);
+                    onClickSight(3);
                 } else if (position == 2) {
-                    onClickHotel(0);
+                    onClickHotel(3);
                 } else {
-                    onClickFood(0);
+                    onClickFood(3);
                 }
             }
         });
@@ -241,13 +241,13 @@ public class AdapterforNearby5 extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 if (position == 0) {
-                    onClickEvent(0);
+                    onClickEvent(4);
                 } else if (position == 1) {
-                    onClickSight(0);
+                    onClickSight(4);
                 } else if (position == 2) {
-                    onClickHotel(0);
+                    onClickHotel(4);
                 } else {
-                    onClickFood(0);
+                    onClickFood(4);
                 }
             }
         });

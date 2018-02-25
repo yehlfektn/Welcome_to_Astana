@@ -712,7 +712,12 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.animateCamera(update);
+        try {
+            mGoogleMap.animateCamera(update);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -722,9 +727,11 @@ public class GdePoestDescription extends AppCompatActivity implements OnMapReady
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker_green", 50, 50)))
                 .position(new LatLng(lat, lng));
-
-        mGoogleMap.addMarker(options).showInfoWindow();
-
+        try {
+            mGoogleMap.addMarker(options).showInfoWindow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {

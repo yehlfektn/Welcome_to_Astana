@@ -97,6 +97,7 @@ public class AllEvents extends Fragment {
         if (progressDialog.getWindow() != null) {
             progressDialog.getWindow().setDimAmount(0);
         }
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         SharedPreferences sharedPref = getContext().getSharedPreferences("time", Context.MODE_PRIVATE);
@@ -151,7 +152,9 @@ public class AllEvents extends Fragment {
                                 "от 5000тг",
                                 o.getString("url_ticketon")
                         );
-                        eventsItemLists.add(item);
+                        if (eventsItemLists != null) {
+                            eventsItemLists.add(item);
+                        }
 
                     }
 

@@ -776,7 +776,11 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
     private void goToLocationZoom(double lat, double lng, float zoom) {
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.animateCamera(update);
+        try {
+            mGoogleMap.animateCamera(update);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setMarker(String locality, double lat, double lng) {
@@ -785,9 +789,11 @@ public class GdeOstanovitsyaDescription extends AppCompatActivity implements OnM
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("icon_marker_purple", 50, 50)))
                 .position(new LatLng(lat, lng));
-
-        mGoogleMap.addMarker(options).showInfoWindow();
-
+        try {
+            mGoogleMap.addMarker(options).showInfoWindow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Bitmap resizeMapIcons(String iconName, int width, int height) {
