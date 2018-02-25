@@ -82,7 +82,6 @@ import kz.welcometoastana.GdePoest.GdePoestDescription;
 import kz.welcometoastana.GdePoest.GdePoestListItem;
 import kz.welcometoastana.ListView.CustomAdapter;
 import kz.welcometoastana.ListView.group;
-import kz.welcometoastana.Pamyatka.Expo;
 import kz.welcometoastana.Pamyatka.Extrennaya;
 import kz.welcometoastana.Pamyatka.Info;
 import kz.welcometoastana.Pamyatka.Poleznaya;
@@ -701,7 +700,7 @@ public class MainActivity extends LocalizationActivity {
                     params.height=pixels;
                     linearLayout.setLayoutParams(params);
                 }else if(groupPosition == 4){
-                    findViewById(R.id.mapImage).setVisibility(View.GONE);
+  /*                  findViewById(R.id.mapImage).setVisibility(View.GONE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xff366AFE, 0xff1A44BD});
                     getSupportActionBar().setBackgroundDrawable(g);
@@ -714,8 +713,7 @@ public class MainActivity extends LocalizationActivity {
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
-                    elv.collapseGroup(4);
-                } else if (groupPosition == 5) {
+                    elv.collapseGroup(4);*/
                     findViewById(R.id.mapImage).setVisibility(View.GONE);
                     findViewById(R.id.calendar).setVisibility(View.GONE);
                     GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF00AA, 0xffFF00AA});
@@ -730,7 +728,23 @@ public class MainActivity extends LocalizationActivity {
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.closeDrawer(GravityCompat.START);
-                    elv.collapseGroup(5);
+                    elv.collapseGroup(4);
+                } else if (groupPosition == 5) {
+/*                    findViewById(R.id.mapImage).setVisibility(View.GONE);
+                    findViewById(R.id.calendar).setVisibility(View.GONE);
+                    GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xffFF00AA, 0xffFF00AA});
+                    getSupportActionBar().setBackgroundDrawable(g);
+
+                    Fragment fragment = new Info();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.mainFrame, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+
+
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                    elv.collapseGroup(5);*/
 
                 }
             }
@@ -893,7 +907,7 @@ public class MainActivity extends LocalizationActivity {
         t4.items.add(getResources().getString(R.string.transport));
         t4.items.add(getResources().getString(R.string.poleznaya));
         t4.items.add(getResources().getString(R.string.extrennaya));
-        group t5 = new group(getString(R.string.Expo));
+        //group t5 = new group(getString(R.string.Expo));
         group t6 = new group(getResources().getString(R.string.chinese));
 
         ArrayList<group> allGroups = new ArrayList<group>();
@@ -901,7 +915,7 @@ public class MainActivity extends LocalizationActivity {
         allGroups.add(t2);
         allGroups.add(t3);
         allGroups.add(t4);
-        allGroups.add(t5);
+        //allGroups.add(t5);
         allGroups.add(t6);
         return allGroups;
     }
